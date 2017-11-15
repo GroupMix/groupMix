@@ -25,11 +25,11 @@ const Event = db.define('event', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  eventType: {
+  type: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  eventGenres: {
+  genres: {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: false
   },
