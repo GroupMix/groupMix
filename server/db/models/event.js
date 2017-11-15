@@ -29,10 +29,6 @@ const Event = db.define('event', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  genres: {
-    type: Sequelize.ARRAY(Sequelize.STRING),
-    allowNull: false
-  },
   hasEnded: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,

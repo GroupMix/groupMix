@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-const PlaylistSong = db.define('event', {
+const PlaylistSong = db.define('playlistSong', {
   playlistId: {
     type: Sequelize.INTEGER,
     allowNull: false

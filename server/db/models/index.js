@@ -1,9 +1,9 @@
 const User = require('./user')
-const Event = require('./user')
-const Playlist = require('./user')
-const Song = require('./user')
-const PlaylistSong = require('./user')
-const EventUser = require('./user')
+const Event = require('./event')
+const Playlist = require('./playlist')
+const Song = require('./song')
+const PlaylistSong = require('./playlistSong')
+const EventUser = require('./eventUser')
 
 //Associations
 User.belongsToMany(Event, {through: EventUser})
