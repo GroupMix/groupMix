@@ -14,9 +14,12 @@ Song.belongsToMany(Playlist, {through: PlaylistSong})
 
 module.exports = {
   User,
+<<<<<<< HEAD
   Event,
   Playlist,
   Song,
   PlaylistSong,
   EventUser
+=======
+>>>>>>> master
 }
