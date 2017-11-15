@@ -3,6 +3,18 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const User = db.define('user', {
+  name: {
+    type: Sequelize.STRING,
+  },
+  spotifyUserId: {
+    type: Sequelize.STRING,
+  },
+  spotifyDeviceId: {
+    type: Sequelize.STRING,
+  },
+  imgurPhoto: {
+    type: Sequelize.STRING,
+  },
   email: {
     type: Sequelize.STRING,
     unique: true,
@@ -16,7 +28,7 @@ const User = db.define('user', {
   },
   googleId: {
     type: Sequelize.STRING
-  }
+  },
 })
 
 module.exports = User
