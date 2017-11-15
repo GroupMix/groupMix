@@ -7,7 +7,7 @@ const Playlist = db.define('playlist', {
     allowNull: false,
     isInt: true
   },
-  playlistName: {
+  name: {
     type: Sequelize.STRING,
     allowNull: true,
   },

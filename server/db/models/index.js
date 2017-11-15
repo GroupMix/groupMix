@@ -1,18 +1,22 @@
 const User = require('./user')
+const Event = require('./user')
+const Playlist = require('./user')
+const Song = require('./user')
+const PlaylistSong = require('./user')
+const EventUser = require('./user')
 
-/**
- * If we had any associations to make, this would be a great place to put them!
- * ex. if we had another model called BlogPost, we might say:
- *
- *    BlogPost.belongsTo(User)
- */
+//Associations
+User.belongsToMany(Event, {through: EventUser})
+Event.belongsToMany(User, {through: EventUser})
+Event.hasOne(Playlist)
+Playlist.belongsToMany(Song, {through: PlaylistSong})
+Song.belongsToMany(Playlist, {through: PlaylistSong})
 
-/**
- * We'll export all of our models here, so that any time a module needs a model,
- * we can just require it from 'db/models'
- * for example, we can say: const {User} = require('../db/models')
- * instead of: const User = require('../db/models/user')
- */
 module.exports = {
-  User
+  User,
+  Event,
+  Playlist,
+  Song,
+  PlaylistSong,
+  EventUser
 }
