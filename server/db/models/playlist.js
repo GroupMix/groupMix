@@ -12,9 +12,8 @@ const Playlist = db.define('playlist', {
     allowNull: true,
   },
   spotifyPlaylistId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    isInt: true
+    type: Sequelize.STRING,
+    allowNull: false
   }
 })
 
