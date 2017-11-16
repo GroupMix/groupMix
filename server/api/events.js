@@ -5,18 +5,8 @@ module.exports = router
 
 // get all events associated with this user
 router.get('/:userId', (req, res, next) => {
-  Event.findAll({
-    include: [
-      {
-        model: User,
-        where: {
-          id: req.params.userId
-        },
-    }
-    ]
-  })
-    .then(events => res.json(events))
-    .catch(next)
-
-// magic method not working
+  User.findById(req.params.userId)
+  .then(user => user.getEvents())
+  .then(events => res.json(events))
+  .catch(next)
 })
