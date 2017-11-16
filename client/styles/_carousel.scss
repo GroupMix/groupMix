@@ -1,0 +1,28 @@
+
+
+.sliderContainer {
+    display: flex;
+}
+.carouselItem {
+    height: 100vh;
+    width: 100vw;
+}
+#carouselTitle{
+    background-color: rgba(179,88,186, .8);
+    position: absolute;
+    z-index: 2;
+    padding: 2%;
+    width: 80vw;
+    border-radius: 12px;
+    transform: translate(12vw, 20vh);
+    h1 {
+        color: white;
+        text-align: center;
+        text-shadow: 1px 1px black;
+    }
+    p {
+        color: white;
+        text-shadow: 1px 1px black;
+        font-size: 15px;
+    }
+}

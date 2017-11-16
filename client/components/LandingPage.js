@@ -5,13 +5,14 @@ import {
 
 } from 'semantic-ui-react'
 import Slick from 'react-slick'
+import Carousel from './_landingCarousel'
 
 const LandingPage = (props) => {
     return (
-        <Container>
-            <h1>Landing Page Here</h1>
+        <Container fluid>
+            <Carousel />
         </Container>
     )
 }
 
-export default LandingPage;
+export default LandingPage
