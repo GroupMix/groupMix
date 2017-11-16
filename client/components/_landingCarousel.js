@@ -10,7 +10,7 @@ const Carousel = () => {
     const settings = {
         infinite: true,
         autoplay: true,
-        autoPlaySpeed: 200,
+        autoPlaySpeed: 900,
     }
     return (
         <Slider {...settings} className="sliderContainer">
