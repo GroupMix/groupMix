@@ -4,7 +4,12 @@ import {Router} from 'react-router'
 import {Route, Switch} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import history from './history'
+<<<<<<< HEAD
 import {Main, Login, Signup, UserHome, EventList} from './components'
+=======
+import {Main, Login, Signup, UserHome, NewEvent, EventGenres, LandingPage} from './components'
+import {withRouter} from 'react-router-dom'
+>>>>>>> fbe15dbdbdfbb877f8f92643db989504e68dec96
 import {me} from './store'
 
 /**
@@ -23,8 +28,11 @@ class Routes extends Component {
         <Main>
           <Switch>
             {/* Routes placed here are available to all visitors */}
+            <Route exact path="/" component={LandingPage} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
+            <Route path="/newevent" component={NewEvent} />
+            <Route path="/eventgenres" component={EventGenres} />
             {
               isLoggedIn &&
               <Switch>
