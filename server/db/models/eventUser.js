@@ -26,11 +26,6 @@ const EventUser = db.define('eventUser', {
     type: Sequelize.BOOLEAN,
     allowNull: false,
     defaultValue: false
-  },
-  isAttending: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
   }
 })
 
