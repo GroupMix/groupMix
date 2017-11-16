@@ -17,6 +17,7 @@ const {
   Song,
   PlaylistSong,
   EventUser} = require('../server/db/models')
+  const faker = require('faker')
 
 async function seed () {
   await db.sync({force: true})
@@ -25,10 +26,10 @@ async function seed () {
   // executed until that promise resolves!
 
   const users = await Promise.all([
-    User.create({name: 'Chris', email: 'chris@email.com', password: '123'}),
-    User.create({name: 'Jesse', email: 'jesse@email.com', password: '123'}),
-    User.create({name: 'Steve', email: 'steve@email.com', password: '123'}),
-    User.create({name: 'Max', email: 'max@email.com', password: '123'})
+    User.create({name: 'Chris', email: 'chris@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
+    User.create({name: 'Jesse', email: 'jesse@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
+    User.create({name: 'Steve', email: 'steve@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
+    User.create({name: 'Max', email: 'max@email.com', password: '123', imgurPhoto: faker.image.avatar()})
   ])
 
   const events = await Promise.all([
