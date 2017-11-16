@@ -1,4 +1,4 @@
-import React,{ Component } from 'react'
+import React, { Component } from 'react'
 import {
     Segment,
     Image
@@ -6,26 +6,47 @@ import {
 import Slider from 'react-slick'
 import '../styles/_carousel.scss'
 
-const  Carousel = () => {
+const Carousel = () => {
     const settings = {
         infinite: true,
         autoplay: true,
-        autoPlaySpeed: 100,
+        autoPlaySpeed: 200,
     }
     return (
         <Slider {...settings} className="sliderContainer">
-        <div className="carouselItem">
-            <div id="carouselTitle">
-                <h1>Get in the Mix</h1>
-                <hr/>
-                <p>Ex deserunt ipsum minim exercitation ut. Esse aute consequat velit nostrud exercitation occaecat in aliquip. Voluptate proident et et eu deserunt anim incididunt magna ea eu.
-
-Sunt tempor sunt esse exercitation ullamco eiusmod laborum excepteur adipisicing voluptate laboris. Nisi laboris enim ad cupidatat sint exercitation. Laboris labore ut ut incididunt. Incididunt et id enim fugiat in. Et commodo amet veniam consectetur reprehenderit dolore tempor excepteur eiusmod elit aute adipisicing ea irure. Deserunt non sint dolor Lorem officia ullamco laboris aliqua. Id do dolore consectetur eu magna qui ipsum.
-
-Occaecat quis occaecat amet ullamco cupidatat tempor. Ex sunt mollit labore non cillum non ea eu tempor irure. Ullamco excepteur ut anim amet esse. Dolor ut consectetur labore sint mollit ut. Anim eiusmod voluptate occaecat magna sint nisi ut duis ut irure aliquip proident deserunt. </p>
+            <div className="carouselItem">
+                <div id="carouselTitle">
+                    <h1>Hosting a Party?</h1>
+                    <hr />
+                    <h2>Get in the Mix!</h2>
+                    <p>
+                        Group Mix offers the perfect solution for entertainers music lovers and those who entertain.
+                        Our service allows the host to create a perfect playlist based on the musical tastes of the guest!
+                        Simply invite your guests, they'll choose their favorite music and our algorithm will take care of the rest!
+                    </p>
+                </div>
+                <Image src='assets/Club Photo 1.jpeg' className="carouselImage" />
             </div>
-            <Image src='assets/Circular Equalizer.png' className="carouselImage" />
-        </div>
+            <div className="carouselItem" >
+                <div id="carouselTitle">
+                    <h1>Not Just For Parties!</h1>
+                    <hr />
+                    <p> 
+                        Our services could be applicable for any social gathering where a little music can brightend the mood.
+                    </p>
+                </div>
+                <Image src='assets/Study Session.jpg' className="carouselImage" />
+            </div>
+            <div className="carouselItem">
+                <div id="carouselTitle">
+                    <h1>About Us</h1>
+                    <hr />
+                    <p> 
+                        Why would you want to know that?
+                    </p>
+                </div>
+                <Image src='assets/Circular Equalizer.png' className="carouselImage" />
+            </div>
         </Slider>
     )
 }
