@@ -10,7 +10,13 @@
  * Now that you've got the main idea, check it out in practice below!
  */
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {
+  User,
+  Event,
+  Playlist,
+  Song,
+  PlaylistSong,
+  EventUser} = require('../server/db/models')
 
 async function seed () {
   await db.sync({force: true})
@@ -19,12 +25,61 @@ async function seed () {
   // executed until that promise resolves!
 
   const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
+    User.create({name: 'Chris', email: 'chris@email.com', password: '123'}),
+    User.create({name: 'Jesse', email: 'jesse@email.com', password: '123'}),
+    User.create({name: 'Steve', email: 'steve@email.com', password: '123'}),
+    User.create({name: 'Max', email: 'max@email.com', password: '123'})
   ])
+
+  const events = await Promise.all([
+    Event.create({name: 'Going Away Party', date: '11/5/17', time: '8:00pm', address: '123 FSA st', city: 'Chicago', state: 'IL', type: 'party', genres: ['rap', 'electronic'], hasEnded: true, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Chill Kickback', date: '11/6/17', time: '6:00pm', address: '456 FSA st', city: 'Chicago', state: 'IL', type: 'chill out', genres: ['downtempo', 'hip-hop'], hasEnded: true, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Dinner Event', date: '11/7/17', time: '7:00pm', address: '789 FSA st', city: 'Chicago', state: 'IL', type: 'dinner', genres: ['jazz', 'soul'], hasEnded: false, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Finals Study Sesh', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['electronic'], hasEnded: false, montageURL: 'http://foo.com'}),
+  ])
+
+  const eventUsers = await Promise.all([
+    EventUser.create({userId: 1, eventId: 1, isHost: true, isAttending: true, atEvent: true}),
+    EventUser.create({userId: 2, eventId: 1, isHost: false, isAttending: true, atEvent: false}),
+    EventUser.create({userId: 3, eventId: 1, isHost: false, isAttending: true, atEvent: false}),
+    EventUser.create({userId: 4, eventId: 1, isHost: false, isAttending: false, atEvent: false}),
+
+    EventUser.create({userId: 1, eventId: 2, isHost: false, isAttending: false, atEvent: false}),
+    EventUser.create({userId: 2, eventId: 2, isHost: true, isAttending: true, atEvent: true}),
+    EventUser.create({userId: 3, eventId: 2, isHost: false, isAttending: true, atEvent: false}),
+    EventUser.create({userId: 4, eventId: 2, isHost: false, isAttending: true, atEvent: false}),
+
+    EventUser.create({userId: 1, eventId: 3, isHost: false, isAttending: true, atEvent: false}),
+    EventUser.create({userId: 2, eventId: 3, isHost: false, isAttending: false, atEvent: false}),
+    EventUser.create({userId: 3, eventId: 3, isHost: true, isAttending: true, atEvent: true}),
+    EventUser.create({userId: 4, eventId: 3, isHost: false, isAttending: true, atEvent: false}),
+
+    EventUser.create({userId: 1, eventId: 4, isHost: false, isAttending: true, atEvent: false}),
+    EventUser.create({userId: 2, eventId: 4, isHost: false, isAttending: true, atEvent: true}),
+    EventUser.create({userId: 3, eventId: 4, isHost: false, isAttending: false, atEvent: false}),
+    EventUser.create({userId: 4, eventId: 4, isHost: true, isAttending: true, atEvent: true}),
+  ])
+
+  // const playlists = await Promise.all([
+
+  // ])
+
+  // const songs = await Promise.all([
+
+  // ])
+
+  // const playlistSongs = await Promise.all([
+
+  // ])
+
   // Wowzers! We can even `await` on the right-hand side of the assignment operator
   // and store the result that the promise resolves to in a variable! This is nice!
   console.log(`seeded ${users.length} users`)
+  console.log(`seeded ${events.length} events`)
+  console.log(`seeded ${eventUsers.length} eventUsers`)
+  // console.log(`seeded ${playlists.length} playlists`)
+  // console.log(`seeded ${songs.length} songs`)
+  // console.log(`seeded ${playlistSongs.length} playlistSongs`)
   console.log(`seeded successfully`)
 }
 
