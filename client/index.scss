@@ -14,8 +14,18 @@ body {
     margin: 1em;
   }
 
-  form div {
-    margin: 1em;
-    display: inline-block;
+  // form div {
+  //   margin: 1em;
+  //   display: inline-block;
+  // }
+  .login-form > body > div,
+  .login-form > body > div > div,
+  .login-form > body > div > div > div.login-form {
+    height: 100%;
+  }
+  .login-form,
+  .backgroundcolor {
+    background-color: #0b4279
   }
 }
+
