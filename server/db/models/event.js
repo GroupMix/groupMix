@@ -4,14 +4,12 @@ const db = require('../db');
 const Event = db.define('event', {
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'My Event'
   },
   date: {
     type: Sequelize.STRING,
     allowNull: false,
-    validate: {
-      isDate: true
-    }
   },
   time: {
     type: Sequelize.STRING,
@@ -35,7 +33,7 @@ const Event = db.define('event', {
   },
   genres: {
     type: Sequelize.ARRAY(Sequelize.STRING),
-    allowNull: false
+    allowNull: true
   },
   hasEnded: {
     type: Sequelize.BOOLEAN,
