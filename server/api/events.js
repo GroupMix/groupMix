@@ -1,5 +1,4 @@
 const router = require('express').Router()
-<<<<<<< HEAD
 const { Event, User } = require('../db/models')
 
 module.exports = router
@@ -11,10 +10,6 @@ router.get('/:userId', (req, res, next) => {
   .then(events => res.json(events))
   .catch(next)
 })
-=======
-const { Event } = require('../db/models')
-const { User } = require('../db/models')
-module.exports = router
 
 router.post('/', (req, res, next) => {
   Event.create(req.body)
@@ -26,5 +21,3 @@ router.post('/', (req, res, next) => {
 })
 
 
-
->>>>>>> fbe15dbdbdfbb877f8f92643db989504e68dec96
