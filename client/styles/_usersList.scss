@@ -1,0 +1,15 @@
+
+#userName{
+    font-size: 2rem;
+}
+#inviteBttn {
+    color: white;
+    background-color: #B358BA;
+}
+.filteringContainer {
+    display: flex;
+    flex-direction: row;
+    #clearFilterBttn {
+        margin-left: 20px;
+    }
+}

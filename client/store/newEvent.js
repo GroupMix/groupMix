@@ -1,36 +1,32 @@
 import axios from 'axios'
-import history from '../history'
+// import history from '../history'
 import { browserHistory } from 'react-router'
 
 /* ACTION TYPES*/
 const CREATE_EVENT = 'CREATE_EVENT'
 
 /* INITIAL STATE */
-const newEvent = {
-  newEvent: {}
-}
+const newEvent = {}
 
 /* ACTION CREATORS */
-const createEvent = newEvent => ({ type: CREATE_EVENT, newEvent })
+const createEvent = event => ({ type: CREATE_EVENT, event })
 
 
 /* THUNK CREATORS */
-export const createNewEvent = (name, date, time, city, state, zip, address, type) =>
+export const createNewEvent = (createdEvent) =>
   dispatch =>
-    axios.post('/api/events', {name, date, time, city, state, zip, address, type})
+    axios.post('/api/events', createdEvent)
       .then(res =>{
         console.log(res.data)
         dispatch(createEvent(res.data))})
-        //history.push('/eventgenres')
       .catch(err => console.log(err))
 
 
 /* REDUCER */
 export default function (state = newEvent, action) {
-
   switch (action.type) {
     case CREATE_EVENT:
-      return Object.assign({}, state, { newEvent: action.newEvent })
+      return action.event
     default:
       return state
   }
