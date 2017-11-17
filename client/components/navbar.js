@@ -41,13 +41,14 @@ const Navbar = (props) => {
           ?
             <Menu.Item position="right" >
               {/* The navbar will show these links after you log in */}
-              <Button inverted as={Link} onClick={handleClick} to="/login">Log Out</Button>
 
-              <Button inverted as={Link} to="/dashboard" style={{ marginLeft: '0.5em' }}><Icon name="cart" />Event Dashboard</Button>
+              <Button inverted as={Link} to="/dashboard"><Icon name="list layout" />Event Dashboard</Button>
 
-              <Button inverted as={Link} to="/newevent" style={{ marginLeft: '0.5em' }}><Icon name="cart" />Host Event</Button>
+              <Button inverted as={Link} to="/newevent" style={{ marginLeft: '0.5em' }}><Icon name="users" />Host Event</Button>
 
               <Button inverted as={Link} to="/profile" style={{ marginLeft: '0.5em' }}><Icon name="user circle outline" />Profile</Button>
+
+              <Button inverted as={Link} onClick={handleClick} to="/login" style={{ marginLeft: '0.5em' }}>Log Out</Button>
 
             </Menu.Item>
           :

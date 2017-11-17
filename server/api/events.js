@@ -12,11 +12,10 @@ router.get('/:userId', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-
+console.log("IDDDD",req.user.id)
   Event.create(req.body)
     .then(event => {
-      console.log("req user", req.user)
-      event.setUsers([3], {through: {isHost: true}})
+      event.setUsers([req.user.id], {through: {isHost: true, isAttending: true}})
       return event
     })
     .then(event => {
