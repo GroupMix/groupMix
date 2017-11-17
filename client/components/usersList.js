@@ -7,7 +7,7 @@ import {
     Search,
     Button
 } from 'semantic-ui-react'
-import { fetchAllUsers, hideUser } from '../store'
+import { fetchAllUsers, hideUser, postInvitedUser } from '../store'
 import UserListItem from './userListItem'
 import '../styles/_usersList.scss'
 
@@ -20,19 +20,20 @@ class UsersList extends Component {
         }
     }
     componentDidMount() {
-        this.props.fetchAllUsers()
+        console.log(this.props)
+        this.props.fetchInitialData(this.props.newEvent.id)
     }
 
     handleSearchChange = (e, { value }) => {
-        this.setState({search: value})
-        
+        this.setState({ search: value })
+
     }
-    clearAllFilters() {
-        this.props.fetchAllUsers()
+    clearAllFilters = () => {
+        this.props.fetchInitialData()
         this.setState({ search: '' })
     }
     render() {
-        let { users, hideUser } = this.props
+        let { users, hideUser, newEvent, inviteUser } = this.props
         let regex = new RegExp(this.state.search, 'i');
         users = users.filter(user => user.name.match(regex))
         return (
@@ -50,7 +51,7 @@ class UsersList extends Component {
                         users.length &&
                         users.map(user => {
                             return (
-                                <UserListItem key={user.id} user={user} hideUser={hideUser} />
+                                <UserListItem key={user.id} user={user} hideUser={hideUser} event={newEvent} inviteUser={inviteUser} />
                             )
                         })
                     }
@@ -60,20 +61,26 @@ class UsersList extends Component {
     }
 }
 
-const mapState = ({ users }) => {
+const mapState = ({ users, inviteUsers, newEvent }) => {
     return {
-        users
+        users,
+        inviteUsers,
+        newEvent
     }
 }
 
 const mapDispatch = (dispatch) => {
     return {
-        fetchAllUsers: () => {
+        fetchInitialData: (eventId) => {
             dispatch(fetchAllUsers())
         },
         hideUser: (userId) => {
             dispatch(hideUser(userId))
         },
+        inviteUser: (eventId, userId) => {
+            console.log(eventId, userId, 'test')
+            dispatch(postInvitedUser(eventId, userId))
+        }
     }
 }
 

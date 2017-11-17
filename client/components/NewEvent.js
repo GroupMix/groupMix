@@ -25,21 +25,21 @@ export class NewEvent extends Component {
     }
   }
 
-  handleChange (evt) {
+  handleChange(evt) {
     var change = {}
     console.log(evt.target.value)
     change[evt.target.name] = evt.target.value
     this.setState(change)
   }
 
-  handleGenreChange = (evt, { name, value }) =>{
+  handleGenreChange = (evt, { name, value }) => {
     console.log("value", value)
-    this.setState({ genres: value})
+    this.setState({ genres: value })
     console.log(this.state.genres)
   }
 
   render() {
-    const {handleSubmit } = this.props
+    const { handleSubmit } = this.props
     const genreList = [
       { key: 'acoustic', text: 'acoustic', value: 'acoustic' },
       { key: 'afrobeat', text: 'afrobeat', value: 'afrobeat' },
@@ -107,7 +107,7 @@ export class NewEvent extends Component {
             <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder='event type' />
           </Form.Field>
           <Form.Field
-            control={Dropdown} label="Genres"  name="genres"  placeholder='select your event music genres' fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
+            control={Dropdown} label="Genres" name="genres" placeholder='select your event music genres' fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
           />
           <div>
             <Button type='submit'>Submit</Button>
@@ -125,13 +125,15 @@ const mapState = (state) => {
   }
 }
 
-const mapDispatch = (dispatch) => {
+const mapDispatch = (dispatch, ownProps) => {
   return {
     handleSubmit(evt, name, date, time, city, state, zip, address, type, genres) {
-      let newEvent = {name, date, time, city, state, zip, address, type, genres}
+      let { history } = ownProps
+      let newEvent = { name, date, time, city, state, zip, address, type, genres }
       evt.preventDefault()
       console.log("genres", newEvent)
-      dispatch(createNewEvent(newEvent))
+      dispatch(createNewEvent(newEvent, history))
+      history.push('/users')
     }
   }
 }

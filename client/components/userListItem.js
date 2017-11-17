@@ -7,7 +7,7 @@ import {
 } from 'semantic-ui-react'
 import '../styles/_usersList.scss'
 
-const UserListItem = ({ user, hideUser }) => {
+const UserListItem = ({ user, hideUser, event, inviteUser }) => {
     return (
         <List.Item>
             <List.Content>
@@ -19,7 +19,7 @@ const UserListItem = ({ user, hideUser }) => {
                     <Button.Group>
                         <Button onClick={() => hideUser(user.id)}>Hide</Button>
                         <Button.Or />
-                        <Button id="inviteBttn">Invite</Button>
+                        <Button id="inviteBttn" onClick={() => inviteUser(event.id, user.id)}>Invite</Button>
                     </Button.Group>
                 </div>
             </List.Content>
