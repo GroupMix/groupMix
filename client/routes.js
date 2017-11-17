@@ -4,11 +4,7 @@ import {Router} from 'react-router'
 import {Route, Switch} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import history from './history'
-<<<<<<< HEAD
-import {Main, Login, Signup, UserHome, NewEvent, EventGenres, UsersList} from './components'
-=======
-import {Main, Login, Signup, UserHome, EventList, NewEvent, EventGenres, LandingPage} from './components'
->>>>>>> master
+import {Main, Login, Signup, UserHome, EventList, NewEvent, EventGenres, LandingPage, UsersList} from './components'
 import {withRouter} from 'react-router-dom'
 import {me} from './store'
 
@@ -33,19 +29,13 @@ class Routes extends Component {
             <Route path="/signup" component={Signup} />
             <Route path="/newevent" component={NewEvent} />
             <Route path="/eventgenres" component={EventGenres} />
+            <Route path="/users" component={UsersList} />
             {
               isLoggedIn &&
-<<<<<<< HEAD
-                <Switch>
-                  {/* Routes placed here are only available after logging in */}
-                  <Route path="/home" component={UserHome} />
-                  <Route path= "/users" component={UsersList} />
-=======
               <Switch>
               {/* Routes placed here are only available after logging in */}
               <Route path="/home" component={UserHome} />
               <Route path="/dashboard" component={EventList} />
->>>>>>> master
                 </Switch>
             }
             {/* Displays our Login component as a fallback */}

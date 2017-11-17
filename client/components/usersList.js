@@ -1,27 +1,47 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { fetchAllUsers } from '../store'
+import {
+    Card,
+    List,
+    Container,
+    Search
+} from 'semantic-ui-react'
+import { fetchAllUsers, hideUser } from '../store'
 import UserListItem from './userListItem'
+
 class UsersList extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            users: []
+        }
+    }
     componentDidMount() {
         this.props.fetchAllUsers()
-        console.log('component mounted and fetched')
+        this.setState(this.props.users)
     }
-
+    handleSearchChange = (e, { value }) => {
+        console.log(value)
+    }
     render() {
-        let { users } = this.props
-        console.log(users, 'users in the render function')
+        let { users, hideUser } = this.props
         return (
-            <div>
-                {
-                    users.length &&
-                    users.map(user => {
-                        return (
-                           <UserListItem key={user.id} user={user} />
-                        )
-                    })
-                }
-            </div>
+            <Container>
+                <Search
+                    showNoResults={false}
+                    onSearchChange={this.handleSearchChange}
+                />
+                <List divided relaxed horizontal size="small">
+                    {
+                        users.length &&
+                        users.map(user => {
+                            return (
+                                <UserListItem key={user.id} user={user} hideUser={hideUser} />
+                            )
+                        })
+                    }
+                </List>
+            </Container>
         )
     }
 }
@@ -36,6 +56,9 @@ const mapDispatch = (dispatch) => {
     return {
         fetchAllUsers: () => {
             dispatch(fetchAllUsers())
+        },
+        hideUser: (userId) => {
+            dispatch(hideUser(userId))
         }
     }
 }
