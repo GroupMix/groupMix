@@ -4,9 +4,15 @@ const { User } = require('../db/models')
 module.exports = router
 
 router.post('/', (req, res, next) => {
+
   Event.create(req.body)
     .then(event => {
-      // event.setUser([req.body.hostId], {through: {isHost: true}})
+      console.log("req user", req.user)
+      event.setUsers([3], {through: {isHost: true}})
+      return event
+    })
+    .then(event => {
+
       res.json(event)
     })
     .catch(next)
