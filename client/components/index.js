@@ -5,4 +5,8 @@
  */
 export {default as Main} from './main'
 export {default as UserHome} from './user-home'
+export {default as LandingPage} from './LandingPage'
 export {Login, Signup} from './auth-form'
+export {default as EventList} from './eventList'
+export {default as NewEvent} from './NewEvent'
+export {default as EventGenres} from './EventGenres'
