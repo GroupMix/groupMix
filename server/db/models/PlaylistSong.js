@@ -14,6 +14,10 @@ const PlaylistSong = db.define('playlistSong', {
   priority: {
     type: Sequelize.INTEGER,
     allowNull: false
+  },
+  requests: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 })
 

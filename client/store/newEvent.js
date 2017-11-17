@@ -27,7 +27,7 @@ export const createNewEvent = (name, date, time, city, state, zip, address, type
 
 /* REDUCER */
 export default function (state = newEvent, action) {
-  console.log('bbb', action.newEvent)
+
   switch (action.type) {
     case CREATE_EVENT:
       return Object.assign({}, state, { newEvent: action.newEvent })
