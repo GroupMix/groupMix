@@ -34,19 +34,28 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
     const spotifyUserId = profile.id
     const name = profile.displayName
     const email = profile.emails[0].value
+console.log('TOKEN AUTH', token)
+console.log('REFRESHTOKEN AUTH', refreshToken)
+ process.env.SPOTIFY_TOKEN = token;
+ process.env.SPOTIFY_REFRESH_TOKEN = refreshToken;
+
+
+
 
     User.find({where: {spotifyUserId}})
-      .then(foundUser => (foundUser
-        ? done(null, foundUser)
+      .then(foundUser => {
+        const user = {id: foundUser.id, user: foundUser, access: token};
+       return (user
+        ? done(null, user)
         : User.create({name, email, spotifyUserId})
           .then(createdUser => done(null, createdUser))
-      ))
+      )})
       .catch(done)
   })
 
   passport.use(strategy)
 
-  router.get('/', passport.authenticate('spotify', {scope: ['user-read-email', 'user-read-private'] }))
+  router.get('/', passport.authenticate('spotify', {scope: ['user-read-email', 'user-read-private', 'playlist-read-private', 'playlist-read-collaborative', 'playlist-modify-public', 'playlist-modify-private', 'streaming', 'ugc-image-upload', 'user-follow-modify', 'user-follow-read', 'user-library-read', 'user-library-modify', 'user-read-private', 'user-read-birthdate', 'user-read-email', 'user-top-read', 'user-read-playback-state', 'user-modify-playback-state', 'user-read-currently-playing', 'user-read-recently-played' ] }))
 
   router.get('/callback', passport.authenticate('spotify', {
     successRedirect: '/home',
