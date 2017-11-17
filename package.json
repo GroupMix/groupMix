@@ -47,7 +47,7 @@
     "semantic-ui-react": "^0.76.0",
     "sequelize": "^4.3.1",
     "socket.io": "^2.0.3",
-    "spotify-web-api-js": "^0.22.1"
+    "spotify-web-api-js": "^0.22.1",
     "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
