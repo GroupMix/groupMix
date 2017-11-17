@@ -44,15 +44,6 @@ console.log('REFRESHTOKEN AUTH', refreshToken)
 
     User.find({where: {spotifyUserId}})
       .then(foundUser => {
-<<<<<<< HEAD
-        console.log(foundUser, "asdkfja;sdlfja;skdf")
-        const user = {id: foundUser.id, user: foundUser, access: token};
-       return (foundUser
-        ? done(null, user)
-        : User.create({name, email, spotifyUserId})
-          .then(createdUser => done(null, createdUser))
-      )})
-=======
         if (!foundUser) {
           User.create({name, email, spotifyUserId})
           .then(createdUser => {
@@ -65,7 +56,6 @@ console.log('REFRESHTOKEN AUTH', refreshToken)
           return done(null, user)
         }
       })
->>>>>>> master
       .catch(done)
   })
 

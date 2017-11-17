@@ -37,6 +37,9 @@ const reducerMethods = {
     },
     HIDE_USER: (state, action) => {
         return state.filter(user => user.id !== action.userId)
+    },
+    FILTER_USER: (state, action) => {
+        return state.filter(user => user.name.includes(action.name))
     }
 }
 
