@@ -2,6 +2,8 @@ const router = require('express').Router()
 module.exports = router
 
 router.use('/users', require('./users'))
+router.use('/events', require('./events'))
+router.use('/eventUsers', require('./eventUsers'))
 
 router.use('/events', require('./events'))
 
