@@ -16,7 +16,10 @@ class UserHome extends React.Component {
       recent: [],
       top: [],
       artists: [],
-      selected: []
+      selected: [],
+      songs: [],
+      songsData: [],
+      genres: []
     }
     this.handleAdd = this.handleAdd.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -27,11 +30,15 @@ componentDidMount(){
   let recent;
   let top;
   let artists;
+  let recentTracks;
   spotifyApi.getMyRecentlyPlayedTracks((err, data) => {
     recent = data;
     if (err) console.log(err)
     else {
-      this.setState({recent: recent.items})
+      recentTracks = recent.items.map(item => item.track)
+      // console.log('recentttttt', recentTracks)
+
+      this.setState({recent: recentTracks})
     }
   })
 
@@ -39,7 +46,7 @@ componentDidMount(){
     top = data;
     if (err) console.log(err)
     else {
-      // console.log('top', top)
+       console.log('top', top)
       this.setState({top: top.items})
     }
   })
@@ -48,7 +55,7 @@ componentDidMount(){
     artists = data;
     if (err) console.log(err)
     else {
-      // console.log('artists', artists)
+      console.log('artists', artists)
       this.setState({artists: artists.items})
 
     }
@@ -65,23 +72,66 @@ handleAdd(evt, data){
 handleSubmit(){
   // console.log('evt', evt)
   // console.log('data', data)
-  let songs = [];
-  console.log('handlesubmit', this.state.selected)
+  let topArtistSongs = [];
+  let idArr = [];
+  let songsData = [];
+  let genres = [];
+  let artistsId =[];
+
+  // console.log('handlesubmit', this.state.selected)
   this.state.selected.map(artist =>
  spotifyApi.getArtistTopTracks(artist.id, 'US', (err, data) => {
   if (err) console.log(err)
   else {
-    console.log(data)
-    songs = [...songs, ...this.state.recent, ...this.state.top, ...data.items]
+  //  console.log('data', data.tracks)
+    topArtistSongs = [...data.tracks, ...topArtistSongs]
+    let songs = [...topArtistSongs, ...this.state.recent, ...this.state.top]
+    songs.forEach(song => idArr.push(song.id))
+    console.log('total IDs', idArr)
+    this.setState({songs: songs})
 
-    this.props.userSongs(songs)
+    songs.forEach(song => artistsId.push( song.artists[0].id))
+    spotifyApi.getArtists(artistsId, (err, data) => {
+      if (err) console.log(err)
+      data.artists.forEach(item => genres.push(item.genres))
+
+      console.log('genresssss', data)
+      this.setState({genres: genres})
+    })
+
+    spotifyApi.getAudioFeaturesForTracks(idArr, (err, data) => {
+      if (err) console.log(err)
+    this.state.songs.forEach((song, index) => {
+      const meta = data.audio_features[index];
+      songsData.push({
+        name: song.name,
+        artist: song.artists[0].name,
+        artistId: song.artists[0].id,
+        spotifySongId: song.id,
+        danceability: meta.danceability,
+        energy: meta.energy,
+        loudness: meta.loudness,
+        speechiness: meta.speechiness,
+        acousticness: meta.acousticness,
+        instrumentalness: meta.instrumentalness,
+        valence: meta.valence,
+        tempo: meta.tempo,
+        popularity: song.popularity,
+        genres: this.state.genres[index]
+      })
+    })
+    this.setState({songsData: songsData})
+    console.log('songsData', this.state.songsData)
+    } )
   }
- })
-  )
+
+
+
+ }))
 }
   render(){
   const { email, user } = this.props
-  console.log('select render', this.state.selected)
+  // console.log('select render', this.state.selected)
 
   // console.log('recent', this.state.recent)
 
@@ -93,7 +143,6 @@ handleSubmit(){
         textAlign="left"
         columns={2}
 
-        // verticalAlign="left"
       >
         <Grid.Column  >
         <Header as="h2" color="blue" textAlign="center">
