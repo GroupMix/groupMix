@@ -10,6 +10,14 @@ router.get('/users/:eventId', (req, res, next) => {
     .then(users => res.json(users))
     .catch(next)
 })
+// Gets event by id
+router.get('/:eventId', (req, res, next) => {
+  Event.findById(req.params.eventId)
+  .then(event => {
+    res.json(event)
+  })
+  .catch(next)
+})
 
 // Creates a new event 
 router.post('/', (req, res, next) => {
@@ -47,4 +55,16 @@ router.put(`/user/:eventId`, (req, res, next) => {
     })
     .then(() => res.json(req.body.userId))
     .catch(next)
+})
+
+router.delete(`/:eventId`, (req, res, next) => {
+  Event.destroy({
+    where: {
+      id: req.params.eventId
+    }
+  })
+  .then(deletedEvent => {
+    res.json(deletedEvent)
+  })
+  .catch(next)
 })

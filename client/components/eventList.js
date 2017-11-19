@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { List, Segment, Button } from 'semantic-ui-react';
-import { fetchUserEvents, setRsvp } from '../store';
+import { fetchUserEvents, setRsvp, cancelEvent} from '../store';
 import '../styles/_eventList.scss';
 
 class EventList extends Component {
@@ -14,7 +14,7 @@ class EventList extends Component {
   }
 
   render() {
-    const { events, user, handleSubmit } = this.props
+    const { events, user, handleSubmit, history, handleCancelEvent } = this.props
     const rsvpYes = true;
     const rsvpNo = false;
     return (
@@ -39,7 +39,53 @@ class EventList extends Component {
                       <List.List as='ul'>
                         <div className="type-container">
                           <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {event.genres}</List.Item>
+                          <List.Item as='li'>Genres: {
+                            event.genres.map(genre => (
+                              `${genre}, `
+                            ))
+                          }
+                          </List.Item>
+                        </div>
+                        <List.Item as='li'>
+                          <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
+                        </List.Item>
+                        <div className="location-container">
+                          <List.Item as='li'>Address: {event.address}</List.Item>
+                          <List.Item as='li'>City: {event.city}</List.Item>
+                          <List.Item as='li'>State: {event.state}</List.Item>
+                        </div>
+                      </List.List>
+                    </List.Description>
+                  </List.Content>
+                </List.Item>
+              ))
+            }
+          </List>
+        </Segment>
+
+        <Segment className="upcoming-events">
+          <Segment compact={true}>Hosted Events</Segment>
+          <List divided>
+            {events &&
+              events.map((event) => (
+                (event.eventUser.isHost && !event.hasEnded) &&
+                <List.Item key={event.id}>
+                  <List.Icon name='sound' size='large' verticalAlign='top' />
+                  <List.Content>
+                    <List.Header>
+                      <Button onClick={() => history.push(`/${event.id}/users/invite`)}>{event.name || "Event"}</Button>
+                      <Button onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
+                    </List.Header>
+                    <List.Description>
+                      <List.List as='ul'>
+                        <div className="type-container">
+                          <List.Item as='li'>Type: {event.type}</List.Item>
+                          <List.Item as='li'>Genres: {
+                            event.genres.map(genre => (
+                              `${genre}, `
+                            ))
+                          }
+                          </List.Item>
                         </div>
                         <List.Item as='li'>
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
@@ -63,18 +109,25 @@ class EventList extends Component {
           <List divided>
             {events &&
               events.map((event) => (
-                (event.eventUser.isAttending && !event.hasEnded) &&
+                (!event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
                   <List.Icon name='sound' size='large' verticalAlign='top' />
                   <List.Content>
                     <List.Header>
-                      {event.name}
+                      {
+                        event.name
+                      }
                     </List.Header>
                     <List.Description>
                       <List.List as='ul'>
                         <div className="type-container">
                           <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {event.genres}</List.Item>
+                          <List.Item as='li'>Genres: {
+                            event.genres.map(genre => (
+                              `${genre}, `
+                            ))
+                          }
+                          </List.Item>
                         </div>
                         <List.Item as='li'>
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
@@ -109,7 +162,12 @@ class EventList extends Component {
                       <List.List as='ul'>
                         <div className="type-container">
                           <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {event.genres}</List.Item>
+                          <List.Item as='li'>Genres: {
+                            event.genres.map(genre => (
+                              `${genre}, `
+                            ))
+                          }
+                          </List.Item>
                         </div>
                         <List.Item as='li'>
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
@@ -146,6 +204,9 @@ const mapDispatch = (dispatch) => ({
   handleSubmit(evt, eventId, userId, rsvp) {
     evt.preventDefault();
     dispatch(setRsvp(eventId, userId, rsvp))
+  },
+  handleCancelEvent(eventId, userId) {
+    dispatch(cancelEvent(eventId, userId))
   }
 })
 
