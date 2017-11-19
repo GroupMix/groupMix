@@ -19,3 +19,34 @@ router.put('/rsvp/:eventId/:userId', (req, res, next) => {
   .catch(next)
 })
 
+// Get events that a user hosted in descending order
+router.get('/:userId/hosted', (req, res, next) => {
+  EventUser.findAll({
+    where: {
+      userId: req.params.userId,
+      isHost: true
+    },
+    order: [
+      ['createdAt', 'DESC'],
+    ]
+  })
+  .then(hostedEvents => {
+    res.send(hostedEvents)
+  })
+  .catch(next)
+})
+
+router.get('/:userId/events', (req, res, next) => {
+  EventUser.findAll({
+    where: {
+      userId: req.params.userId
+    },
+    order: [
+      ['createdAt', 'DESC'],
+    ]
+  })
+  .then(userEvents => {
+    res.send(userEvents)
+  })
+  .catch(next)
+})

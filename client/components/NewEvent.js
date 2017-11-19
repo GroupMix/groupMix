@@ -70,6 +70,10 @@ export class NewEvent extends Component {
     let type = this.state.type
     let genres = this.state.genres
 
+    // Very Sloppy approach to solve the id issue...
+    if (this.props.newEvent.id) {
+      this.props.history.push(`${this.props.newEvent.id}/users/invite`)
+    }
     return (
       <div>
         <h3>Add New Event</h3>
@@ -131,9 +135,7 @@ const mapDispatch = (dispatch, ownProps) => {
       let { history } = ownProps
       let newEvent = { name, date, time, city, state, zip, address, type, genres }
       evt.preventDefault()
-      console.log("genres", newEvent)
-      dispatch(createNewEvent(newEvent, history))
-      history.push('/users')
+      dispatch(createNewEvent(newEvent))
     }
   }
 }

@@ -7,19 +7,24 @@ import {
 } from 'semantic-ui-react'
 import '../styles/_usersList.scss'
 
-const UserListItem = ({ user, hideUser, event, inviteUser }) => {
+const UserListItem = ({ user, hideUser, eventId, inviteUser, uninviteUser, invitedUsers }) => {
+    let invited = invitedUsers.some(invitedUser => invitedUser.id === user.id)
     return (
-        <List.Item>
+        <List.Item id="userItem">
             <List.Content>
                 <div id="userName">
                     <h2>{user.name}</h2>
-                    <Image size="small" src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
+                    <Image id="profilePic" size="small" src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
                 </div>
                 <div className="ui three buttons">
-                    <Button.Group>
+                    <Button.Group fluid>
                         <Button onClick={() => hideUser(user.id)}>Hide</Button>
                         <Button.Or />
-                        <Button id="inviteBttn" onClick={() => inviteUser(event.id, user.id)}>Invite</Button>
+                        {
+                            invited
+                                ? <Button id="uninviteBttn" onClick={() => uninviteUser(eventId, user.id)}>Uninvite</Button>
+                                : <Button id="inviteBttn" onClick={() => inviteUser(eventId, user.id)}>Invite</Button>
+                        }
                     </Button.Group>
                 </div>
             </List.Content>

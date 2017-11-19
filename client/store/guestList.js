@@ -17,16 +17,17 @@ const uninviteUser = userId => ({ type: UNINVITE_USER, userId })
 
 export const removeUserInvite = (eventId, userId) => 
     dispatch => 
-        axios.delete(`/api/events/user/${eventId}`, { userId })
+        axios.put(`/api/events/user/${eventId}`, {userId})
         .then(res => res.data)
-        .then(userId => dispatch(uninviteUser(userId)))
+        .then(uninvitedUserId => {
+            dispatch(uninviteUser(uninvitedUserId))
+        })
         .catch(err => console.log(err))
 
 export const fetchInvitedUsers = (eventId) =>
     (dispatch) =>
-        axios.post(`/api/events/users/${eventId}`)
+        axios.get(`/api/events/users/${eventId}`)
             .then(res => {
-                console.log(res.data)
                 dispatch(getInvitedUsers(res.data))
             })
             .catch(err => console.log(err))
