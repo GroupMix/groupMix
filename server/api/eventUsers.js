@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { EventUser } = require('../db/models')
+const { EventUser, Event } = require('../db/models')
 
 module.exports = router
 
@@ -43,7 +43,7 @@ router.get('/:userId/events', (req, res, next) => {
     },
     order: [
       ['createdAt', 'DESC'],
-    ]
+    ],
   })
   .then(userEvents => {
     res.send(userEvents)

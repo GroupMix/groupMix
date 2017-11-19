@@ -10,8 +10,12 @@ const updateRsvp = (eventId, userId, rsvp) => ({ type: SET_RSVP, eventId, userId
 
 // THUNKS
 export const fetchUserEvents = (userId) => dispatch => {
-  axios.get(`/api/events/${userId}`)
-  .then(res => dispatch(getEvents(res.data)))
+  axios.get(`/api/users/${userId}/events`)
+  .then(res => res.data)
+  .then(events => {
+    console.log(events)
+    dispatch(getEvents(events))
+  })
 }
 
 export const setRsvp = (eventId, userId, rsvp) => dispatch => {

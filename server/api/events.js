@@ -6,16 +6,16 @@ module.exports = router
 // get all users associated with this event
 router.get('/users/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)
-  .then(event => event.getUsers())
-  .then(users => res.json(users))
-  .catch(next)
+    .then(event => event.getUsers())
+    .then(users => res.json(users))
+    .catch(next)
 })
 
 // Creates a new event 
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
-      event.setUsers([req.user.id], {through: {isHost: true, isAttending: true}})
+      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true } })
       return event
     })
     .then(event => {
@@ -26,25 +26,25 @@ router.post('/', (req, res, next) => {
 
 router.post('/user/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)
-  .then(event => {
-    event.addUsers([req.body.userId], {through: {isHost: false, isAttending: null}})
-  })
-  .then(() => {
-   return User.findById(req.body.userId)
-  })
-  .then(user => {
-    console.log(user)
-    res.json(user)
-  })
-  .catch(next)
+    .then(event => {
+      event.addUsers([req.body.userId], { through: { isHost: false, isAttending: null } })
+    })
+    .then(() => {
+      return User.findById(req.body.userId)
+    })
+    .then(user => {
+      console.log(user)
+      res.json(user)
+    })
+    .catch(next)
 });
 
 router.put(`/user/:eventId`, (req, res, next) => {
   console.log(req.body, 'body id in api', req.params.eventId)
   Event.findById(req.params.eventId)
-  .then(event => {
-    return event.removeUsers([req.body.userId])
-  })
-  .then(() => res.json(req.body.userId))
-  .catch(next)
+    .then(event => {
+      return event.removeUsers([req.body.userId])
+    })
+    .then(() => res.json(req.body.userId))
+    .catch(next)
 })
