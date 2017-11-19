@@ -36,31 +36,51 @@ const Event = db.define('event', {
     allowNull: true
   },
   danceability: {
-    type: Sequelize.DECIMAL(2, 1),
+    type: Sequelize.FLOAT,
+    validate: {
+      min: 0,
+      max: 1
+    },
     isRequired: true,
     allowNull: false,
     defaultValue: 0.0
   },
   loudness: {
-    type: Sequelize.DECIMAL(2, 1),
+    type: Sequelize.FLOAT,
+    validate: {
+      min: 0,
+      max: 1
+    },
     isRequired: true,
     allowNull: false,
     defaultValue: 0.0
   },
   energy: {
-    type: Sequelize.DECIMAL(2, 1),
+    type: Sequelize.FLOAT,
+    validate: {
+      min: 0,
+      max: 1
+    },
     isRequired: true,
     allowNull: false,
     defaultValue: 0.0
   },
   acousticness: {
-    type: Sequelize.DECIMAL(2, 1),
+    type: Sequelize.FLOAT,
+    validate: {
+      min: 0,
+      max: 1
+    },
     isRequired: true,
     allowNull: false,
     defaultValue: 0.0
   },
   valence: {
-    type: Sequelize.DECIMAL(2, 1),
+    type: Sequelize.FLOAT,
+    validate: {
+      min: 0,
+      max: 1
+    },
     isRequired: true,
     allowNull: false,
     defaultValue: 0.0
