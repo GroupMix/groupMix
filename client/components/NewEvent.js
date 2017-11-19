@@ -187,12 +187,8 @@ const mapDispatch = (dispatch, ownProps) => {
       let { history } = ownProps
       let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence }
       evt.preventDefault()
-<<<<<<< HEAD
       dispatch(createNewEvent(newEvent, history))
       history.push('/users')
-=======
-      dispatch(createNewEvent(newEvent))
->>>>>>> master
     }
   }
 }
