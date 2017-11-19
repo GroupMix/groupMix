@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {User, eventUser} = require('../db/models')
+const { User, eventUser, Event } = require('../db/models')
 module.exports = router
 
 router.get('/', (req, res, next) => {
@@ -11,4 +11,17 @@ router.get('/', (req, res, next) => {
   })
     .then(users => res.json(users))
     .catch(next)
+})
+
+router.get('/:userId/events', (req, res, next) => {
+  User.findById(req.params.userId, {
+    include: [
+      { model: Event }
+    ],
+    order: [
+      [Event, 'createdAt', 'DESC']
+    ]
+  })
+  .then(user => res.json(user.events))
+  .catch(next)
 })

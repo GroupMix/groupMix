@@ -1,0 +1,16 @@
+.event-list-container {
+    li {
+        list-style: none;
+        padding: 5px;
+    }
+    .type-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    .location-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+}

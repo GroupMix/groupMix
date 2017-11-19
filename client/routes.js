@@ -27,7 +27,6 @@ class Routes extends Component {
             <Route exact path="/" component={LandingPage} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <Route path="/newevent" component={NewEvent} />
             <Route path="/eventgenres" component={EventGenres} />
             <Route path="/:eventId/users/invite" component={UsersList} />
             {
