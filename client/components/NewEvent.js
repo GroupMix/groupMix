@@ -90,7 +90,11 @@ export class NewEvent extends Component {
     let energy = this.state.energy / 10
     let acousticness = this.state.acousticness / 10
     let valence = this.state.valence / 10
-    console.log(acousticness)
+
+    // Very Sloppy approach to solve the id issue...
+    if (this.props.newEvent.id) {
+      this.props.history.push(`${this.props.newEvent.id}/users/invite`)
+    }
     return (
 
       <div>
@@ -183,8 +187,12 @@ const mapDispatch = (dispatch, ownProps) => {
       let { history } = ownProps
       let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence }
       evt.preventDefault()
+<<<<<<< HEAD
       dispatch(createNewEvent(newEvent, history))
       history.push('/users')
+=======
+      dispatch(createNewEvent(newEvent))
+>>>>>>> master
     }
   }
 }
