@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { createNewEvent } from '../store'
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Form } from 'semantic-ui-react'
+import { Button, Dropdown, Form, Rating } from 'semantic-ui-react'
 import { EventGenres } from '/'
 
 /**
@@ -21,21 +21,37 @@ export class NewEvent extends Component {
       zip: '',
       address: '',
       type: '',
-      genres: []
+      genres: [],
+      danceability: 0,
+      loudness: 0,
+      energy: 0,
+      acousticness: 0,
+      valence: 0
     }
   }
 
   handleChange(evt) {
     var change = {}
-    console.log(evt.target.value)
     change[evt.target.name] = evt.target.value
     this.setState(change)
   }
-
-  handleGenreChange = (evt, { name, value }) => {
-    console.log("value", value)
+  handleGenreChange = (evt, { value }) => {
     this.setState({ genres: value })
-    console.log(this.state.genres)
+  }
+  handleDanceability = (evt) => {
+    this.setState({ danceability: evt.target.value * 1 })
+  }
+  handleLoudness = (evt) => {
+    this.setState({ loudness: evt.target.value * 1 })
+  }
+  handleEnergy = (evt) => {
+    this.setState({ energy: evt.target.value * 1 })
+  }
+  handleAcousticness = (evt) => {
+    this.setState({ acousticness: evt.target.value * 1 })
+  }
+  handleValence = (evt) => {
+    this.setState({ valence: evt.target.value * 1 })
   }
 
   render() {
@@ -69,11 +85,17 @@ export class NewEvent extends Component {
     let address = this.state.address
     let type = this.state.type
     let genres = this.state.genres
+    let danceability = this.state.danceability / 10
+    let loudness = this.state.loudness / 10
+    let energy = this.state.energy / 10
+    let acousticness = this.state.acousticness / 10
+    let valence = this.state.valence / 10
 
     return (
+
       <div>
         <h3>Add New Event</h3>
-        <Form onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres)}>
+        <Form onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence)}>
           <Form.Field>
             <label>Event Name</label>
             <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder='event name' />
@@ -109,6 +131,36 @@ export class NewEvent extends Component {
           <Form.Field
             control={Dropdown} label="Genres" name="genres" placeholder='select your event music genres' fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
           />
+          <Form.Field>
+            <label>Danceability</label>
+            <input type='range' min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
+            <br />
+            <Rating rating={this.state.danceability} maxRating={10} />
+          </Form.Field>
+          <Form.Field>
+            <label>Loudness</label>
+            <input type='range' min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
+            <br />
+            <Rating rating={this.state.loudness} maxRating={10} />
+          </Form.Field>
+          <Form.Field>
+            <label>Energy</label>
+            <input type='range' min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
+            <br />
+            <Rating rating={this.state.energy} maxRating={10} />
+          </Form.Field>
+          <Form.Field>
+            <label>Acousticness</label>
+            <input type='range' min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
+            <br />
+            <Rating rating={this.state.acousticness} maxRating={10} />
+          </Form.Field>
+          <Form.Field>
+            <label>Valence</label>
+            <input type='range' min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
+            <br />
+            <Rating rating={this.state.valence} maxRating={10} />
+          </Form.Field>
           <div>
             <Button type='submit'>Submit</Button>
           </div>
@@ -127,9 +179,9 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres) {
+    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence) {
       let { history } = ownProps
-      let newEvent = { name, date, time, city, state, zip, address, type, genres }
+      let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence }
       evt.preventDefault()
       dispatch(createNewEvent(newEvent, history))
     }

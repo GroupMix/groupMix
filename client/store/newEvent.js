@@ -19,7 +19,6 @@ export const createNewEvent = (createdEvent, history) =>
       .then(res => res.data)
       .then(createdEvent => {
         dispatch(createEvent(createdEvent))
-        console.log(history)
         history.push(`${createdEvent.id}/users/invite`)
       })
       .catch(err => console.log(err))
