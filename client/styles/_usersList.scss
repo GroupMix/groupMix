@@ -1,15 +1,44 @@
 
-#userName{
-    font-size: 2rem;
-}
-#inviteBttn {
-    color: white;
-    background-color: #B358BA;
-}
-.filteringContainer {
-    display: flex;
-    flex-direction: row;
-    #clearFilterBttn {
-        margin-left: 20px;
+.userInviteContainer {
+    margin-top: 6vh;
+
+    #userName{
+        font-size: 2rem;
+    }
+    #inviteBttn {
+        color: white;
+        background-color: #B358BA;
+    }
+    #uninviteBttn {
+        color: white;
+        background-color: #6A8CDF;
+    }
+    #userItem {
+        padding: 2rem;
+    }
+    #profilePic {
+        width: 12rem;
+    }
+    .filteringContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin-top: 20px;
+        #userSearchBar {
+            width: 16rem;
+        }
+        #clearFilterBttn {
+            margin-left: 8px;
+        }
+        #invitedFilterBttn {
+            margin-left: 8px;
+            color: white;
+            background-Color: #6A8CDF;
+        }
+        #uninvitedFilterBttn {
+            margin-left: 8px;
+            color: white;
+            background-color: #B358BA;
+        }
     }
 }
