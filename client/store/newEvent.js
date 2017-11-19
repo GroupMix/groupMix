@@ -14,12 +14,12 @@ const createEvent = event => ({ type: CREATE_EVENT, event })
 
 /* THUNK CREATORS */
 export const createNewEvent = (createdEvent) =>
-  dispatch =>
+  dispatch =>{
+    console.log("DDDDD", createdEvent)
     axios.post('/api/events', createdEvent)
       .then(res =>{
-        console.log(res.data)
         dispatch(createEvent(res.data))})
-      .catch(err => console.log(err))
+      .catch(err => console.log(err))}
 
 
 /* REDUCER */

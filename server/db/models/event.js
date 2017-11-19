@@ -35,6 +35,36 @@ const Event = db.define('event', {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: true
   },
+  danceability: {
+    type: Sequelize.DECIMAL(2, 1),
+    isRequired: true,
+    allowNull: false,
+    defaultValue: 0.0
+  },
+  loudness: {
+    type: Sequelize.DECIMAL(2, 1),
+    isRequired: true,
+    allowNull: false,
+    defaultValue: 0.0
+  },
+  energy: {
+    type: Sequelize.DECIMAL(2, 1),
+    isRequired: true,
+    allowNull: false,
+    defaultValue: 0.0
+  },
+  acousticness: {
+    type: Sequelize.DECIMAL(2, 1),
+    isRequired: true,
+    allowNull: false,
+    defaultValue: 0.0
+  },
+  valence: {
+    type: Sequelize.DECIMAL(2, 1),
+    isRequired: true,
+    allowNull: false,
+    defaultValue: 0.0
+  },
   hasEnded: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
