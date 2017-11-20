@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List } from 'semantic-ui-react'
-import addSongsThunk from '../store'
+import { addSongsThunk } from '../store'
 /**
  * COMPONENT
  */
@@ -128,6 +128,8 @@ class UserHome extends React.Component {
         // console.log('AUDIO FEATURE DATA', data);
         // console.log('SONGS !!!!!', songs);
 
+        let persistSongs = [];
+
         songs.forEach((song, index) => {
           const meta = data.audio_features[index];
           let songData = {
@@ -146,7 +148,15 @@ class UserHome extends React.Component {
             popularity: song.popularity,
             // genres: genres[index]
           }
+          persistSongs.push(songData);
+          // this.props.userSongs(song);
           this.setState({ songsData: [...this.state.songsData, songData] })
+        })
+        return persistSongs;
+      })
+      .then(persistSongs => {
+        persistSongs.forEach(song => {
+          this.props.userSongs(song);
         })
       })
       .catch(err => {

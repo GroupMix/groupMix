@@ -3,15 +3,6 @@ const { PlaylistSong } = require('/../db/models');
 
 module.exports = router
 
-// router.post('/', (req, res, next) => {
-//   PlaylistSong.findOrCreate(req.body)
-//     .then(song => {
-//       song.increment('requests', {by: 1})
-//       res.status(201).json(song)}
-//   )
-//     .catch(next);
-// });
-
 router.post('/', (req, res, next) => {
   PlaylistSong.findOrCreate(req.body)
     .then(song => {
