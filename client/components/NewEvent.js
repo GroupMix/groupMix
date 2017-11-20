@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { createNewEvent } from '../store'
+import { createNewEvent, createSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Rating } from 'semantic-ui-react'
 import { EventGenres } from '/'
@@ -55,7 +55,7 @@ export class NewEvent extends Component {
   }
 
   render() {
-    const { handleSubmit } = this.props
+    const { handleSubmit, user } = this.props
     const genreList = [
       { key: 'acoustic', text: 'acoustic', value: 'acoustic' },
       { key: 'afrobeat', text: 'afrobeat', value: 'afrobeat' },
@@ -90,12 +90,14 @@ export class NewEvent extends Component {
     let energy = this.state.energy / 10
     let acousticness = this.state.acousticness / 10
     let valence = this.state.valence / 10
+    let spotifyUserId = user.user.spotifyUserId
+    let token = user.access
 
     return (
 
       <div>
         <h3>Add New Event</h3>
-        <Form onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence)}>
+        <Form onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token)}>
           <Form.Field>
             <label>Event Name</label>
             <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder='event name' />
@@ -179,9 +181,9 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence) {
+    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token) {
       let { history } = ownProps
-      let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence }
+      let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token }
       evt.preventDefault()
       dispatch(createNewEvent(newEvent, history))
     }

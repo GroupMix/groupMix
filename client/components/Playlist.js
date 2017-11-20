@@ -11,29 +11,32 @@ class Playlist extends Component {
 
   componentDidMount(props) {
     let eventId = this.props.match.params.eventId
-    this.props.loadEvents(eventId)
+    if(Object.keys(this.props.user).length > 0 ){
+    this.props.loadEvents(eventId, this.props.user.access, this.props.user.user.spotifyUserId)
+    }
   }
 
   render() {
-
+    //playlist = this.props.playlist
     return (
       <div >
-      <h1>hi</h1>
+      <ul>
 
+      </ul>
       </div>
     )
   }
 }
 
 const mapState = (state) => ({
-  // user: state.user,
-  // events: state.events,
+  user: state.user,
+  playlist: state.playlist,
   // eventUser: state.eventUser
 })
 
 const mapDispatch = (dispatch) => ({
-  loadEvents(userId) {
-    dispatch(fetchPlaylist(userId))
+  loadEvents(eventId, token, spotifyUserId ) {
+    dispatch(fetchPlaylist(eventId, token, spotifyUserId))
   }
   // handleSubmit(evt, eventId, userId, rsvp) {
   //   evt.preventDefault();
@@ -42,4 +45,10 @@ const mapDispatch = (dispatch) => ({
 })
 
 export default connect(mapState, mapDispatch)(Playlist)
+
+// {playlist.map((song)=>{
+//   return(
+//     <li>song.name</li>
+//   )
+// })}
 

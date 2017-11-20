@@ -35,7 +35,7 @@ class Routes extends Component {
               <Switch>
               {/* Routes placed here are only available after logging in */}
               <Route path="/home" component={UserHome} />
-              <Route path="/dashboard" component={EventList} />
+              <Route path="/eventList" component={EventList} />
               <Route path="/newevent" component={NewEvent} />
                 </Switch>
             }
