@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Event, User } = require('../db/models')
+const { Event, User, Playlist } = require('../db/models')
 
 module.exports = router
 
@@ -19,7 +19,7 @@ router.get('/:eventId', (req, res, next) => {
   .catch(next)
 })
 
-// Creates a new event 
+// Creates a new event and playlist entry
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
@@ -27,6 +27,8 @@ router.post('/', (req, res, next) => {
       return event
     })
     .then(event => {
+      console.log("ASdfa",event.id)
+      Playlist.create({eventId: event.id})
       res.json(event)
     })
     .catch(next)
