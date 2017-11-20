@@ -64,80 +64,72 @@ class UserHome extends React.Component {
     this.setState({ selected: [data.content, ...this.state.selected] })
   }
   handleSubmit() {
-    let data = this.getTopArtistTracks();
-    // this.getTrackGenres(data)
-    // this.getAudioFeatures(data);
+    this.getTopArtistTracks();
   }
 
   getTopArtistTracks = () => {
-    // console.log('SELECTED ARTISTS', this.state.selected)
-
-    let topArtistSongs = []
-
-    // this.state.selected.map(artist =>
-    // spotifyApi.getArtistTopTracks(artist.id, 'US')
-    //   .then((data) => {
-    //     topArtistSongs = [... topArtistSongs, ...data.tracks ]
-    //   })
-    // .catch(err => {
-    //   console.error(err);
-    // }))
-
+    let artistsTopTracks = [];
     this.state.selected.forEach(artist => {
-      spotifyApi.getArtistTopTracks(artist.id, 'US')
-        .then((data) => {
-          data.tracks.forEach(track =>{
-            topArtistSongs.push(track)
-          })
-        })
-        .catch(err => {
-          console.error(err);
-        })})
+      artistsTopTracks.push(spotifyApi.getArtistTopTracks(artist.id, 'US'))
+    })
 
-    console.log(topArtistSongs, "faksghdflkajdshfs")
+    Promise.all(artistsTopTracks)
+    .then(topTracks => {
+      console.log(topTracks, "top tracks")
 
-    let songs = topArtistSongs;
-    console.log(songs, "songs[0]")
-    console.log(songs[0]);
-    let idArr = songs.map(song => song.id)
-    // console.log(idArr, "idArr")
+      let topArtistSongs = [];
 
-    this.setState({ songs: songs, topArtistSongs: topArtistSongs, idArr: idArr })
-    // return { songs: songs, topArtistSongs: topArtistSongs, idArr: idArr }
+      topTracks.forEach(collection => {
+        topArtistSongs = [...collection.tracks, ...topArtistSongs]
+      })
+
+      let songs = [...topArtistSongs, ...this.state.topTracks, ...this.state.recentTracks, ...this.state.songs]
+
+      let idArr = songs.map(song => song.id)
+
+      return {songs: songs, idArr: idArr}
+    })
+    .then((data) => {
+      // this.getTrackGenres(data);
+      this.getAudioFeatures(data);
+    })
   }
 
+  // CURRENTLY NOT BEING USED !!!!!!!!!!
   getTrackGenres = (data) => {
-
-    console.log('DATA', data)
+    // console.log('SONGS IN GET TRACK GENRES', data.songs);
+    // console.log('DATA', data)
 
     let songArtistIds = data.songs.map(song => song.artists[0].id)
-    let genres = [];
-    // this.setState({ artistIds: [...this.state.artistIds, ...songArtistIds] })
+
+    // console.log('SONG ARTIST IDS', songArtistIds)
 
     spotifyApi.getArtists(songArtistIds)
       .then(artistData => {
-        console.log(artistData.artists)
-        genres.push(...artistData.artists.genres)
+        console.log('ARTIST DATA', artistData);
+        let genres = [];
+        // console.log('ARTIST DATA', artistData.artists)
+        artistData.artists.forEach(artist => {
+          genres.push(artist.genres)
+        })
+        return genres
+      })
+      .then(genres => {
+        this.getAudioFeatures(data, genres)
       })
       .catch(err => console.log(err))
-    console.log(genres, "Artists genres")
-
-    // (err, data) => {
-    //   if (err) console.log(err)
-    //   data.artists.forEach(artist =>
-    //     data
-    //     // this.setState({ genres: [...this.state.genres, artist.genres]}))
-    // })
-    // console.log(this.state.genres, "genres")
   }
 
-  getAudioFeatures = () => {
-    spotifyApi.getAudioFeaturesForTracks(this.state.idArr)
+  getAudioFeatures = ({ idArr, songs }) => {
+    // console.log('ID ARR IN AUDIO FEATURES', idArr)
+    // console.log('SONGS IN AUDIO FEATURES', songs)
+    spotifyApi.getAudioFeaturesForTracks(idArr)
       .then((data) => {
-        console.log('AUDIO FEATURE DATA', data);
+        // console.log('AUDIO FEATURE DATA', data);
+        // console.log('SONGS !!!!!', songs);
 
-        this.state.songs.forEach((song, index) => {
-          const meta = song.audio_features[index];
+        songs.forEach((song, index) => {
+          const meta = data.audio_features[index];
           let songData = {
             name: song.name,
             artist: song.artists[0].name,
@@ -152,7 +144,7 @@ class UserHome extends React.Component {
             valence: meta.valence,
             tempo: meta.tempo,
             popularity: song.popularity,
-            genres: this.state.genres[index]
+            // genres: genres[index]
           }
           this.setState({ songsData: [...this.state.songsData, songData] })
         })
@@ -168,7 +160,8 @@ class UserHome extends React.Component {
     // console.log('ALL SONGS', this.state.songs);
     // console.log('ID ARR', this.state.idArr)
     // console.log('TOP ARTIST SONGS ON STATE', this.state.topArtistSongs)
-    // console.log('SONGS', this.state.songs)
+    console.log('SONGS DATA FINALLY', this.state.songsData)
+    // console.log('ARTIST GENRES', this.state.genres)
 
     const { email, user } = this.props
 
