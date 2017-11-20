@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { List, Segment, Button } from 'semantic-ui-react';
 import { fetchUserEvents, setRsvp, cancelEvent} from '../store';
+import { Link } from 'react-router-dom'
 import '../styles/_eventList.scss';
 
 class EventList extends Component {
@@ -75,6 +76,7 @@ class EventList extends Component {
                     <List.Header>
                       <Button onClick={() => history.push(`/${event.id}/users/invite`)}>{event.name || "Event"}</Button>
                       <Button onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
+                      <Button onClick={() => history.push(`/viewPlaylist/${event.id}`)}>View Playlist</Button>
                     </List.Header>
                     <List.Description>
                       <List.List as='ul'>
@@ -197,7 +199,7 @@ const mapState = (state) => ({
   eventUser: state.eventUser
 })
 
-const mapDispatch = (dispatch) => ({
+const mapDispatch = (dispatch, ownProps) => ({
   loadEvents(userId) {
     dispatch(fetchUserEvents(userId))
   },
