@@ -6,53 +6,57 @@ const Song = db.define('song', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  spotifyArtistId: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   artist: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
-  genre: {
+  genres: {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: true
   },
   spotifySongId: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   danceability: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   energy: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   loudness: {
-    type: Sequelize.FLOAT,
-    allowNull: false
+    type: Sequelize.DECIMAL,
+    allowNull: true
   },
   speechiness: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   acousticness: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   instrumentalness: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   valence: {
     type: Sequelize.FLOAT,
-    allowNull: false
+    allowNull: true
   },
   tempo: {
-    type: Sequelize.FLOAT,
-    allowNull: false
+    type: Sequelize.DECIMAL,
+    allowNull: true
   },
   popularity: {
-    type: Sequelize.FLOAT,
-    allowNull: false
+    type: Sequelize.INTEGER,
+    allowNull: true
   },
 })
 

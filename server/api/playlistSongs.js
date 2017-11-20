@@ -1,12 +1,14 @@
 const router = require('express').Router();
-const { PlaylistSong } = require('/../db/models');
+const { PlaylistSong } = require('../db/models');
 
 module.exports = router
 
 router.post('/', (req, res, next) => {
-  PlaylistSong.findOrCreate(req.body)
+  PlaylistSong.findOrCreate({
+    where: req.body
+  })
     .then(song => {
-      song.increment('requests', {by: 1})
+      // song.increment('requests', {by: 1})
       res.status(201).json(song)}
   )
     .catch(next);

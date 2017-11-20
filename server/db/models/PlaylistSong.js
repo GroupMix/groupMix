@@ -23,7 +23,7 @@ const PlaylistSong = db.define('playlistSong', {
   },
   requests: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: true
   }
 })
 
