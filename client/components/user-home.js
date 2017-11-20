@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List } from 'semantic-ui-react'
-import { addSongsThunk } from '../store'
+import { addSongsThunk, addPlaylistSongThunk } from '../store'
 /**
  * COMPONENT
  */
@@ -74,44 +74,65 @@ class UserHome extends React.Component {
     })
 
     Promise.all(artistsTopTracks)
-    .then(topTracks => {
-      console.log(topTracks, "top tracks")
+      .then(topTracks => {
+        console.log(topTracks, "top tracks")
 
-      let topArtistSongs = [];
+        let topArtistSongs = [];
 
-      topTracks.forEach(collection => {
-        topArtistSongs = [...collection.tracks, ...topArtistSongs]
+        topTracks.forEach(collection => {
+          topArtistSongs = [...collection.tracks, ...topArtistSongs]
+        })
+
+        let songs = [...topArtistSongs, ...this.state.topTracks, ...this.state.recentTracks]
+
+        let idArr = [];
+        let uniqueSongs = [];
+        songs.map(song => {
+          if (idArr.indexOf(song.id) === -1){
+          idArr.push(song.id)
+          uniqueSongs.push(song)
+          }
+        })
+        console.log('SONGSSSSSSSSS', uniqueSongs.length)
+        console.log('IDDDDDDSSSSS', idArr.length)
+        return { songs: uniqueSongs, idArr: idArr }
       })
-
-      let songs = [...topArtistSongs, ...this.state.topTracks, ...this.state.recentTracks, ...this.state.songs]
-
-      let idArr = songs.map(song => song.id)
-
-      return {songs: songs, idArr: idArr}
-    })
-    .then((data) => {
-      // this.getTrackGenres(data);
-      this.getAudioFeatures(data);
-    })
+      .then((data) => {
+        this.getTrackGenres(data);
+        // this.getAudioFeatures(data);
+      })
   }
 
-  // CURRENTLY NOT BEING USED !!!!!!!!!!
   getTrackGenres = (data) => {
     // console.log('SONGS IN GET TRACK GENRES', data.songs);
     // console.log('DATA', data)
 
     let songArtistIds = data.songs.map(song => song.artists[0].id)
+    let nestedArtistIds = [];
+    while (songArtistIds.length) {
+      console.log(songArtistIds.length)
+      nestedArtistIds.push(songArtistIds.splice(0, 50))
+    }
+    console.log('NESTED ARTIST IDS', nestedArtistIds)
 
-    // console.log('SONG ARTIST IDS', songArtistIds)
+    let genreCalls = [];
 
-    spotifyApi.getArtists(songArtistIds)
+    nestedArtistIds.forEach(artistsIds => {
+      genreCalls.push(spotifyApi.getArtists(artistsIds))
+    })
+
+    Promise.all(genreCalls)
       .then(artistData => {
         console.log('ARTIST DATA', artistData);
         let genres = [];
-        // console.log('ARTIST DATA', artistData.artists)
-        artistData.artists.forEach(artist => {
-          genres.push(artist.genres)
+
+        artistData.forEach(collection => {
+          collection.artists.forEach(artist => {
+            genres.push(artist.genres)
+          })
         })
+
+        console.log('GENRES', genres)
         return genres
       })
       .then(genres => {
@@ -120,7 +141,7 @@ class UserHome extends React.Component {
       .catch(err => console.log(err))
   }
 
-  getAudioFeatures = ({ idArr, songs }) => {
+  getAudioFeatures = ({ idArr, songs }, genres) => {
     // console.log('ID ARR IN AUDIO FEATURES', idArr)
     // console.log('SONGS IN AUDIO FEATURES', songs)
     spotifyApi.getAudioFeaturesForTracks(idArr)
@@ -129,13 +150,23 @@ class UserHome extends React.Component {
         // console.log('SONGS !!!!!', songs);
 
         let persistSongs = [];
+        let persistPlaylistSongs = [];
 
+        console.log('GENRES IN AUDIO FEAT', genres)
         songs.forEach((song, index) => {
           const meta = data.audio_features[index];
+
+          // let playlistSong = {
+          //   playlistId: this.props.eventId,
+          //   songId: song.id,
+          //   priority: 0,
+          //   userId: this.props.user.id
+          // }
+
           let songData = {
             name: song.name,
             artist: song.artists[0].name,
-            artistId: song.artists[0].id,
+            spotifyArtistId: song.artists[0].id,
             spotifySongId: song.id,
             danceability: meta.danceability,
             energy: meta.energy,
@@ -146,18 +177,25 @@ class UserHome extends React.Component {
             valence: meta.valence,
             tempo: meta.tempo,
             popularity: song.popularity,
-            // genres: genres[index]
+            genres: genres[index] || null,
+            playlistId: this.props.eventId,
+            userId: this.props.user.id
           }
+
           persistSongs.push(songData);
+          // persistPlaylistSongs.push(playlistSong);
           // this.props.userSongs(song);
           this.setState({ songsData: [...this.state.songsData, songData] })
         })
-        return persistSongs;
+        return {persistSongs: persistSongs, persistPlaylistSongs: persistPlaylistSongs};
       })
-      .then(persistSongs => {
+      .then(({persistSongs, persistPlaylistSongs}) => {
         persistSongs.forEach(song => {
           this.props.userSongs(song);
         })
+        // persistPlaylistSongs.forEach(song => {
+        //   this.props.playListSong(song);
+        // })
       })
       .catch(err => {
         console.error(err);
@@ -170,8 +208,9 @@ class UserHome extends React.Component {
     // console.log('ALL SONGS', this.state.songs);
     // console.log('ID ARR', this.state.idArr)
     // console.log('TOP ARTIST SONGS ON STATE', this.state.topArtistSongs)
-    console.log('SONGS DATA FINALLY', this.state.songsData)
+    // console.log('SONGS DATA FINALLY', this.state.songsData)
     // console.log('ARTIST GENRES', this.state.genres)
+    console.log('ROUTE PARAMS', this.props.eventId)
 
     const { email, user } = this.props
 
@@ -225,20 +264,22 @@ class UserHome extends React.Component {
 /**
  * CONTAINER
  */
-const mapState = (state) => {
+const mapState = (state, ownProps) => {
   return {
     user: state.user,
-    email: state.user.user.email
+    email: state.user.user.email,
+    eventId: ownProps.match.params.eventId
   }
 }
 
-const mapDispatch = (dispatch) => {
-  return {
+const mapDispatch = (dispatch) => ({
     userSongs(songs) {
       dispatch(addSongsThunk(songs))
+    },
+    playListSong(song) {
+      dispatch(addPlaylistSongThunk(song))
     }
-  }
-}
+})
 
 export default connect(mapState, mapDispatch)(UserHome)
 

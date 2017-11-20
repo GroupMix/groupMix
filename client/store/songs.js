@@ -33,6 +33,10 @@ export const addSongsThunk = (songs) =>
     axios.post('/api/songs', songs)
       .then(res => {
         dispatch(addSongs(res.data))
+        return res.data.id
+      })
+      .then(songId => {
+
       })
       .catch(err => console.log(err))
 

@@ -14,7 +14,7 @@ const Song = db.define('song', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  genre: {
+  genres: {
     type: Sequelize.ARRAY(Sequelize.STRING),
     allowNull: true
   },

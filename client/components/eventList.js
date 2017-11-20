@@ -114,9 +114,7 @@ class EventList extends Component {
                   <List.Icon name='sound' size='large' verticalAlign='top' />
                   <List.Content>
                     <List.Header>
-                      {
-                        event.name
-                      }
+                    <Button onClick={() => history.push(`/events/${event.id}`)}>{event.name || "Event"}</Button>
                     </List.Header>
                     <List.Description>
                       <List.List as='ul'>

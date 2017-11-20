@@ -4,6 +4,7 @@ module.exports = router
 router.use('/users', require('./users'))
 router.use('/events', require('./events'))
 router.use('/songs', require('./songs'))
+router.use('/playlistSongs', require('./playlistSongs'))
 router.use('/eventUsers', require('./eventUsers'))
 
 router.use((req, res, next) => {
