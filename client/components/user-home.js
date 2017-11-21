@@ -75,7 +75,6 @@ class UserHome extends React.Component {
 
     Promise.all(artistsTopTracks)
       .then(topTracks => {
-        console.log(topTracks, "top tracks")
 
         let topArtistSongs = [];
 
@@ -93,27 +92,22 @@ class UserHome extends React.Component {
           uniqueSongs.push(song)
           }
         })
-        console.log('SONGSSSSSSSSS', uniqueSongs.length)
-        console.log('IDDDDDDSSSSS', idArr.length)
         return { songs: uniqueSongs, idArr: idArr }
       })
       .then((data) => {
         this.getTrackGenres(data);
-        // this.getAudioFeatures(data);
       })
   }
 
   getTrackGenres = (data) => {
-    // console.log('SONGS IN GET TRACK GENRES', data.songs);
-    // console.log('DATA', data)
 
     let songArtistIds = data.songs.map(song => song.artists[0].id)
     let nestedArtistIds = [];
+
     while (songArtistIds.length) {
       console.log(songArtistIds.length)
       nestedArtistIds.push(songArtistIds.splice(0, 50))
     }
-    console.log('NESTED ARTIST IDS', nestedArtistIds)
 
     let genreCalls = [];
 
@@ -123,7 +117,6 @@ class UserHome extends React.Component {
 
     Promise.all(genreCalls)
       .then(artistData => {
-        console.log('ARTIST DATA', artistData);
         let genres = [];
 
         artistData.forEach(collection => {
@@ -131,8 +124,6 @@ class UserHome extends React.Component {
             genres.push(artist.genres)
           })
         })
-
-        console.log('GENRES', genres)
         return genres
       })
       .then(genres => {
@@ -146,22 +137,11 @@ class UserHome extends React.Component {
     // console.log('SONGS IN AUDIO FEATURES', songs)
     spotifyApi.getAudioFeaturesForTracks(idArr)
       .then((data) => {
-        // console.log('AUDIO FEATURE DATA', data);
-        // console.log('SONGS !!!!!', songs);
 
         let persistSongs = [];
-        let persistPlaylistSongs = [];
 
-        console.log('GENRES IN AUDIO FEAT', genres)
         songs.forEach((song, index) => {
           const meta = data.audio_features[index];
-
-          // let playlistSong = {
-          //   playlistId: this.props.eventId,
-          //   songId: song.id,
-          //   priority: 0,
-          //   userId: this.props.user.id
-          // }
 
           let songData = {
             name: song.name,
@@ -183,19 +163,14 @@ class UserHome extends React.Component {
           }
 
           persistSongs.push(songData);
-          // persistPlaylistSongs.push(playlistSong);
-          // this.props.userSongs(song);
           this.setState({ songsData: [...this.state.songsData, songData] })
         })
-        return {persistSongs: persistSongs, persistPlaylistSongs: persistPlaylistSongs};
+        return persistSongs;
       })
-      .then(({persistSongs, persistPlaylistSongs}) => {
+      .then(persistSongs => {
         persistSongs.forEach(song => {
           this.props.userSongs(song);
         })
-        // persistPlaylistSongs.forEach(song => {
-        //   this.props.playListSong(song);
-        // })
       })
       .catch(err => {
         console.error(err);

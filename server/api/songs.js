@@ -1,22 +1,10 @@
 const router = require('express').Router();
 const { Song, PlaylistSong, Playlist } = require('../db/models');
-// const { addPlaylistSongThunk } = require( '../../client/store/playlistSongs.js')
 
 module.exports = router
 
 router.post('/', (req, res, next) => {
 
-  // Promise.all(req.body.map(song =>
-  //   Song.findOrCreate({
-  //     where: {
-  //       name: req.body.name
-  //     }
-  //   })
-  // ))
-  // .then(songs => res.status(201).json(songs))
-  // .catch(err => {
-  //   console.error(err);
-  // })
   let song = {
     name: req.body.name,
     artist: req.body.artist,
@@ -33,23 +21,22 @@ router.post('/', (req, res, next) => {
     popularity: req.body.popularity,
     genres: req.body.genres,
   }
+
   let playlistId;
+
   Playlist.findOne({ where: { eventId: req.body.playlistId } })
     .then(playlist => {
 
       playlistId = playlist.id
-      console.log('playlisttttttttttttt', playlist.id)
 
       return playlistId
     })
-    .then( playId => {
-     return Song.findOrCreate({
-      where: song
-    }
-    )})
+    .then(playId => {
+      return Song.findOrCreate({
+        where: song
+      })
+    })
     .spread(createdSong => {
-      // res.status(201).json(createdSong)
-      console.log('songIDDDDDDDDDDDDDDDDDD', createdSong)
       return createdSong.id
     })
     .then(songId => {
@@ -61,20 +48,11 @@ router.post('/', (req, res, next) => {
       }
       PlaylistSong.create(playlistSong)
         .then(foundPlaylistSong => {
-          // playlistSong.increment('requests', {by: 1})
           res.status(201).json(foundPlaylistSong)
-        }
-        )
+        })
     })
     .catch(next);
-
 });
-
-// router.post('/', (req, res, next) => {
-//   Song.findOrCreate(req.body)
-//     .then(songs => res.status(201).json(songs))
-//     .catch(next);
-// });
 
 router.get('/:songId', (req, res, next) => {
   Song.findById(req.params.songId)
