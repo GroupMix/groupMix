@@ -2,7 +2,7 @@ import axios from 'axios'
 // import history from '../history'
 import { browserHistory } from 'react-router'
 const SpotifyWebApi = require('spotify-web-api-js');
-const SpotifyApi = new SpotifyWebApi()
+const SpotifyApi = new SpotifyWebApi() // FROM BEN: You should move your API client to its own module, so you only create it once
 
 /* ACTION TYPES*/
 const GET_PRIORITIZED_TRACKS = 'GET_PRIORITIZED_TRACKS'

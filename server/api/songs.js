@@ -5,6 +5,7 @@ module.exports = router
 
 router.post('/', (req, res, next) => {
 
+  // FROM BEN - Why are you creating this interim object? Why not just pass the body directly?
   let song = {
     name: req.body.name,
     artist: req.body.artist,

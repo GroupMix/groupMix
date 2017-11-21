@@ -39,7 +39,7 @@ export class NewEvent extends Component {
     this.setState({ genres: value })
   }
   handleDanceability = (evt) => {
-    this.setState({ danceability: evt.target.value * 1 })
+    this.setState({ danceability: evt.target.value * 1 }) // FROM BEN: What are all these *1's?
   }
   handleLoudness = (evt) => {
     this.setState({ loudness: evt.target.value * 1 })
@@ -76,6 +76,9 @@ export class NewEvent extends Component {
       { key: 'disco', text: 'disco', value: 'disco' },
       { key: 'disney', text: 'disney', value: 'disney' },
     ]
+
+    // FROM BEN: Consider using _.pick()? to pull the desired properties into their own `userEvent` object
+
     let eventname = this.state.eventname
     let date = this.state.date
     let time = this.state.time
@@ -181,9 +184,10 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token) {
+    // FROM BEN: Pass a keyed object (event) of values here, not each individual argument
+    handleSubmit(evt, newEvent) {
       let { history } = ownProps
-      let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token }
+      // let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token }
       evt.preventDefault()
       dispatch(createNewEvent(newEvent, history))
     }
