@@ -11,7 +11,6 @@ const getHostEvents = (hostEvents) => ({ type: GET_HOST_EVENTS, hostEvents })
 const getAllUserEvents = (userEvents) => ({ type: GET_ALL_USER_EVENTS, userEvents })
 
 // Reducer
-
 const reducerMethods = {
     GET_HOST_EVENTS(state, action) {
         return action.hostEvents
@@ -26,8 +25,7 @@ export default (state = [], action) => {
     return state
 }
 
-// Thunks 
-
+// Thunks
 export const fetchHostEvents = (userId) =>
     dispatch =>
         axios.get(`/api/eventUsers/${userId}/hosted`)
@@ -35,7 +33,7 @@ export const fetchHostEvents = (userId) =>
             .then(hostedEvents => console.log(hostedEvents))
             .catch(err => console.log(err))
 
-export const fetchAllUserEvents = (userId) => 
+export const fetchAllUserEvents = (userId) =>
     dispatch =>
         axios.get(`/api/eventUsers/${userId}/events`)
         .then(res => res.data)

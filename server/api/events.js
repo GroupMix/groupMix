@@ -1,5 +1,7 @@
 const router = require('express').Router()
-const { Event, User } = require('../db/models')
+const { Event, User, Playlist } = require('../db/models')
+const SpotifyWebApi = require('spotify-web-api-js');
+const SpotifyApi = new SpotifyWebApi()
 
 module.exports = router
 
@@ -19,7 +21,7 @@ router.get('/:eventId', (req, res, next) => {
   .catch(next)
 })
 
-// Creates a new event 
+// Creates a new event
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
@@ -27,6 +29,8 @@ router.post('/', (req, res, next) => {
       return event
     })
     .then(event => {
+      let eventId = event.id*1
+      Playlist.create({eventId: eventId, spotifyPlaylistId: req.body.playlistId, spotifyPlaylistUri: req.body.uri})
       res.json(event)
     })
     .catch(next)
@@ -41,7 +45,6 @@ router.post('/user/:eventId', (req, res, next) => {
       return User.findById(req.body.userId)
     })
     .then(user => {
-      console.log(user)
       res.json(user)
     })
     .catch(next)
@@ -67,4 +70,11 @@ router.delete(`/:eventId`, (req, res, next) => {
     res.json(deletedEvent)
   })
   .catch(next)
+})
+
+router.get('/playlist/:eventId', (req, res, next) => {
+  Playlist.findOne({where: {eventId: req.params.eventId}})
+  .then((playlist)=>{
+    res.json(playlist)
+  })
 })
