@@ -21,7 +21,7 @@ router.get('/:eventId', (req, res, next) => {
   .catch(next)
 })
 
-// Creates a new event
+// Creates a new event and playlist entry
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
@@ -51,7 +51,6 @@ router.post('/user/:eventId', (req, res, next) => {
 });
 
 router.put(`/user/:eventId`, (req, res, next) => {
-  console.log(req.body, 'body id in api', req.params.eventId)
   Event.findById(req.params.eventId)
     .then(event => {
       return event.removeUsers([req.body.userId])

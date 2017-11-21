@@ -134,31 +134,31 @@ export class NewEvent extends Component {
             control={Dropdown} label="Genres" name="genres" placeholder='select your event music genres' fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
           />
           <Form.Field>
-            <label>Danceability</label>
+            <label>Danceability: {this.state.danceability}</label>
             <input type='range' min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
             <br />
             <Rating rating={this.state.danceability} maxRating={10} />
           </Form.Field>
           <Form.Field>
-            <label>Loudness</label>
+            <label>Loudness: {this.state.loudness}</label>
             <input type='range' min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
             <br />
             <Rating rating={this.state.loudness} maxRating={10} />
           </Form.Field>
           <Form.Field>
-            <label>Energy</label>
+            <label>Energy: {this.state.energy}</label>
             <input type='range' min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
             <br />
             <Rating rating={this.state.energy} maxRating={10} />
           </Form.Field>
           <Form.Field>
-            <label>Acousticness</label>
+            <label>Acousticness: {this.state.acousticness}</label>
             <input type='range' min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
             <br />
             <Rating rating={this.state.acousticness} maxRating={10} />
           </Form.Field>
           <Form.Field>
-            <label>Valence</label>
+            <label>Valence: {this.state.valence}</label>
             <input type='range' min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
             <br />
             <Rating rating={this.state.valence} maxRating={10} />
