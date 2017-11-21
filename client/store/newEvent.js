@@ -1,6 +1,8 @@
 import axios from 'axios'
 // import history from '../history'
 import { browserHistory } from 'react-router'
+const SpotifyWebApi = require('spotify-web-api-js');
+const SpotifyApi = new SpotifyWebApi()
 
 /* ACTION TYPES*/
 const CREATE_EVENT = 'CREATE_EVENT'
@@ -14,14 +16,23 @@ const getEvent = event => ({ type: GET_EVENT, event })
 
 /* THUNK CREATORS */
 export const createNewEvent = (createdEvent, history) =>
-  dispatch =>
-    axios.post('/api/events', createdEvent)
-      .then(res => res.data)
-      .then(createdEvent => {
-        dispatch(createEvent(createdEvent))
-        history.push(`${createdEvent.id}/users/invite`)
+  dispatch =>{
+    SpotifyApi.setAccessToken(createdEvent.token)
+    SpotifyApi.createPlaylist(createdEvent.spotifyUserId, {name: createdEvent.name,  public: true} )
+      .then((playlist)=>{
+        createdEvent.uri = playlist.uri
+        createdEvent.playlistId = playlist.id
+      })
+      .then(()=>{
+        axios.post('/api/events', createdEvent)
+        .then(res => res.data)
+        .then(myCreatedEvent => {
+          dispatch(createEvent(myCreatedEvent))
+          history.push(`${myCreatedEvent.id}/users/invite`)
+        })
       })
       .catch(err => console.log(err))
+    }
 
 export const fetchEvent = (eventId) =>
   dispatch =>

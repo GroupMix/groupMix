@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { Song, PlaylistSong, Playlist } = require('../db/models');
-// const { addPlaylistSongThunk } = require( '../../client/store/playlistSongs.js')
 
 module.exports = router
 
@@ -22,17 +21,19 @@ router.post('/', (req, res, next) => {
     popularity: req.body.popularity,
     genres: req.body.genres,
   }
+
   let playlistId;
+
   Playlist.findOne({ where: { eventId: req.body.playlistId } })
     .then(playlist => {
       playlistId = playlist.id
       return playlistId
     })
-    .then( playId => {
-     return Song.findOrCreate({
-      where: song
-    }
-    )})
+    .then(playId => {
+      return Song.findOrCreate({
+        where: song
+      })
+    })
     .spread(createdSong => {
       return createdSong.id
     })
@@ -46,18 +47,10 @@ router.post('/', (req, res, next) => {
       PlaylistSong.create(playlistSong)
         .then(foundPlaylistSong => {
           res.status(201).json(foundPlaylistSong)
-        }
-        )
+        })
     })
     .catch(next);
-
 });
-
-// router.post('/', (req, res, next) => {
-//   Song.findOrCreate(req.body)
-//     .then(songs => res.status(201).json(songs))
-//     .catch(next);
-// });
 
 router.get('/:songId', (req, res, next) => {
   Song.findById(req.params.songId)

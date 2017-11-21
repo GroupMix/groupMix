@@ -29,14 +29,20 @@ async function seed () {
     User.create({name: 'Chris', email: 'chris@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
     User.create({name: 'Jesse', email: 'jesse@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
     User.create({name: 'Steve', email: 'steve@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
-    User.create({name: 'Max', email: 'max@email.com', password: '123', imgurPhoto: faker.image.avatar()})
+    User.create({name: 'Max', email: 'max@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
+    User.create({name: 'Jesse Barron', spotifyUserId: '1235276482', email: 'jessebarron1113@gmail.com', password: 'null', imgurPhoto: faker.image.avatar()}),
   ])
 
   const events = await Promise.all([
     Event.create({name: 'Going Away Party', date: '11/5/17', time: '8:00pm', address: '123 FSA st', city: 'Chicago', state: 'IL', type: 'party', genres: ['rap', 'electronic'], hasEnded: true, montageURL: 'http://foo.com'}),
     Event.create({name: 'Chill Kickback', date: '11/6/17', time: '6:00pm', address: '456 FSA st', city: 'Chicago', state: 'IL', type: 'chill out', genres: ['downtempo', 'hip-hop'], hasEnded: true, montageURL: 'http://foo.com'}),
     Event.create({name: 'Dinner Event', date: '11/7/17', time: '7:00pm', address: '789 FSA st', city: 'Chicago', state: 'IL', type: 'dinner', genres: ['jazz', 'soul'], hasEnded: false, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Fullstack Social', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['electronic'], hasEnded: false, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Poker Night', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['electronic'], hasEnded: false, montageURL: 'http://foo.com'}),
     Event.create({name: 'Finals Study Sesh', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['electronic'], hasEnded: false, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Dance Party!', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['dance','deep-house','dancehall','afrobeat'], danceability: 0.9, loudness: 0.8, energy: 0.9, acousticness: 0.1, valence: 0.8, hasEnded: false, montageURL: 'http://foo.com'}),
+    Event.create({name: 'Quiet Party', date: '11/8/17', time: '4:00pm', address: '111 FSA st', city: 'Chicago', state: 'IL', type: 'study session', genres: ['acoustic', 'alit-rock', 'classical','chill'], danceability: 0.2, loudness: 0.2, energy: 0.2, acousticness: 0.2, valence: 0.3, hasEnded: false, montageURL: 'http://foo.com'}),
+
   ])
 
   const eventUsers = await Promise.all([
@@ -59,28 +65,29 @@ async function seed () {
     EventUser.create({userId: 2, eventId: 4, isHost: false, isAttending: true, atEvent: true}),
     EventUser.create({userId: 3, eventId: 4, isHost: false, isAttending: false, atEvent: false}),
     EventUser.create({userId: 4, eventId: 4, isHost: true, isAttending: true, atEvent: true}),
+    EventUser.create({userId: 5, eventId: 8, isHost: true, isAttending: true, atEvent: false}),
   ])
 
-  // const playlists = await Promise.all([
+  const playlists = await Promise.all([
+    Playlist.create({ eventId: 8, spotifyPlaylistId: '0HSub3KCzMArJr7VKxm1pW' })
+  ])
 
-  // ])
+  const songs = await Promise.all([
+    Song.create({ artist: 'A Tribe Called Quest', name: 'Can I Kick it?', spotifySongId: '7kpeL1x9j7uKgPx6rVz7D7', danceability: 3, energy: 4, loudness: 4, speechiness: 3, acousticness: 3, instrumentalness: 8, valence: 2, popularity: 1, tempo: 2 })
+  ])
 
-  // const songs = await Promise.all([
-
-  // ])
-
-  // const playlistSongs = await Promise.all([
-
-  // ])
+  const playlistSongs = await Promise.all([
+    PlaylistSong.create({ playlistId: 1, songId: 1, priority: 10, requests: 0, userId: 5 })
+  ])
 
   // Wowzers! We can even `await` on the right-hand side of the assignment operator
   // and store the result that the promise resolves to in a variable! This is nice!
   console.log(`seeded ${users.length} users`)
   console.log(`seeded ${events.length} events`)
   console.log(`seeded ${eventUsers.length} eventUsers`)
-  // console.log(`seeded ${playlists.length} playlists`)
-  // console.log(`seeded ${songs.length} songs`)
-  // console.log(`seeded ${playlistSongs.length} playlistSongs`)
+  console.log(`seeded ${playlists.length} playlists`)
+  console.log(`seeded ${songs.length} songs`)
+  console.log(`seeded ${playlistSongs.length} playlistSongs`)
   console.log(`seeded successfully`)
 }
 

@@ -59,12 +59,17 @@ class UserHome extends React.Component {
         console.error(err);
       })
   }
+//will run this on component did mount for Chris' component
+  componentWillUnmount(){
+    this.props.prioritize(this.props.match.params.eventId * 1)
+  }
 
   handleAdd(evt, data) {
     this.setState({ selected: [data.content, ...this.state.selected] })
   }
   handleSubmit() {
     this.getTopArtistTracks();
+    this.props.history.push(`/event/${this.props.match.params.eventId * 1}/partyview`)
   }
 
   getTopArtistTracks = () => {
@@ -75,7 +80,6 @@ class UserHome extends React.Component {
 
     Promise.all(artistsTopTracks)
       .then(topTracks => {
-        console.log(topTracks, "top tracks")
 
         let topArtistSongs = [];
 
@@ -97,13 +101,13 @@ class UserHome extends React.Component {
       })
       .then((data) => {
         this.getTrackGenres(data);
-        // this.getAudioFeatures(data);
       })
   }
 
   getTrackGenres = (data) => {
     let songArtistIds = data.songs.map(song => song.artists[0].id)
     let nestedArtistIds = [];
+
     while (songArtistIds.length) {
       nestedArtistIds.push(songArtistIds.splice(0, 50))
     }
@@ -133,7 +137,6 @@ class UserHome extends React.Component {
     spotifyApi.getAudioFeaturesForTracks(idArr)
       .then((data) => {
         let persistSongs = [];
-        let persistPlaylistSongs = [];
 
         songs.forEach((song, index) => {
           const meta = data.audio_features[index];
@@ -160,9 +163,9 @@ class UserHome extends React.Component {
           persistSongs.push(songData);
           this.setState({ songsData: [...this.state.songsData, songData] })
         })
-        return { persistSongs: persistSongs, persistPlaylistSongs: persistPlaylistSongs };
+        return persistSongs;
       })
-      .then(({ persistSongs, persistPlaylistSongs }) => {
+      .then(persistSongs => {
         persistSongs.forEach(song => {
           this.props.userSongs(song);
         })
@@ -174,7 +177,6 @@ class UserHome extends React.Component {
 
   render() {
     const { email, user } = this.props
-    const eventId = this.props.match.params.eventId * 1
     return (
       <div>
         <h3>Welcome, {email}</h3>
@@ -187,9 +189,6 @@ class UserHome extends React.Component {
             <Header as="h2" color="blue" textAlign="center">
               Event Name
         </Header>
-            <Button onClick={() => this.props.prioritize(eventId)} color="blue" floated="right">
-              Run Prioritizations
-            </Button>
           </Grid.Column>
 
           <Grid.Column  >
@@ -235,7 +234,7 @@ const mapState = (state, ownProps) => {
   }
 }
 
-const mapDispatch = (dispatch) => ({
+const mapDispatch = (dispatch, ownProps) => ({
   userSongs(songs) {
     dispatch(addSongsThunk(songs))
   },

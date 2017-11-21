@@ -42,7 +42,7 @@ const Navbar = (props) => {
             <Menu.Item position="right" >
               {/* The navbar will show these links after you log in */}
 
-              <Button inverted as={Link} to="/dashboard"><Icon name="list layout" />Event Dashboard</Button>
+              <Button inverted as={Link} to="/eventList"><Icon name="list layout" />Events</Button>
 
               <Button inverted as={Link} to="/newevent" style={{ marginLeft: '0.5em' }}><Icon name="users" />Host Event</Button>
 
