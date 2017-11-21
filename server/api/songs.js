@@ -26,9 +26,7 @@ router.post('/', (req, res, next) => {
 
   Playlist.findOne({ where: { eventId: req.body.playlistId } })
     .then(playlist => {
-
       playlistId = playlist.id
-
       return playlistId
     })
     .then(playId => {

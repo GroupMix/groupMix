@@ -1,18 +1,30 @@
 
 const Sequelize = require('sequelize')
 const db = require('../db')
+const {Event, Song, Playlist} = require('../models')
+
 
 const PlaylistSong = db.define('playlistSong', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   playlistId: {
     type: Sequelize.INTEGER,
     allowNull: false
   },
   songId: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    isUnique: false
+  },
+  userId: {
+    type: Sequelize.INTEGER,
   },
   priority: {
     type: Sequelize.INTEGER,
+    defaultValue: 0,
     allowNull: false
   },
   requests: {
@@ -20,6 +32,7 @@ const PlaylistSong = db.define('playlistSong', {
     allowNull: true
   }
 })
+
 
 module.exports = PlaylistSong
 

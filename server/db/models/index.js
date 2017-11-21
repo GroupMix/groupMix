@@ -9,12 +9,10 @@ const EventUser = require('./eventUser')
 User.belongsToMany(Event, {through: EventUser})
 Event.belongsToMany(User, {through: EventUser})
 Event.hasOne(Playlist)
-
-Playlist.belongsToMany(Song, {through: PlaylistSong, unique: false})
-Song.belongsToMany(Playlist, {through: PlaylistSong, unique: false})
-
-User.hasMany(PlaylistSong)
-PlaylistSong.hasOne(User)
+Playlist.belongsToMany(Song, {through: {model: PlaylistSong, unique: false}, constraints: false})
+Song.belongsToMany(Playlist, {through: {model: PlaylistSong, unique: false}, constraints: false})
+User.hasMany(PlaylistSong, {constraints: false, unique: false})
+PlaylistSong.hasOne(User, {constraints: false, unique: false})
 
 module.exports = {
   User,
