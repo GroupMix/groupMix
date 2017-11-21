@@ -22,6 +22,12 @@ const Song = db.define('song', {
     type: Sequelize.STRING,
     allowNull: true
   },
+  spotifySongUri: {
+    type: Sequelize.VIRTUAL,
+    get () {
+      return 'spotify:track:' + this.getDataValue('spotifySongId');
+    }
+  },
   danceability: {
     type: Sequelize.FLOAT,
     allowNull: true
