@@ -34,8 +34,6 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
     const spotifyUserId = profile.id
     const name = profile.displayName
     const email = profile.emails[0].value
-console.log('TOKEN AUTH', token)
-console.log('REFRESHTOKEN AUTH', refreshToken)
  process.env.SPOTIFY_TOKEN = token;
  process.env.SPOTIFY_REFRESH_TOKEN = refreshToken;
 

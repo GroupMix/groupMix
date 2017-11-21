@@ -6,17 +6,6 @@ module.exports = router
 
 router.post('/', (req, res, next) => {
 
-  // Promise.all(req.body.map(song =>
-  //   Song.findOrCreate({
-  //     where: {
-  //       name: req.body.name
-  //     }
-  //   })
-  // ))
-  // .then(songs => res.status(201).json(songs))
-  // .catch(err => {
-  //   console.error(err);
-  // })
   let song = {
     name: req.body.name,
     artist: req.body.artist,
@@ -36,10 +25,7 @@ router.post('/', (req, res, next) => {
   let playlistId;
   Playlist.findOne({ where: { eventId: req.body.playlistId } })
     .then(playlist => {
-
       playlistId = playlist.id
-      console.log('playlisttttttttttttt', playlist.id)
-
       return playlistId
     })
     .then( playId => {
@@ -48,8 +34,6 @@ router.post('/', (req, res, next) => {
     }
     )})
     .spread(createdSong => {
-      // res.status(201).json(createdSong)
-      console.log('songIDDDDDDDDDDDDDDDDDD', createdSong)
       return createdSong.id
     })
     .then(songId => {
@@ -61,7 +45,6 @@ router.post('/', (req, res, next) => {
       }
       PlaylistSong.create(playlistSong)
         .then(foundPlaylistSong => {
-          // playlistSong.increment('requests', {by: 1})
           res.status(201).json(foundPlaylistSong)
         }
         )

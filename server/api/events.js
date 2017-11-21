@@ -27,7 +27,6 @@ router.post('/', (req, res, next) => {
       return event
     })
     .then(event => {
-      console.log("ASdfa",event.id)
       Playlist.create({eventId: event.id})
       res.json(event)
     })
@@ -43,14 +42,12 @@ router.post('/user/:eventId', (req, res, next) => {
       return User.findById(req.body.userId)
     })
     .then(user => {
-      console.log(user)
       res.json(user)
     })
     .catch(next)
 });
 
 router.put(`/user/:eventId`, (req, res, next) => {
-  console.log(req.body, 'body id in api', req.params.eventId)
   Event.findById(req.params.eventId)
     .then(event => {
       return event.removeUsers([req.body.userId])
