@@ -1,11 +1,56 @@
 const router = require('express').Router();
-const { Song } = require('../db/models');
+const { Song, PlaylistSong, Playlist } = require('../db/models');
 
 module.exports = router
 
 router.post('/', (req, res, next) => {
-  Song.findOrCreate(req.body)
-    .then(songs => res.status(201).json(songs))
+
+  let song = {
+    name: req.body.name,
+    artist: req.body.artist,
+    spotifyArtistId: req.body.spotifyArtistId,
+    spotifySongId: req.body.spotifySongId,
+    danceability: req.body.danceability,
+    energy: req.body.energy,
+    loudness: req.body.loudness,
+    speechiness: req.body.speechiness,
+    acousticness: req.body.acousticness,
+    instrumentalness: req.body.instrumentalness,
+    valence: req.body.valence,
+    tempo: req.body.tempo,
+    popularity: req.body.popularity,
+    genres: req.body.genres,
+  }
+
+  let playlistId;
+
+  Playlist.findOne({ where: { eventId: req.body.playlistId } })
+    .then(playlist => {
+
+      playlistId = playlist.id
+
+      return playlistId
+    })
+    .then(playId => {
+      return Song.findOrCreate({
+        where: song
+      })
+    })
+    .spread(createdSong => {
+      return createdSong.id
+    })
+    .then(songId => {
+      let playlistSong = {
+        playlistId: playlistId,
+        songId: songId,
+        priority: 0,
+        userId: req.body.userId
+      }
+      PlaylistSong.create(playlistSong)
+        .then(foundPlaylistSong => {
+          res.status(201).json(foundPlaylistSong)
+        })
+    })
     .catch(next);
 });
 
