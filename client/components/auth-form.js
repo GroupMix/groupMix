@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {auth} from '../store'
-import { Button, Form, Grid, Header, Segment, Icon } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Icon, Message } from 'semantic-ui-react'
 /**
  * COMPONENT
  */
@@ -18,35 +18,16 @@ const AuthForm = (props) => {
     >
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h2" color="green" textAlign="center">
-          {displayName}
+          Please {displayName}
         </Header>
-        <Form onSubmit={handleSubmit} name={name} size="large">
-          <Segment stacked style={{ height: '175px' }}>
-            <Form.Input
-              fluid
-              icon="user"
-              iconPosition="left"
-              placeholder="E-mail address"
-              type="text"
-              name="email"
-            />
-            <Form.Input
-              fluid
-              icon="lock"
-              iconPosition="left"
-              placeholder="Password"
-              type="password"
-              name="pass"
-            />
-
+        <Message positive>
+        <Message.Header>{displayName} with Spotify to start mixin</Message.Header>
+        <p>You <b>must</b> have a spotify account to enjoy groupMix.</p>
+      </Message>
             <Button href="/auth/spotify" color="green" fluid size="large">
             <Icon name="spotify" size="large" color="white" />
               Spotify {displayName}
             </Button>
-
-          </Segment>
-
-        </Form>
 
       </Grid.Column>
     </Grid>

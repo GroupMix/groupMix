@@ -4,8 +4,12 @@ import { connect } from 'react-redux'
 var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
-import { Button, Form, Grid, Header, Segment, Icon, List } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, prioritizeSongs } from '../store'
+
+import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs } from '../store'
+import GuestListItem from './guestListItem.jsx'
+import history from '../history'
+
 /**
  * COMPONENT
  */
@@ -32,6 +36,7 @@ class UserHome extends React.Component {
   }
 
   componentDidMount() {
+    this.props.fetchInitialData(this.props.eventId)
     spotifyApi.setAccessToken(this.props.user.access)
 
     spotifyApi.getMyRecentlyPlayedTracks()
@@ -69,7 +74,6 @@ class UserHome extends React.Component {
   }
   handleSubmit() {
     this.getTopArtistTracks();
-    this.props.history.push(`/event/${this.props.match.params.eventId * 1}/partyview`)
   }
 
   getTopArtistTracks = () => {
@@ -169,6 +173,7 @@ class UserHome extends React.Component {
         persistSongs.forEach(song => {
           this.props.userSongs(song);
         })
+        history.push(`/events/${this.props.eventId}/partyview`)
       })
       .catch(err => {
         console.error(err);
@@ -176,19 +181,37 @@ class UserHome extends React.Component {
   }
 
   render() {
-    const { email, user } = this.props
+    const { email, user, eventId, guestlist, event } = this.props
     return (
       <div>
-        <h3>Welcome, {email}</h3>
+      <br />
+      <Segment inverted style={{marginTop: '-.75em', marginBottom: '-.7em'}}>
+      <Header as="h2" inverted color="purple" textAlign="center"  >Get ready for the {event.name}!</Header>
+        </Segment>
+        <Segment inverted>
         <Grid
           divided
           textAlign="left"
           columns={2}
         >
+
           <Grid.Column  >
             <Header as="h2" color="blue" textAlign="center">
-              Event Name
+              Guestlist
         </Header>
+        <Card.Group itemsPerRow = {3}>
+        {
+            guestlist.length ?
+                guestlist.map(guest => {
+                    return (
+                        <GuestListItem key={guest.id} user={guest} eventId={eventId}  />
+                    )
+                })
+                : <h1>No one Has been Invited</h1>
+        }
+    </Card.Group>
+
+
           </Grid.Column>
 
           <Grid.Column  >
@@ -219,6 +242,7 @@ class UserHome extends React.Component {
             </List>
           </Grid.Column>
         </Grid>
+        </Segment>
       </div>
     )
   }
@@ -230,18 +254,25 @@ const mapState = (state, ownProps) => {
   return {
     user: state.user,
     email: state.user.user.email,
-    eventId: ownProps.match.params.eventId
+    eventId: ownProps.match.params.eventId,
+    guestlist: state.invitedUsers,
+    event: state.newEvent
   }
 }
 
-const mapDispatch = (dispatch, ownProps) => ({
-  userSongs(songs) {
-    dispatch(addSongsThunk(songs))
-  },
-  playListSong(song) {
-    dispatch(addPlaylistSongThunk(song))
-  },
-  prioritize(eventId) {
+
+const mapDispatch = (dispatch) => ({
+    userSongs(songs) {
+      dispatch(addSongsThunk(songs))
+    },
+    playListSong(song) {
+      dispatch(addPlaylistSongThunk(song))
+    },
+    fetchInitialData(eventId) {
+      dispatch(fetchInvitedUsers(eventId))
+      dispatch(fetchEvent(eventId))
+    },  
+    prioritize(eventId) {
     dispatch(prioritizeSongs(eventId))
   }
 })

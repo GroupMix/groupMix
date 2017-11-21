@@ -41,10 +41,9 @@ router.post('/', (req, res, next) => {
       let playlistSong = {
         playlistId: playlistId,
         songId: songId,
-        priority: 0,
         userId: req.body.userId
       }
-      PlaylistSong.create(playlistSong)
+      PlaylistSong.findOrCreate({where: playlistSong})
         .then(foundPlaylistSong => {
           res.status(201).json(foundPlaylistSong)
         })
