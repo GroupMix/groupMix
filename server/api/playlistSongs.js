@@ -56,17 +56,21 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
             if (song.energy > hostEnergy - 0.1 && song.energy < hostEnergy + 0.1) pointsToAdd += 5
             if (song.acousticness > hostAcousticness - 0.1 && song.acoustisness < hostAcousticness + 0.1) pointsToAdd += 5
             if (song.valence > hostValence - 0.1 && song.valence < hostValence + 0.1) pointsToAdd += 5
-            let keyName = song.id.toString()
-            //if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 6}
 
-            return PlaylistSong.findOne({where: {songId: song.id}})
+            let keyName = song.id.toString()
+            if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 6}
+
+           //produces promise warning in back-end console; optimize if time
+              return PlaylistSong.findAll({where: {songId: song.id}})
               .then((playlistSong) => {
-                playlistSong.increment('priority', { by: pointsToAdd })
+                playlistSong.forEach((duplicateSong)=>{
+                  return duplicateSong.update({priority: pointsToAdd})
+                })
               })
           })
           Bluebird.all(songMatchPromisesArr)
             .then(()=>{
-              console.log("DONE", requestCount)
+              console.log("DONE")
             })
         })
     })
