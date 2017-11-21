@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { List, Segment, Button } from 'semantic-ui-react';
-import { fetchUserEvents, setRsvp, cancelEvent} from '../store';
+import { List, Segment, Button, Header } from 'semantic-ui-react';
+import { fetchUserEvents, setRsvp, cancelEvent } from '../store';
 import { Link } from 'react-router-dom'
 import '../styles/_eventList.scss';
 
@@ -20,40 +20,47 @@ class EventList extends Component {
     const rsvpNo = false;
     return (
       <div className="event-list-container">
-        <Segment className="invited-events">
-          <Segment compact={true}>Invitations</Segment>
-          <List divided >
+      <br />
+      <Segment textAlign="center" inverted style={{ marginTop: 'inherit'}}>
+      <Header as="h1" icon="list ul" content="Your Events" textAlign="center"  />
+</Segment>
+        <Segment className="invited-events" inverted>
+          <Segment compact={true} inverted>
+          <Header as="h2" content="Invitations" color="purple" />
+
+          </Segment>
+          <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isAttending === null && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <List.Icon name='sound' size='large' verticalAlign='top' />
-                  <List.Content floated='right'>
-                    <Button onClick={evt => handleSubmit(evt, event.id, user.id, rsvpYes)}>Yes</Button>
-                    <Button onClick={evt => handleSubmit(evt, event.id, user.id, rsvpNo)}>No</Button>
+                <Header as="h3" icon="sound" content={event.name} />
+                  <List.Content floated="right">
+                    <Button positive onClick={evt => handleSubmit(evt, event.id, user.id, rsvpYes)}>Yes</Button>
+                    <Button negative onClick={evt => handleSubmit(evt, event.id, user.id, rsvpNo)}>No</Button>
                   </List.Content>
                   <List.Content>
                     <List.Header>
                       {event.name}
                     </List.Header>
                     <List.Description className="event-description">
-                      <List.List as='ul'>
+                      <List.List as="ul">
                         <div className="type-container">
-                          <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {
+                          <List.Item as="li">Type: {event.type}</List.Item>
+                          <List.Item as="li">Genres: {
                             event.genres.map(genre => (
                               `${genre}, `
                             ))
                           }
                           </List.Item>
                         </div>
-                        <List.Item as='li'>
+                        <List.Item as="li">
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
                         </List.Item>
                         <div className="location-container">
-                          <List.Item as='li'>Address: {event.address}</List.Item>
-                          <List.Item as='li'>City: {event.city}</List.Item>
-                          <List.Item as='li'>State: {event.state}</List.Item>
+                          <List.Item as="li">Address: {event.address}</List.Item>
+                          <List.Item as="li">City: {event.city}</List.Item>
+                          <List.Item as="li">State: {event.state}</List.Item>
                         </div>
                       </List.List>
                     </List.Description>
@@ -64,38 +71,41 @@ class EventList extends Component {
           </List>
         </Segment>
 
-        <Segment className="upcoming-events">
-          <Segment compact={true}>Hosted Events</Segment>
-          <List divided>
+        <Segment className="upcoming-events" inverted>
+          <Segment compact={true} inverted>
+          <Header as="h2" content="Hosted Events" color="purple" />
+          </Segment>
+          <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <List.Icon name='sound' size='large' verticalAlign='top' />
-                  <List.Content>
+                  <Header as="h3" icon="sound" content={event.name} />
+
+                  <List.Content floated="left">
                     <List.Header>
-                      <Button onClick={() => history.push(`/${event.id}/users/invite`)}>{event.name || "Event"}</Button>
-                      <Button onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
-                      <Button onClick={() => history.push(`/viewPlaylist/${event.id}`)}>View Playlist</Button>
+                      <Button color="purple" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
+                      <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
+                      <Button color="blue" onClick={() => history.push(`/viewPlaylist/${event.id}`)}>View Playlist</Button>
                     </List.Header>
                     <List.Description>
-                      <List.List as='ul'>
+                      <List.List as="ul">
                         <div className="type-container">
-                          <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {
+                          <List.Item as="li">Type: {event.type}</List.Item>
+                          <List.Item as="li">Genres: {
                             event.genres.map(genre => (
                               `${genre}, `
                             ))
                           }
                           </List.Item>
                         </div>
-                        <List.Item as='li'>
+                        <List.Item as="li">
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
                         </List.Item>
                         <div className="location-container">
-                          <List.Item as='li'>Address: {event.address}</List.Item>
-                          <List.Item as='li'>City: {event.city}</List.Item>
-                          <List.Item as='li'>State: {event.state}</List.Item>
+                          <List.Item as="li">Address: {event.address}</List.Item>
+                          <List.Item as="li">City: {event.city}</List.Item>
+                          <List.Item as="li">State: {event.state}</List.Item>
                         </div>
                       </List.List>
                     </List.Description>
@@ -106,36 +116,42 @@ class EventList extends Component {
           </List>
         </Segment>
 
-        <Segment className="upcoming-events">
-          <Segment compact={true}>Upcoming Events</Segment>
-          <List divided>
+        <Segment className="upcoming-events" inverted>
+        <Segment compact={true} inverted>
+        <Header as="h2" content="Upcoming Events" color="purple" />
+        </Segment>
+          <List divided inverted>
             {events &&
               events.map((event) => (
                 (!event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <List.Icon name='sound' size='large' verticalAlign='top' />
-                  <List.Content>
+                  <Header as="h3" icon="sound" content={event.name} />
+
+                  <List.Content floated="left">
+
+
                     <List.Header>
-                    <Button onClick={() => history.push(`/events/${event.id}`)}>{event.name || "Event"}</Button>
+                      <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
+                      <Button color="purple" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
-                      <List.List as='ul'>
+                      <List.List as="ul">
                         <div className="type-container">
-                          <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {
+                          <List.Item as="li">Type: {event.type}</List.Item>
+                          <List.Item as="li">Genres: {
                             event.genres.map(genre => (
                               `${genre}, `
                             ))
                           }
                           </List.Item>
                         </div>
-                        <List.Item as='li'>
+                        <List.Item as="li">
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
                         </List.Item>
                         <div className="location-container">
-                          <List.Item as='li'>Address: {event.address}</List.Item>
-                          <List.Item as='li'>City: {event.city}</List.Item>
-                          <List.Item as='li'>State: {event.state}</List.Item>
+                          <List.Item as="li">Address: {event.address}</List.Item>
+                          <List.Item as="li">City: {event.city}</List.Item>
+                          <List.Item as="li">State: {event.state}</List.Item>
                         </div>
                       </List.List>
                     </List.Description>
@@ -146,36 +162,37 @@ class EventList extends Component {
           </List>
         </Segment>
 
-        <Segment className="past-events">
-          <Segment compact={true}>Past Events</Segment>
-          <List divided>
+        <Segment className="past-events" inverted>
+        <Segment compact={true} inverted>
+        <Header as="h1" content="Past Events" color="purple" />
+        </Segment>
+          <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isAttending && event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <List.Icon name='sound' size='large' verticalAlign='top' />
-                  <List.Content>
-                    <List.Header>
-                      {event.name}
-                    </List.Header>
+                  <Header as="h3" icon="sound" content={event.name} />
+
+                  <List.Content floated="left">
+
                     <List.Description>
-                      <List.List as='ul'>
+                      <List.List as="ul">
                         <div className="type-container">
-                          <List.Item as='li'>Type: {event.type}</List.Item>
-                          <List.Item as='li'>Genres: {
+                          <List.Item as="li">Type: {event.type}</List.Item>
+                          <List.Item as="li">Genres: {
                             event.genres.map(genre => (
                               `${genre}, `
                             ))
                           }
                           </List.Item>
                         </div>
-                        <List.Item as='li'>
+                        <List.Item as="li">
                           <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
                         </List.Item>
                         <div className="location-container">
-                          <List.Item as='li'>Address: {event.address}</List.Item>
-                          <List.Item as='li'>City: {event.city}</List.Item>
-                          <List.Item as='li'>State: {event.state}</List.Item>
+                          <List.Item as="li">Address: {event.address}</List.Item>
+                          <List.Item as="li">City: {event.city}</List.Item>
+                          <List.Item as="li">State: {event.state}</List.Item>
                         </div>
                       </List.List>
                     </List.Description>
