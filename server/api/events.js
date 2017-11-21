@@ -30,7 +30,7 @@ router.post('/', (req, res, next) => {
     })
     .then(event => {
       let eventId = event.id*1
-      Playlist.create({eventId: eventId, spotifyPlaylistId: req.body.playlistId})
+      Playlist.create({eventId: eventId, spotifyPlaylistId: req.body.playlistId, spotifyPlaylistUri: req.body.uri})
       res.json(event)
     })
     .catch(next)

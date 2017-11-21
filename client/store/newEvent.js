@@ -20,6 +20,7 @@ export const createNewEvent = (createdEvent, history) =>
     SpotifyApi.setAccessToken(createdEvent.token)
     SpotifyApi.createPlaylist(createdEvent.spotifyUserId, {name: createdEvent.name,  public: true} )
       .then((playlist)=>{
+        createdEvent.uri = playlist.uri
         createdEvent.playlistId = playlist.id
       })
       .then(()=>{

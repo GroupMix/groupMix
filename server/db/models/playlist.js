@@ -14,6 +14,10 @@ const Playlist = db.define('playlist', {
   spotifyPlaylistId: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  spotifyPlaylistUri: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 })
 

@@ -17,6 +17,7 @@ router.get('/:eventId', (req, res, next) => {
     })
   })
   .then(songs => {
+    console.log(songs, "songs to add to the playlist")
     res.json(songs)
   })
   .catch(next)

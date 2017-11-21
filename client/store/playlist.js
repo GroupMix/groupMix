@@ -30,11 +30,9 @@ export const fetchPlaylist = (eventId, token, spotifyUserId) =>
         dispatch(getPrioritizedTracks(prioritizedTracks))
       })
       .then(() => {
-        console.log(tracksToPlay, "Tracks to play")
         tracksToPlay.forEach((track) => {
-           axios.get(`/api/songs/${track.songId * 1}`)
+          axios.get(`/api/songs/${track.songId * 1}`)
             .then((res) => {
-              console.log(res.data.spotifySongId)
               uriArr.push(res.data.spotifySongId)
             })
         })
@@ -43,31 +41,28 @@ export const fetchPlaylist = (eventId, token, spotifyUserId) =>
       .then((res) => {
         playlistId = res.data.spotifyPlaylistId
         return SpotifyApi.getPlaylistTracks(spotifyUserId, playlistId)
-        .then(playlistTracks => {
-          let tracks = []
-          tracks = playlistTracks.items.map((item, i) => (
-            // { "positions":[i], "uri": item.track.uri}
-            item.track.uri
-          )
-        )
-        return tracks
-        })
-        .then(tracks => {
-          console.log(tracks, "Tracks object")
-          return SpotifyApi.removeTracksFromPlaylist(spotifyUserId, playlistId, tracks)
-        })
-        .then(()=>{
-          let uris = uriArr.map(uri => `spotify:track:${uri}`)
-          return SpotifyApi.addTracksToPlaylist(spotifyUserId, playlistId, uris)
-        })
-        .then((play)=>{
-          console.log(spotifyUserId, "UserId to play", playlistId, "The playlist id to play")
-          SpotifyApi.play({'context_uri': `spotify:user:${spotifyUserId}t:playlist:${playlistId}`})
-        })
+          .then(playlistTracks => {
+            return playlistTracks.items.map((item, i) => item.track.uri)
+          })
+          .then(tracks => {
+            return SpotifyApi.removeTracksFromPlaylist(spotifyUserId, playlistId, tracks)
+          })
+          .then(() => {
+            let uris = uriArr.map(uri => `spotify:track:${uri}`)
+            return SpotifyApi.addTracksToPlaylist(spotifyUserId, playlistId, uris)
+          })
+          .then((play) => {
+            SpotifyApi.getMyDevices()
+              .then(myDevices => {
+                SpotifyApi.play({ 'context_uri': `spotify:user:${spotifyUserId}:playlist:${playlistId}` })
+                .then(message => {
+                  console.log(message, "Playlist now playing")
+                })
+              })
+          })
       })
       .catch(err => console.log(err))
   }
-
 /* REDUCER */
 export default function (state = playlist, action) {
   switch (action.type) {
