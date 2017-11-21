@@ -18,7 +18,7 @@ const getEvent = event => ({ type: GET_EVENT, event })
 export const createNewEvent = (createdEvent, history) =>
   dispatch =>{
     SpotifyApi.setAccessToken(createdEvent.token)
-    SpotifyApi.createPlaylist(createdEvent.spotifyUserId, {name: createdEvent.name} )
+    SpotifyApi.createPlaylist(createdEvent.spotifyUserId, {name: createdEvent.name,  public: true} )
       .then((playlist)=>{
         createdEvent.playlistId = playlist.id
       })

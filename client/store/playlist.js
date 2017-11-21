@@ -18,10 +18,9 @@ const getPrioritizedTracks = tracks => ({ type: GET_PRIORITIZED_TRACKS, tracks }
 export const fetchPlaylist = (eventId, token, spotifyUserId) =>
   dispatch => {
 
-    let tracksToPlay;
+    let tracksToPlay
     let playlistId
     let uriArr = []
-    let device;
 
     axios.get(`/api/prioritizedTracks/${eventId}`)
       .then(res => res.data)
@@ -29,12 +28,13 @@ export const fetchPlaylist = (eventId, token, spotifyUserId) =>
         SpotifyApi.setAccessToken(token)
         tracksToPlay = prioritizedTracks.slice(0, 9)
         dispatch(getPrioritizedTracks(prioritizedTracks))
-        console.log(tracksToPlay)
       })
       .then(() => {
+        console.log(tracksToPlay, "Tracks to play")
         tracksToPlay.forEach((track) => {
-          let songId = axios.get(`/api/songs/${track.songId * 1}`)
+           axios.get(`/api/songs/${track.songId * 1}`)
             .then((res) => {
+              console.log(res.data.spotifySongId)
               uriArr.push(res.data.spotifySongId)
             })
         })
@@ -42,32 +42,29 @@ export const fetchPlaylist = (eventId, token, spotifyUserId) =>
       })
       .then((res) => {
         playlistId = res.data.spotifyPlaylistId
-        // console.log(tracksToPlay, "tracks to be replaced")
         return SpotifyApi.getPlaylistTracks(spotifyUserId, playlistId)
         .then(playlistTracks => {
-          let tracks = {
-            "tracks": []
-          }
-          tracks.tracks = playlistTracks.items.map((item, i) => (
-            { "positions":[i], "uri": item.track.uri}
+          let tracks = []
+          tracks = playlistTracks.items.map((item, i) => (
+            // { "positions":[i], "uri": item.track.uri}
+            item.track.uri
           )
         )
         return tracks
         })
         .then(tracks => {
-          // console.log(tracks, "Tracks object")
-          SpotifyApi.replaceTracksInPlaylist(spotifyUserId, playlistId, tracks)
-            .then(data => { console.log(data, "Data from replace") })
+          console.log(tracks, "Tracks object")
+          return SpotifyApi.removeTracksFromPlaylist(spotifyUserId, playlistId, tracks)
+        })
+        .then(()=>{
+          let uris = uriArr.map(uri => `spotify:track:${uri}`)
+          return SpotifyApi.addTracksToPlaylist(spotifyUserId, playlistId, uris)
+        })
+        .then((play)=>{
+          console.log(spotifyUserId, "UserId to play", playlistId, "The playlist id to play")
+          SpotifyApi.play({'context_uri': `spotify:user:${spotifyUserId}t:playlist:${playlistId}`})
         })
       })
-      .catch(err => console.log(err))
-      // .then(()=>{
-      //   // console.log(uriArr, 'uri array')
-      //   return SpotifyApi.addTracksToPlaylist(spotifyUserId, playlistId, uriArr)
-      // })
-      // .then((play)=>{
-      //   SpotifyApi.play({'context_uri': `spotify:user:${spotifyUserId}t:playlist:${playlistId}`})
-      // })
       .catch(err => console.log(err))
   }
 
