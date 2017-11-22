@@ -58,6 +58,7 @@ Main.propTypes = {
 
 //GEOLOCATION
 function sendCoords(lat, long, accuracy, userIdForSocket){
+  console.log("userSock", userIdForSocket)
   let coords = {
     lat,
     long,

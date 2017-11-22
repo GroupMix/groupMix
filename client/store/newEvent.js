@@ -17,6 +17,7 @@ const getEvent = event => ({ type: GET_EVENT, event })
 /* THUNK CREATORS */
 export const createNewEvent = (createdEvent, history) =>
   dispatch =>{
+    console.log("in event thunk")
     SpotifyApi.setAccessToken(createdEvent.token)
     SpotifyApi.createPlaylist(createdEvent.spotifyUserId, {name: createdEvent.name,  public: true} )
       .then((playlist)=>{
