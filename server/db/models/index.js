@@ -2,7 +2,7 @@ const User = require('./user')
 const Event = require('./event')
 const Playlist = require('./playlist')
 const Song = require('./song')
-const PlaylistSong = require('./playlistSong')
+const PlaylistSong = require('./PlaylistSong')
 const EventUser = require('./eventUser')
 
 //Associations
