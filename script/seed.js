@@ -72,13 +72,13 @@ async function seed () {
     Playlist.create({ eventId: 8, spotifyPlaylistId: '0HSub3KCzMArJr7VKxm1pW' })
   ])
 
-  const songs = await Promise.all([
-    Song.create({ artist: 'A Tribe Called Quest', name: 'Can I Kick it?', spotifySongId: '7kpeL1x9j7uKgPx6rVz7D7', danceability: 3, energy: 4, loudness: 4, speechiness: 3, acousticness: 3, instrumentalness: 8, valence: 2, popularity: 1, tempo: 2 })
-  ])
+  // const songs = await Promise.all([
+  //   Song.create({ artist: 'A Tribe Called Quest', name: 'Can I Kick it?', spotifySongId: '7kpeL1x9j7uKgPx6rVz7D7', danceability: 0.3, energy: 0.4, loudness: 0.7, speechiness: 0.3, acousticness: 0.3, instrumentalness: 0.8, valence: 0.2, popularity: 1, tempo: 0.2 })
+  // ])
 
-  const playlistSongs = await Promise.all([
-    PlaylistSong.create({ playlistId: 1, songId: 1, priority: 10, requests: 0, userId: 5 })
-  ])
+  // const playlistSongs = await Promise.all([
+  //   PlaylistSong.create({ playlistId: 1, songId: 1, priority: 10, requests: 0, userId: 5 })
+  // ])
 
   // Wowzers! We can even `await` on the right-hand side of the assignment operator
   // and store the result that the promise resolves to in a variable! This is nice!
@@ -86,8 +86,8 @@ async function seed () {
   console.log(`seeded ${events.length} events`)
   console.log(`seeded ${eventUsers.length} eventUsers`)
   console.log(`seeded ${playlists.length} playlists`)
-  console.log(`seeded ${songs.length} songs`)
-  console.log(`seeded ${playlistSongs.length} playlistSongs`)
+  //console.log(`seeded ${songs.length} songs`)
+  //console.log(`seeded ${playlistSongs.length} playlistSongs`)
   console.log(`seeded successfully`)
 }
 
