@@ -29,9 +29,9 @@ module.exports = (io) => {
       let key = userIdForSocket.toString()
       coordsCache[key] = { lat, long }
       console.log("coords cache",coordsCache)
-
+      console.log("sock IDDD",userIdForSocket)
       //find most recent Event for user from DB
-      User.findById(userIdForSocket)
+      return User.findById(userIdForSocket)
         .then((user) => {
           return user.getEvents()
         })
@@ -48,7 +48,8 @@ module.exports = (io) => {
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
-          if (coordsCache.hasOwnProperty(upcomingEvent.userId)){
+          console.log("val", Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId))
+          if (Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId)){
           let lat1 = coordsCache[upcomingEvent.userId.toString()].lat
           let lon1 = coordsCache[upcomingEvent.userId.toString()].long
           let lat2 = coordsCache[userIdForSocket.toString()].lat
@@ -66,6 +67,10 @@ module.exports = (io) => {
           }
           }
         })
+        .catch((err)=>{
+          console.log("SOCKET ERROR", err)
+        })
+        
     }))
 
 

@@ -155,7 +155,7 @@ export class NewEvent extends Component {
       <div>
         <Segment inverted>
           <Header textAlign="center" as="h1" color="purple">Add New Event</Header>
-          <Form inverted onSubmit={(evt) => handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
+          <Form inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
             <Form.Field>
               <label>Event Name</label>
               <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="event name" />
