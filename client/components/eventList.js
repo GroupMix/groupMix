@@ -35,7 +35,7 @@ class EventList extends Component {
                 (event.eventUser.isAttending === null && !event.hasEnded) &&
                 <List.Item key={event.id}>
                 <Header as="h3" icon="sound" content={event.name} />
-                  <List.Content floated="right">
+                  <List.Content floated="left">
                     <Button positive onClick={evt => handleSubmit(evt, event.id, user.id, rsvpYes)}>Yes</Button>
                     <Button negative onClick={evt => handleSubmit(evt, event.id, user.id, rsvpNo)}>No</Button>
                   </List.Content>
@@ -84,9 +84,10 @@ class EventList extends Component {
 
                   <List.Content floated="left">
                     <List.Header>
-                      <Button color="purple" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
+                      <Button color="green" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
                       <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
-                      <Button color="blue" onClick={() => history.push(`/events/${event.id}/partyView`)}>Party View</Button>
+                      <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
+                      <Button color="blue" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
                       <List.List as="ul">
@@ -228,4 +229,3 @@ const mapDispatch = (dispatch, ownProps) => ({
 })
 
 export default connect(mapState, mapDispatch)(EventList)
-

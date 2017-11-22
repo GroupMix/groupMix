@@ -18,6 +18,15 @@ router.put('/rsvp/:eventId/:userId', (req, res, next) => {
   .catch(next)
 })
 
+// Check a User into an event
+router.put('/checkin/:eventId', (req, res, next) => {
+  EventUser.update({atEvent: true}, {where: {userId: req.user.id, eventId: req.params.eventId} })
+  .then(guest => {
+    console.log(guest, "Event Has Updated")
+    res.send(guest)
+  })
+})
+
 // Get events that a user hosted in descending order
 router.get('/:userId/hosted', (req, res, next) => {
   EventUser.findAll({
@@ -46,6 +55,18 @@ router.get('/isHost/:eventId', (req, res, next) => {
   })
   .then(host => {
     res.send(host.isHost)
+  })
+})
+
+router.get('/hasCheckedIn/:eventId', (req, res, next) => {
+  EventUser.findOne({
+    where: {
+      userId: req.user.id,
+      eventId: req.params.eventId,
+    }
+  })
+  .then(guest => {
+    res.send(guest.isAttending)
   })
 })
 

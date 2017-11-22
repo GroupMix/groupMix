@@ -48,6 +48,7 @@ module.exports = (io) => {
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
+          if (coordsCache.hasOwnProperty(upcomingEvent.userId)){
           let lat1 = coordsCache[upcomingEvent.userId.toString()].lat
           let lon1 = coordsCache[upcomingEvent.userId.toString()].long
           let lat2 = coordsCache[userIdForSocket.toString()].lat
@@ -61,8 +62,14 @@ module.exports = (io) => {
             })
             socket.broadcast.emit('guestArrived', {eventId: upcomingEvent.eventId, hostId: upcomingEvent.userId}) 
           }
+          }
         })
     }))
+
+    socket.on(`emmited`, (eventId, userId) => {
+      console.log( "Message button emmited from event", eventId, userId)
+      socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
+    })
 
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
