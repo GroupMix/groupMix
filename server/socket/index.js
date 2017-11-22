@@ -26,9 +26,9 @@ module.exports = (io) => {
       console.log("coords", coords)
       //cache all coordinates
       let { lat, long, userIdForSocket } = coords
-      let key = userIdForSocket
+      let key = userIdForSocket.toString()
       coordsCache[key] = { lat, long }
-      console.log(coordsCache)
+      console.log("coords cache",coordsCache)
 
       //find most recent Event for user from DB
       User.findById(userIdForSocket)
@@ -55,21 +55,19 @@ module.exports = (io) => {
           let lon2 = coordsCache[userIdForSocket.toString()].long
           let unit = 'N'
           let distanceBetween = distance(lat1, lon1, lat2, lon2, unit)
+          console.log('distance between', distanceBetween)
           if(distanceBetween < 0.03 ) {
             EventUser.findOne({ where: { eventId: upcomingEvent.eventId, userId: userIdForSocket } })
             .then((userToCheckIn)=>{
               userToCheckIn.update({atEvent: true})
             })
-            socket.broadcast.emit('guestArrived', {eventId: upcomingEvent.eventId, hostId: upcomingEvent.userId}) 
+            console.log('user has been checked in')
+            socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 
           }
           }
         })
     }))
 
-    socket.on(`emmited`, (eventId, userId) => {
-      console.log( "Message button emmited from event", eventId, userId)
-      socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
-    })
 
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
