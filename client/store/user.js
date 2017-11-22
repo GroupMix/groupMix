@@ -1,8 +1,5 @@
 import axios from 'axios'
 import history from '../history'
-import socket from '../socket'
-
-let userId
 
 /**
  * ACTION TYPES
@@ -28,8 +25,6 @@ export const me = () =>
   dispatch =>
     axios.get('/auth/me')
       .then(res =>{
-        userId = res.data.id
-        let wpid = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
         dispatch(getUser(res.data || defaultUser))})
       .catch(err => console.log(err))
 
@@ -66,26 +61,4 @@ export default function (state = defaultUser, action) {
   }
 }
 
-//GEOLOCATION
-function sendCoords(lat, long, accuracy, userId){
-  let coords = {
-    lat,
-    long,
-    accuracy,
-    userId
-  }
-  socket.emit('guestCoords', coords);
-}
-
-function geo_success(position) {
-  sendCoords(position.coords.latitude, position.coords.longitude, position.coords.accuracy, userId);
-}
-function geo_error() {
-  alert("Sorry, no position available.");
-}
-var geo_options = {
-  enableHighAccuracy: true,
-  maximumAge        : 30000,
-  timeout           : 27000
-};
 

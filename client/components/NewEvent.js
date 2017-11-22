@@ -5,6 +5,7 @@ import { createNewEvent, createSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Rating } from 'semantic-ui-react'
 import { EventGenres } from '/'
+import genreList from './genreList'
 
 /**
  * COMPONENT
@@ -56,26 +57,7 @@ export class NewEvent extends Component {
 
   render() {
     const { handleSubmit, user } = this.props
-    const genreList = [
-      { key: 'acoustic', text: 'acoustic', value: 'acoustic' },
-      { key: 'afrobeat', text: 'afrobeat', value: 'afrobeat' },
-      { key: 'alt-rock', text: 'alt-rock', value: 'alt-rock' },
-      { key: 'alternative', text: 'alternative', value: 'alternative' },
-      { key: 'bluegrass', text: 'bluegrass', value: 'bluegrass' },
-      { key: 'blues', text: 'blues', value: 'blues' },
-      { key: 'chicago-house', text: 'chicago-house', value: 'chicago-house' },
-      { key: 'children', text: 'children', value: 'children' },
-      { key: 'chill', text: 'chill', value: 'chill' },
-      { key: 'classical', text: 'classical', value: 'classical' },
-      { key: 'club', text: 'club', value: 'club' },
-      { key: 'country', text: 'country', value: 'country' },
-      { key: 'dance', text: 'dance', value: 'dance' },
-      { key: 'dancehall', text: 'dancehall', value: 'dancehall' },
-      { key: 'death-metal', text: 'death-metal', value: 'death-metal' },
-      { key: 'deep-house', text: 'deep-house', value: 'deep-house' },
-      { key: 'disco', text: 'disco', value: 'disco' },
-      { key: 'disney', text: 'disney', value: 'disney' },
-    ]
+
     let eventname = this.state.eventname
     let date = this.state.date
     let time = this.state.time
@@ -100,71 +82,71 @@ export class NewEvent extends Component {
         <Form onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, loudness, energy, acousticness, valence, spotifyUserId, token)}>
           <Form.Field>
             <label>Event Name</label>
-            <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder='event name' />
+            <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="event name" />
           </Form.Field>
           <Form.Field>
             <label>Date</label>
-            <input name="date" onChange={this.handleChange.bind(this)} value={this.state.date} placeholder='date' />
+            <input name="date" onChange={this.handleChange.bind(this)} value={this.state.date} placeholder="date" />
           </Form.Field>
           <Form.Field>
             <label>Time</label>
-            <input name="time" onChange={this.handleChange.bind(this)} value={this.state.time} placeholder='time' />
+            <input name="time" onChange={this.handleChange.bind(this)} value={this.state.time} placeholder="time" />
           </Form.Field>
           <Form.Field>
             <label>City</label>
-            <input name="city" onChange={this.handleChange.bind(this)} value={this.state.city} placeholder='state' />
+            <input name="city" onChange={this.handleChange.bind(this)} value={this.state.city} placeholder="state" />
           </Form.Field>
           <Form.Field>
             <label>State</label>
-            <input name="state" onChange={this.handleChange.bind(this)} value={this.state.state} placeholder='state' />
+            <input name="state" onChange={this.handleChange.bind(this)} value={this.state.state} placeholder="state" />
           </Form.Field>
           <Form.Field>
             <label>Zip</label>
-            <input name="zip" onChange={this.handleChange.bind(this)} value={this.state.zip} placeholder='zip' />
+            <input name="zip" onChange={this.handleChange.bind(this)} value={this.state.zip} placeholder="zip" />
           </Form.Field>
           <Form.Field>
             <label>Address</label>
-            <input name="address" onChange={this.handleChange.bind(this)} value={this.state.address} placeholder='address' />
+            <input name="address" onChange={this.handleChange.bind(this)} value={this.state.address} placeholder="address" />
           </Form.Field>
           <Form.Field>
             <label>Event Type</label>
-            <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder='event type' />
+            <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="event type" />
           </Form.Field>
           <Form.Field
-            control={Dropdown} label="Genres" name="genres" placeholder='select your event music genres' fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
+            control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
           />
           <Form.Field>
             <label>Danceability: {this.state.danceability}</label>
-            <input type='range' min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
+            <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
             <br />
             <Rating rating={this.state.danceability} maxRating={10} />
           </Form.Field>
           <Form.Field>
             <label>Loudness: {this.state.loudness}</label>
-            <input type='range' min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
+            <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
             <br />
             <Rating rating={this.state.loudness} maxRating={10} />
           </Form.Field>
           <Form.Field>
             <label>Energy: {this.state.energy}</label>
-            <input type='range' min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
+            <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
             <br />
             <Rating rating={this.state.energy} maxRating={10} />
           </Form.Field>
           <Form.Field>
             <label>Acousticness: {this.state.acousticness}</label>
-            <input type='range' min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
+            <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
             <br />
             <Rating rating={this.state.acousticness} maxRating={10} />
           </Form.Field>
           <Form.Field>
             <label>Valence: {this.state.valence}</label>
-            <input type='range' min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
+            <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
             <br />
             <Rating rating={this.state.valence} maxRating={10} />
           </Form.Field>
           <div>
-            <Button type='submit'>Submit</Button>
+            <Button type="submit">Submit</Button>
           </div>
         </Form>
       </div>
