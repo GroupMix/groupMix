@@ -64,6 +64,7 @@ export const fetchPlaylist = (eventId, token, spotifyUserId) =>
           })
           .then(() => {
             let uris = uriArr.map(uri => `spotify:track:${uri}`)
+            console.log(uris)
             return SpotifyApi.addTracksToPlaylist(spotifyUserId, playlistId, uris)
           })
           .then((play) => {
