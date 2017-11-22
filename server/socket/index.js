@@ -26,7 +26,7 @@ module.exports = (io) => {
       console.log("coords", coords)
       //cache all coordinates
       let { lat, long, userIdForSocket } = coords
-      let key = userIdForSocket.toString()
+      let key = userIdForSocket
       coordsCache[key] = { lat, long }
       console.log("coords cache",coordsCache)
       console.log("sock IDDD",userIdForSocket)
