@@ -271,7 +271,7 @@ const mapDispatch = (dispatch) => ({
     fetchInitialData(eventId) {
       dispatch(fetchInvitedUsers(eventId))
       dispatch(fetchEvent(eventId))
-    },  
+    },
     prioritize(eventId) {
     dispatch(prioritizeSongs(eventId))
   }

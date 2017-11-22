@@ -16,11 +16,12 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
   let requestCount = {}
   Event.findById(req.params.eventId)
     .then(event => {
-      hostDanceability = event.danceability * 0.75;
-      hostLoudness = event.loudness * 0.75;
-      hostEnergy = event.energy * 0.75;
-      hostAcousticness = event.acousticness * 0.75;
-      hostValence = event.valence * 0.75
+      hostDanceability = event.danceability * 0.9;
+      hostLoudness = (((1.4 - +event.loudness ) * 12 ) ) * -1;
+      console.log("loud",hostLoudness)
+      hostEnergy = event.energy * 0.9;
+      hostAcousticness = event.acousticness * 0.9;
+      hostValence = event.valence * 0.9
       hostGenres = event.genres
       return Playlist.findOne({ where: { eventId: req.params.eventId } })
     })
@@ -50,15 +51,21 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
             genreMatch = hostGenres.some((genre) => {
               return song.genres.indexOf(genre) > -1
             })
+            switch(song.popularity){
+              case (song.popularity > 75):
+                pointsToAdd += 8
+              case (song.popularity <= 75 && song.popularity > 50):
+                pointsToAdd += 40
+            }
             if (genreMatch) pointsToAdd += 15
-            if (song.danceability > hostDanceability - 0.1 && song.danceability < hostDanceability + 0.1) pointsToAdd += 5
-            if (song.loudness > hostLoudness - 0.1 && song.loudness < hostLoudness + 0.1) pointsToAdd += 5
-            if (song.energy > hostEnergy - 0.1 && song.energy < hostEnergy + 0.1) pointsToAdd += 5
-            if (song.acousticness > hostAcousticness - 0.1 && song.acoustisness < hostAcousticness + 0.1) pointsToAdd += 5
-            if (song.valence > hostValence - 0.1 && song.valence < hostValence + 0.1) pointsToAdd += 5
+            if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) pointsToAdd += 6
+            if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) pointsToAdd += 4
+            if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) pointsToAdd += 5
+            if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) pointsToAdd += 7
+            if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) pointsToAdd += 3
 
             let keyName = song.id.toString()
-            if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 6}
+            if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 4}
 
            //produces promise warning in back-end console; optimize if time
               return PlaylistSong.findAll({where: {songId: song.id}})
