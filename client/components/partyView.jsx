@@ -85,6 +85,7 @@ class PartyView extends React.Component {
     let spotifyUrl;
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
+      console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
         startParty(+eventId, user.access, user.user.spotifyUserId)
       }
@@ -175,6 +176,7 @@ const mapDispatch = (dispatch) => ({
     dispatch(fetchSpotifyPlaylist(eventId))
   },
   startParty(eventId, token, spotifyUserId) {
+    console.log("location based checkin worked!")
     dispatch(fetchPlaylist(eventId, token, spotifyUserId))
   }
 })
