@@ -12,6 +12,7 @@ router.get('/users/:eventId', (req, res, next) => {
     .then(users => res.json(users))
     .catch(next)
 })
+
 // Gets event by id
 router.get('/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)

@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 /**
@@ -61,7 +61,7 @@ class PartyView extends React.Component {
     // console.log('SONGS DATA FINALLY', this.state.songsData)
     // console.log('ARTIST GENRES', this.state.genres)
 
-    const { email, user, eventId, guestlist, event, spotifyPlaylist } = this.props
+    const { email, user, eventId, guestlist, event, spotifyPlaylist, startParty } = this.props
     const { isHost } = this.state
     // let spotifyUser;
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
@@ -80,8 +80,8 @@ class PartyView extends React.Component {
           {
             isHost &&
             <div>
-              <Button style={{ backgroundColor: '#AF5090', color: 'white' }}>Start The Event!</Button>
-              <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }}>Shuffle Playlist</Button>
+              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(eventId, user.access, user.user.spotifyUserId)}>Start The Event!</Button>
+              {/* <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }}>Shuffle Playlist</Button> */}
             </div>
           }
         </Segment>
@@ -146,7 +146,9 @@ const mapDispatch = (dispatch) => ({
   fetchInitialData(eventId) {
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
-    dispatch(fetchSpotifyPlaylist(eventId))
+  },
+  startParty(eventId, token, spotifyUserId) {
+    dispatch(fetchPlaylist(eventId, token, spotifyUserId))
   }
 })
 

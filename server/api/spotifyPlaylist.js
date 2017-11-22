@@ -5,11 +5,26 @@ const { Playlist, PlaylistSong, Song } = require('../db/models')
 
 module.exports = router
 
+const filterUniqueTracks = (tracks, tracksCache = {}) => {
+    const uniqueTracks = []
+    tracks.forEach(track => {
+        if (!tracksCache.hasOwnProperty(track.songId)) {
+            console.log(track.songId)
+            uniqueTracks.push(track)
+            tracksCache[track.songId] = track
+        }
+    })
+    return uniqueTracks
+}
+
 router.get('/updatePlaylist/:eventId', (req, res, next) => {
     SpotifyApi.setAccessToken(req.user.access)
     let tracksToPlay = []
-    let tracksCache = {}
-
+    let uriArr =[]
+    // SpotifyApi.getMyDevices()
+    // .then(devices => {
+    //     console.log(devices, 'my devices')
+    // })
     Playlist.findOne({ where: { eventId: req.params.eventId } })
         .then(playlist => {
             return PlaylistSong.findAll({
@@ -20,14 +35,17 @@ router.get('/updatePlaylist/:eventId', (req, res, next) => {
         })
         .then(songs => {
             let tempSongs = songs.map(song => song.toJSON())
-            tempSongs.forEach(song => {
-                // if()
-            })
-            tracksToPlay = tracksToPlay.slice(0, 10)
-            res.json(tracksToPlay)
+           return filterUniqueTracks(tempSongs).slice(0, 10)
+        })
+        .then(tracksToFetch => {
+            return Promise.all(tracksToFetch.map(track =>
+                Song.findById(track.songId)
+            ))
+        })
+        .then(tracksWithInfo => {
+            uriArr = tracksWithInfo.map(track => `spotify:track:${track.spotifySongId}`)
+            console.log(uriArr)
+            res.send()
         })
         .catch(next)
 })
-
-// Cache Songs that where already passed by and push only the ones we haven't passed by
-// Whatever 
