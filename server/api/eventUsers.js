@@ -35,6 +35,20 @@ router.get('/:userId/hosted', (req, res, next) => {
   .catch(next)
 })
 
+// Checks id this particular user is the host of the party
+router.get('/isHost/:eventId', (req, res, next) => {
+  EventUser.findOne({
+    where: {
+      userId: req.user.id,
+      eventId: req.params.eventId,
+      isHost: true
+    }
+  })
+  .then(host => {
+    res.send(host.isHost)
+  })
+})
+
 router.get('/:userId/events', (req, res, next) => {
   EventUser.findAll({
     where: {

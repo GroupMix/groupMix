@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 /**
@@ -26,6 +26,7 @@ class PartyView extends React.Component {
       idArr: [],
       artistIds: [],
       spotifyUri: '',
+      isHost: false,
     }
     // this.handleAdd = this.handleAdd.bind(this)
     // this.handleSubmit = this.handleSubmit.bind(this)
@@ -37,7 +38,9 @@ class PartyView extends React.Component {
   componentWillMount() {
     this.props.fetchInitialData(this.props.eventId)
     // spotifyApi.setAccessToken(this.props.user.access)
-
+    isHost(this.props.eventId)
+      .then(res => res.data)
+      .then(host => this.setState({ isHost: host }))
   }
 
   // handleAdd(evt, data) {
@@ -59,61 +62,67 @@ class PartyView extends React.Component {
     // console.log('ARTIST GENRES', this.state.genres)
 
     const { email, user, eventId, guestlist, event, spotifyPlaylist } = this.props
+    const { isHost } = this.state
     // let spotifyUser;
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl;
     // this.setState({spotifyUri: spotifyUri})
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
-
-    console.log('EVENTTT', this.props.event)
-    console.log('GUESTLISTTTTT', this.props.guestlist)
-    console.log('SPOTIFY PLAYLIST', spotifyUrl)
+    // console.log('EVENTTT', this.props.event)
+    // console.log('GUESTLISTTTTT', this.props.guestlist)
+    // console.log('SPOTIFY PLAYLIST', spotifyUrl)
     // let attending = invitedUsers.some(invitedUser => invitedUser.id === user.id)
     return (
       <div>
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
           <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
+          {
+            isHost &&
+            <div>
+              <Button style={{ backgroundColor: '#AF5090', color: 'white' }}>Start The Event!</Button>
+              <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }}>Shuffle Playlist</Button>
+            </div>
+          }
         </Segment>
         <Segment inverted>
-        <Grid
-          divided
-          textAlign="left"
-          columns={2}
-          padded
-          inverted
+          <Grid
+            divided
+            textAlign="left"
+            columns={2}
+            padded
+            inverted
 
-        >
-          <Grid.Column  floated = "left" >
-            <Header as="h2" color="blue" textAlign="center">
-              Guestlist
+          >
+            <Grid.Column floated="left" >
+              <Header as="h2" color="blue" textAlign="center">
+                Guestlist
         </Header>
-            <Card.Group
-            itemsPerRow = {3}
-            >
-              {
-                guestlist.length ?
-                  guestlist.map(guest => {
-                    return (
-                      <GuestListItem key={guest.id} user={guest} eventId={eventId} />
-                    )
-                  })
-                  : <h1>No one Has been Arrived</h1>
-              }
-            </Card.Group>
+              <Card.Group
+                itemsPerRow={3}
+              >
+                {
+                  guestlist.length ?
+                    guestlist.map(guest => {
+                      return (
+                        <GuestListItem key={guest.id} user={guest} eventId={eventId} />
+                      )
+                    })
+                    : <h1>No one Has been Arrived</h1>
+                }
+              </Card.Group>
 
 
-          </Grid.Column>
+            </Grid.Column>
 
-          <Grid.Column  >
-            <Header as="h2" color="blue" textAlign="center">
-              Playlist
+            <Grid.Column  >
+              <Header as="h2" color="blue" textAlign="center">
+                Playlist
             </Header>
-            {spotifyUrl &&
-              <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe> }
-          </Grid.Column>
-        </Grid>
+              {spotifyUrl &&
+                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe>}
+            </Grid.Column>
+          </Grid>
         </Segment>
       </div>
     )

@@ -15,6 +15,10 @@ const playlist = []
 const getPrioritizedTracks = tracks => ({ type: GET_PRIORITIZED_TRACKS, tracks })
 
 /* THUNK CREATORS */
+// export const updateSpotifyPlaylist = (eventId) => {
+//   axios.get('/api/prioritized')
+// }
+
 export const fetchPlaylist = (eventId, token, spotifyUserId) =>
   dispatch => {
 

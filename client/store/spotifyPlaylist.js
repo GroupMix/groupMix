@@ -17,7 +17,6 @@ const getPlaylist = spotifyPlaylist => ({ type: GET_SPOTIFY_PLAYLIST, spotifyPla
 /* THUNK CREATORS */
 export const fetchSpotifyPlaylist = (eventId) =>
   dispatch => {
-
  axios.get(`/api/events/playlist/${eventId}`)
       .then(res => dispatch(getPlaylist(res.data)))
       .catch(err => console.log(err))

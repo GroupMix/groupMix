@@ -39,3 +39,7 @@ export const fetchAllUserEvents = (userId) =>
         .then(res => res.data)
         .then(events => dispatch(getAllUserEvents(events)))
         .catch(err => console.log(err))
+
+export const isHost = (eventId) => {
+    return axios.get(`/api/eventusers/ishost/${eventId}`)
+}
