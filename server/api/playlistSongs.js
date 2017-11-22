@@ -11,6 +11,11 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
   let hostEnergy = 0;
   let hostAcousticness = 0;
   let hostValence = 0;
+  let hostDanceabilityWeight = 0;
+  let hostLoudnessWeight = 0;
+  let hostEnergyWeight = 0;
+  let hostAcousticnessWeight = 0;
+  let hostValenceWeight = 0;
   let hostGenres = [];
   let playlistId = 0;
   let requestCount = {}
@@ -23,6 +28,11 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
       hostAcousticness = event.acousticness * 0.9;
       hostValence = event.valence * 0.9
       hostGenres = event.genres
+      hostDanceabilityWeight = event.danceabilityWeight;
+      hostLoudnessWeight = event.loudnessWeight;
+      hostEnergyWeight = event.energyWeight ;
+      hostAcousticnessWeight = event.acoustisnessWeight;
+      hostValenceWeight = event.valenceWeight;
       return Playlist.findOne({ where: { eventId: req.params.eventId } })
     })
     .then((playlist) => {
@@ -55,14 +65,14 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
               case (song.popularity > 75):
                 pointsToAdd += 8
               case (song.popularity <= 75 && song.popularity > 50):
-                pointsToAdd += 40
+                pointsToAdd += 4
             }
             if (genreMatch) pointsToAdd += 15
-            if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) pointsToAdd += 6
-            if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) pointsToAdd += 4
-            if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) pointsToAdd += 5
-            if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) pointsToAdd += 7
-            if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) pointsToAdd += 3
+            if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) pointsToAdd += (6* hostDanceabilityWeight)
+            if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) pointsToAdd += (4* hostLoudnessWeight)
+            if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) pointsToAdd += (5*hostEnergyWeight)
+            if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) pointsToAdd += (7*hostAcousticnessWeight)
+            if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) pointsToAdd += (3*hostValenceWeight)
 
             let keyName = song.id.toString()
             if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 4}
