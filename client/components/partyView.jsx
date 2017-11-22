@@ -5,9 +5,10 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist, hasCheckedIn, checkUserIn } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
+import socket from '../socket'
 /**
  * COMPONENT
  */
@@ -27,6 +28,7 @@ class PartyView extends React.Component {
       artistIds: [],
       spotifyUri: '',
       isHost: false,
+      isCheckedIn: false,
     }
     // this.handleAdd = this.handleAdd.bind(this)
     // this.handleSubmit = this.handleSubmit.bind(this)
@@ -38,18 +40,33 @@ class PartyView extends React.Component {
   componentWillMount() {
     this.props.fetchInitialData(this.props.eventId)
     // spotifyApi.setAccessToken(this.props.user.access)
-    isHost(this.props.eventId)
-      .then(res => res.data)
-      .then(host => this.setState({ isHost: host }))
+    this.getUserStatus(this.props.eventId)
   }
 
-  // handleAdd(evt, data) {
-  //   this.setState({ selected: [data.content, ...this.state.selected] })
-  // }
-  // handleSubmit() {
-  //   this.getTopArtistTracks();
-  //   history.pushState('/events/:eventId/partyview')
-  // }
+  getUserStatus = (eventId) => {
+    let hostStatus;
+    isHost(eventId)
+      .then(hostStat => {
+        hostStatus = hostStat
+        return hasCheckedIn(eventId)
+      })
+      .then(guestStat => {
+        console.log(guesStat.data)
+        this.setState({
+          isCheckedIn: guestStat.data,
+          isHost: hostStatus.data
+        })
+      })
+  }
+  
+  handleCheckin = (eventId, userId) => {
+    console.log(userId)
+    checkUserIn(eventId)
+    .then(user => {
+      this.setState({ isCheckedIn: true })
+      socket.emit('emmited', eventId, user.id)
+    })
+  }
 
 
   render() {
@@ -62,10 +79,16 @@ class PartyView extends React.Component {
     // console.log('ARTIST GENRES', this.state.genres)
 
     const { email, user, eventId, guestlist, event, spotifyPlaylist, startParty } = this.props
-    const { isHost } = this.state
+    const { isHost, isCheckedIn } = this.state
     // let spotifyUser;
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl;
+
+    socket.on(`userHere/${eventId}`, (userId, eventId) => {
+      if (isHost) {
+        startParty(+eventId, user.access, user.user.spotifyUserId)
+      }
+    })
     // this.setState({spotifyUri: spotifyUri})
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
     // console.log('EVENTTT', this.props.event)
@@ -81,8 +104,11 @@ class PartyView extends React.Component {
             isHost &&
             <div>
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(eventId, user.access, user.user.spotifyUserId)}>Start The Event!</Button>
-              {/* <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }}>Shuffle Playlist</Button> */}
             </div>
+          }
+          {
+            isCheckedIn &&
+            <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id) }>Check-in</Button>
           }
         </Segment>
         <Segment inverted>
@@ -108,7 +134,7 @@ class PartyView extends React.Component {
                         <GuestListItem key={guest.id} user={guest} eventId={eventId} />
                       )
                     })
-                    : <h1>No one Has been Arrived</h1>
+                    : <h1>No one Has Arrived</h1>
                 }
               </Card.Group>
 

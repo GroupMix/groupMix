@@ -21,10 +21,7 @@ router.get('/updatePlaylist/:eventId', (req, res, next) => {
     SpotifyApi.setAccessToken(req.user.access)
     let tracksToPlay = []
     let uriArr =[]
-    // SpotifyApi.getMyDevices()
-    // .then(devices => {
-    //     console.log(devices, 'my devices')
-    // })
+    
     Playlist.findOne({ where: { eventId: req.params.eventId } })
         .then(playlist => {
             return PlaylistSong.findAll({

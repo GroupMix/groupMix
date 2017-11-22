@@ -40,6 +40,15 @@ export const fetchAllUserEvents = (userId) =>
         .then(events => dispatch(getAllUserEvents(events)))
         .catch(err => console.log(err))
 
+// User Check functions
 export const isHost = (eventId) => {
     return axios.get(`/api/eventusers/ishost/${eventId}`)
+}
+
+export const hasCheckedIn = (eventId) => {
+    return axios.get(`/api/eventusers/hascheckedin/${eventId}`)
+}
+
+export const checkUserIn = (eventId) => {
+    return axios.put(`/api/eventusers/checkin/${eventId}`)
 }

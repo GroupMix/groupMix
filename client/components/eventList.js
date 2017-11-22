@@ -86,7 +86,7 @@ class EventList extends Component {
                     <List.Header>
                       <Button color="purple" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
                       <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
-                      <Button color="blue" onClick={() => history.push(`/events/${event.id}/partyView`)}>Party View</Button>
+                      <Button color="blue" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
                       <List.List as="ul">
