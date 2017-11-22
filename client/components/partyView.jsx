@@ -146,6 +146,7 @@ const mapDispatch = (dispatch) => ({
   fetchInitialData(eventId) {
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
+    dispatch(fetchSpotifyPlaylist(eventId))
   },
   startParty(eventId, token, spotifyUserId) {
     dispatch(fetchPlaylist(eventId, token, spotifyUserId))
