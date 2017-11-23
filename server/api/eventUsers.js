@@ -50,7 +50,6 @@ router.get('/isHost/:eventId', (req, res, next) => {
     where: {
       userId: req.user.id,
       eventId: req.params.eventId,
-      isHost: true
     }
   })
   .then(host => {
@@ -66,7 +65,7 @@ router.get('/hasCheckedIn/:eventId', (req, res, next) => {
     }
   })
   .then(guest => {
-    res.send(guest.isAttending)
+    res.send(guest.atEvent)
   })
 })
 

@@ -9,6 +9,7 @@ import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fet
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 import socket from '../socket'
+
 /**
  * COMPONENT
  */
@@ -30,42 +31,40 @@ class PartyView extends React.Component {
       isHost: false,
       isCheckedIn: false,
     }
-    // this.handleAdd = this.handleAdd.bind(this)
-    // this.handleSubmit = this.handleSubmit.bind(this)
-    // this.getTopArtistTracks = this.getTopArtistTracks.bind(this)
-    // this.getTrackGenres = this.getTrackGenres.bind(this)
-    // this.getAudioFeatures = this.getAudioFeatures.bind(this)
   }
-
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchInitialData(this.props.eventId)
-    // spotifyApi.setAccessToken(this.props.user.access)
-    this.getUserStatus(this.props.eventId)
+  }
+  componentWillMount() {
+    this.getUserStatus(+this.props.eventId)
+    console.log('something happened')
   }
 
   getUserStatus = (eventId) => {
     let hostStatus;
     isHost(eventId)
-      .then(hostStat => {
-        hostStatus = hostStat
-        return hasCheckedIn(eventId)
-      })
-      .then(guestStat => {
-        console.log(guesStat.data)
-        this.setState({
-          isCheckedIn: guestStat.data,
-          isHost: hostStatus.data
-        })
-      })
-  }
-  
-  handleCheckin = (eventId, userId) => {
-    console.log(userId)
-    checkUserIn(eventId)
-    .then(user => {
-      this.setState({ isCheckedIn: true })
-      socket.emit('emmited', eventId, user.id)
+    .then(res => {
+      hostStatus = res.data
+      console.log(hostStatus, "isHost")
+      return hasCheckedIn(eventId)
     })
+    .then(res => {
+      console.log(res.data, "isCheckedIn")
+      this.setState({
+        isHost: hostStatus,
+        isCheckedIn: res.data
+      })
+    })
+    .catch(err => console.log(err))
+  }
+
+  handleCheckin = (eventId, userId) => {
+    console.log(userId, 'Handle the damn Checkin!!!')
+    checkUserIn(eventId)
+      .then(user => {
+        this.setState({ isCheckedIn: true })
+        socket.emit('emmited', eventId, user.id)
+      })
   }
 
 
@@ -96,6 +95,7 @@ class PartyView extends React.Component {
     // console.log('GUESTLISTTTTT', this.props.guestlist)
     // console.log('SPOTIFY PLAYLIST', spotifyUrl)
     // let attending = invitedUsers.some(invitedUser => invitedUser.id === user.id)
+    console.log(isHost, "is host from stat", isCheckedIn, 'is checked in from state')
     return (
       <div>
         <br />
@@ -108,8 +108,8 @@ class PartyView extends React.Component {
             </div>
           }
           {
-            isCheckedIn &&
-            <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id) }>Check-in</Button>
+            !isCheckedIn &&
+            <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
         </Segment>
         <Segment inverted>
@@ -176,7 +176,6 @@ const mapDispatch = (dispatch) => ({
     dispatch(fetchSpotifyPlaylist(eventId))
   },
   startParty(eventId, token, spotifyUserId) {
-    console.log("location based checkin worked!")
     dispatch(fetchPlaylist(eventId, token, spotifyUserId))
   }
 })

@@ -72,7 +72,7 @@ function geo_success(position) {
   sendCoords(position.coords.latitude, position.coords.longitude, position.coords.accuracy, userIdForSocket);
 }
 function geo_error() {
-  alert("Sorry, no position available.");
+  console.log("Sorry, no position available.");
 }
 var geo_options = {
   enableHighAccuracy: true,
