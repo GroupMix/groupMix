@@ -37,7 +37,6 @@ router.post('/logout', (req, res) => {
 })
 
 router.get('/me', (req, res) => {
-  console.log(req.user, "/me bug")
   res.json(req.user)
 })
 

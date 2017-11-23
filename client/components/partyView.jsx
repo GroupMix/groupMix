@@ -37,7 +37,7 @@ class PartyView extends React.Component {
   }
   componentWillMount() {
     this.getUserStatus(+this.props.eventId)
-    console.log('something happened')
+    // console.log('something happened')
   }
 
   getUserStatus = (eventId) => {
@@ -45,11 +45,11 @@ class PartyView extends React.Component {
     isHost(eventId)
     .then(res => {
       hostStatus = res.data
-      console.log(hostStatus, "isHost")
+      // console.log(hostStatus, "isHost")
       return hasCheckedIn(eventId)
     })
     .then(res => {
-      console.log(res.data, "isCheckedIn")
+      // console.log(res.data, "isCheckedIn")
       this.setState({
         isHost: hostStatus,
         isCheckedIn: res.data
@@ -59,7 +59,7 @@ class PartyView extends React.Component {
   }
 
   handleCheckin = (eventId, userId) => {
-    console.log(userId, 'Handle the damn Checkin!!!')
+    // console.log(userId, 'Handle the damn Checkin!!!')
     checkUserIn(eventId)
       .then(user => {
         this.setState({ isCheckedIn: true })
@@ -95,7 +95,7 @@ class PartyView extends React.Component {
     // console.log('GUESTLISTTTTT', this.props.guestlist)
     // console.log('SPOTIFY PLAYLIST', spotifyUrl)
     // let attending = invitedUsers.some(invitedUser => invitedUser.id === user.id)
-    console.log(isHost, "is host from stat", isCheckedIn, 'is checked in from state')
+    // console.log(isHost, "is host from stat", isCheckedIn, 'is checked in from state')
     return (
       <div>
         <br />
@@ -108,7 +108,7 @@ class PartyView extends React.Component {
             </div>
           }
           {
-            !isCheckedIn &&
+          (!isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
         </Segment>
@@ -174,6 +174,7 @@ const mapDispatch = (dispatch) => ({
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
     dispatch(fetchSpotifyPlaylist(eventId))
+    // dispatch(updateSpotifyPlaylist(eventId))
   },
   startParty(eventId, token, spotifyUserId) {
     dispatch(fetchPlaylist(eventId, token, spotifyUserId))

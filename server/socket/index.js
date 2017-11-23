@@ -60,7 +60,7 @@ module.exports = (io) => {
           if(distanceBetween < 0.03 ) {
             EventUser.findOne({ where: { eventId: upcomingEvent.eventId, userId: userIdForSocket } })
             .then((userToCheckIn)=>{
-              userToCheckIn.update({atEvent: true})
+             return userToCheckIn.update({atEvent: true})
             })
             console.log('user has been checked in')
             socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 

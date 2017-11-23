@@ -34,23 +34,18 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
     const spotifyUserId = profile.id
     const name = profile.displayName
     const email = profile.emails[0].value
- process.env.SPOTIFY_TOKEN = token;
- process.env.SPOTIFY_REFRESH_TOKEN = refreshToken;
-
-
-
 
     User.find({where: {spotifyUserId}})
       .then(foundUser => {
         if (!foundUser) {
           User.create({name, email, spotifyUserId})
           .then(createdUser => {
-            let user = { id: createdUser.id, user: createdUser, access: token }
+            let user = { id: createdUser.id, user: createdUser, access: token, refreshToken }
            return done(null, user);
           })
         }
         else {
-          let user = {id: foundUser.id, user:foundUser, access: token}
+          let user = {id: foundUser.id, user:foundUser, access: token, refreshToken}
           return done(null, user)
         }
       })
