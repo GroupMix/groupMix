@@ -80,4 +80,5 @@ var geo_options = {
   timeout           : 27000
 };
 
-navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
+
+if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
