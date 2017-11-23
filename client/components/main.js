@@ -72,7 +72,7 @@ function geo_success(position) {
   sendCoords(position.coords.latitude, position.coords.longitude, position.coords.accuracy, userIdForSocket);
 }
 function geo_error() {
-  alert("Sorry, no position available.");
+  console.log("Sorry, no position available.");
 }
 var geo_options = {
   enableHighAccuracy: true,
@@ -80,4 +80,5 @@ var geo_options = {
   timeout           : 27000
 };
 
-navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
+
+if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
