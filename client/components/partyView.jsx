@@ -83,19 +83,12 @@ class PartyView extends React.Component {
   }
 
   render() {
-    // console.log('songsData', this.state.songsData)
-    // console.log('ARTISTS TOP TRACKS', this.state.topArtistSongs);
-    // console.log('ALL SONGS', this.state.songs);
-    // console.log('ID ARR', this.state.idArr)
-    // console.log('TOP ARTIST SONGS ON STATE', this.state.topArtistSongs)
-    // console.log('SONGS DATA FINALLY', this.state.songsData)
-    // console.log('ARTIST GENRES', this.state.genres)
-
     const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus } = this.props
     const { isHost, isCheckedIn } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
+    spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
@@ -104,13 +97,7 @@ class PartyView extends React.Component {
         this.props.updatePlaylist(+eventId)
       }
     })
-    // console.log(event, hasStarted, "Event Status")
-    // this.setState({spotifyUri: spotifyUri})
-    spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-    // console.log('EVENTTT', this.props.event)
-    // console.log('GUESTLISTTTTT', this.props.guestlist)
-    // console.log('SPOTIFY PLAYLIST', spotifyUrl)
-    // let attending = invitedUsers.some(invitedUser => invitedUser.id === user.id)
+
     return (
       <div>
         <br />
@@ -152,7 +139,7 @@ class PartyView extends React.Component {
                 itemsPerRow={3}
               >
                 {
-                  guestlist.length ?
+                  guestlist.length > 1 ?
                     guestlist.map(guest => {
                       return (
                         <GuestListItem key={guest.id} user={guest} eventId={eventId} />
