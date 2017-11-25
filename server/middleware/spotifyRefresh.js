@@ -3,7 +3,6 @@ const querystring = require('querystring')
 
 module.exports = {
     tokenRefresh: (req, res, next) => {
-        console.log('here')
         const body = {
             grant_type: 'refresh_token',
             refresh_token: req.user.refreshToken

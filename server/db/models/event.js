@@ -139,6 +139,10 @@ const Event = db.define('event', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  hasStarted: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
   montageURL: {
     type: Sequelize.STRING,
     validate: {

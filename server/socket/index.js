@@ -62,7 +62,7 @@ module.exports = (io) => {
             .then((userToCheckIn)=>{
              return userToCheckIn.update({atEvent: true})
             })
-            console.log('user has been checked in')
+            console.log('user has been checked in with geolocation')
             socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 
           }
           }
@@ -73,7 +73,10 @@ module.exports = (io) => {
         
     }))
 
-
+    socket.on('userArrived', (eventId, userId) => {
+      console.log('A User Has Manually Checked in')
+      socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
+    })
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
     })

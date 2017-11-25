@@ -24,7 +24,7 @@ router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Sh
     const accessToken = req.user.access
     let spotifyPlaylistId;
     let tracksToPlay = []
-    let uriArr =[]
+    let uriArr = []
 
     SpotifyApi.setAccessToken(req.user.access)
     Playlist.findOne({ where: { eventId: req.params.eventId } }) //Gets PlaylistId
@@ -38,7 +38,7 @@ router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Sh
         })
         .then(songs => {
             let tempSongs = songs.map(song => song.toJSON()) // Filters repeated songs and returns the top ten songs...
-           return filterUniqueTracks(tempSongs).slice(0, 10)
+            return filterUniqueTracks(tempSongs).slice(0, 10)
         })
         .then(tracksToFetch => {
             return Promise.all(tracksToFetch.map(track => // Fetches the prioritized songs metadata, Model should be changed to carry their uri rather than their id...
@@ -53,7 +53,11 @@ router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Sh
                 spotifyPlaylistId,
                 accessToken
             })
-           
+
         })
         .catch(next)
+})
+
+router.get('/play/', tokenRefresh, (req, res, next) => {
+    res.json(req.user.access)
 })
