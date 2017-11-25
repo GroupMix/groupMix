@@ -58,6 +58,6 @@ router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Sh
         .catch(next)
 })
 
-router.get('/play/', tokenRefresh, (req, res, next) => {
+router.get('/refreshtoken/', tokenRefresh, (req, res, next) => {
     res.json(req.user.access)
 })
