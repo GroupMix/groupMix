@@ -21,12 +21,6 @@ const myPrioritizeSongs = () => ({ type: PRIORITIZE_SONGS })
 /**
  * THUNK CREATORS
  */
-export const updateSpotifyPlaylist = (eventId) => 
-  dispatch => {
-  axios.get(`/api/spotifyPlaylist/updatePlaylist/${eventId}`)
-  .then(res => res.data)
-  .then(data => console.log(data))
-}
 
 export const addPlaylistSongThunk = (song) =>
   dispatch =>

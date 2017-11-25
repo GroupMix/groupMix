@@ -60,9 +60,9 @@ module.exports = (io) => {
           if(distanceBetween < 0.03 ) {
             EventUser.findOne({ where: { eventId: upcomingEvent.eventId, userId: userIdForSocket } })
             .then((userToCheckIn)=>{
-              userToCheckIn.update({atEvent: true})
+             return userToCheckIn.update({atEvent: true})
             })
-            console.log('user has been checked in')
+            console.log('user has been checked in with geolocation')
             socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 
           }
           }
@@ -73,7 +73,10 @@ module.exports = (io) => {
         
     }))
 
-
+    socket.on('userArrived', (eventId, userId) => {
+      console.log('A User Has Manually Checked in')
+      socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
+    })
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
     })
