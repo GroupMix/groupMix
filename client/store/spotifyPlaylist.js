@@ -54,7 +54,7 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
   }
 
 export const startSpotifyPlaylist = (spotifyUri) => {
-  axios.get('/api/spotifyPlaylist/play')
+  axios.get('/api/spotifyPlaylist/refreshtoken')
     .then(res => res.data)
     .then(token => {
       SpotifyApi.setAccessToken(token)

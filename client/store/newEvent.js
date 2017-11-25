@@ -16,9 +16,12 @@ const getEvent = event => ({ type: GET_EVENT, event })
 /* THUNK CREATORS */
 export const createNewEvent = (createdEvent, history) =>
   dispatch => {
-    console.log("in event thunk")
-    SpotifyApi.setAccessToken(createdEvent.token)
-    SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
+    axios.get('/api/spotifyPlaylist/refreshtoken')
+    .then(res => {
+      const newToken = res.data
+      SpotifyApi.setAccessToken(newToken)
+     return SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
+    })
       .then((playlist) => {
         createdEvent.uri = playlist.uri
         createdEvent.playlistId = playlist.id
