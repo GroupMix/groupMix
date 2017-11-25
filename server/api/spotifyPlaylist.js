@@ -19,9 +19,11 @@ const filterUniqueTracks = (tracks, tracksCache = {}) => {
     return uniqueTracks
 }
 
-router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Should send back the uriArr, the spotUserId, and the spotPlaylistId
+router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { // Should send back the uriArr, the spotUserId, and the spotPlaylistId
     const spotifyUserId = req.user.user.spotifyUserId
     const accessToken = req.user.access
+    const limit = req.body.endParty ? 200 : 100
+    const songAmount = req.body.endParty ? 100 : 10
     let spotifyPlaylistId;
     let tracksToPlay = []
     let uriArr = []
@@ -33,12 +35,12 @@ router.get('/updatePlaylist/:eventId', tokenRefresh, (req, res, next) => { // Sh
             return PlaylistSong.findAll({ // Finds 100 of the top Prioritized songs in descending order
                 where: { playlistId: playlist.id },
                 order: [['priority', 'DESC']],
-                limit: 100,
+                limit: limit,
             })
         })
         .then(songs => {
             let tempSongs = songs.map(song => song.toJSON()) // Filters repeated songs and returns the top ten songs...
-            return filterUniqueTracks(tempSongs).slice(0, 10)
+            return filterUniqueTracks(tempSongs).slice(0, songAmount)
         })
         .then(tracksToFetch => {
             return Promise.all(tracksToFetch.map(track => // Fetches the prioritized songs metadata, Model should be changed to carry their uri rather than their id...

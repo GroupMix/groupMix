@@ -15,10 +15,10 @@ router.get('/users/:eventId', (req, res, next) => {
 // Gets event by id
 router.get('/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)
-  .then(event => {
-    res.json(event)
-  })
-  .catch(next)
+    .then(event => {
+      res.json(event)
+    })
+    .catch(next)
 })
 
 // Creates a new event and playlist entry
@@ -29,8 +29,8 @@ router.post('/', (req, res, next) => {
       return event
     })
     .then(event => {
-      let eventId = event.id*1
-      Playlist.create({eventId: eventId, spotifyPlaylistId: req.body.playlistId, spotifyPlaylistUri: req.body.uri})
+      let eventId = event.id * 1
+      Playlist.create({ eventId: eventId, spotifyPlaylistId: req.body.playlistId, spotifyPlaylistUri: req.body.uri })
       res.json(event)
     })
     .catch(next)
@@ -61,9 +61,18 @@ router.put(`/user/:eventId`, (req, res, next) => {
 
 // Flips the has started flag on this event.
 router.put('/start/:eventId', (req, res, next) => {
-  Event.update({hasStarted: true}, {where: {id: req.params.eventId}, returning: true})
+  Event.update({ hasStarted: true }, { where: { id: req.params.eventId }, returning: true })
+    .then(updatedEvent => {
+      console.log('Update Succesful')
+      res.send(updatedEvent)
+    })
+    .catch(next)
+})
+
+router.put('/end/:eventId', (req, res, next) => {
+  Event.update({ hasEnded: true }, {where: { id: req.params.eventId }, returning: true})
   .then(updatedEvent => {
-    console.log('Update Succesful')
+    console.log('event hasEnded')
     res.send(updatedEvent)
   })
   .catch(next)
@@ -75,15 +84,15 @@ router.delete(`/:eventId`, (req, res, next) => {
       id: req.params.eventId
     }
   })
-  .then(deletedEvent => {
-    res.json(deletedEvent)
-  })
-  .catch(next)
+    .then(deletedEvent => {
+      res.json(deletedEvent)
+    })
+    .catch(next)
 })
 
 router.get('/playlist/:eventId', (req, res, next) => {
-  Playlist.findOne({where: {eventId: req.params.eventId}})
-  .then((playlist)=>{
-    res.json(playlist)
-  })
+  Playlist.findOne({ where: { eventId: req.params.eventId } })
+    .then((playlist) => {
+      res.json(playlist)
+    })
 })
