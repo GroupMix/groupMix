@@ -103,7 +103,7 @@ class PartyView extends React.Component {
             <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
           }
           {
-            (!isCheckedIn && !isHost) &&
+            (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
         </Segment>
