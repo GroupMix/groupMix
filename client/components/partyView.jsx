@@ -20,6 +20,7 @@ import {
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
+import PlaylistQueue from './playlistQueue'
 import history from '../history'
 import socket from '../socket'
 
@@ -169,8 +170,11 @@ class PartyView extends React.Component {
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
             </Header>
-              {spotifyUrl &&
-                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe>}
+              {
+                spotifyUrl &&
+                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
+              }
+              {/* <PlaylistQueue />  NOTE this component needs to fetch its playlistSongs and pass it down to the playlistQueue*/}
             </Grid.Column>
           </Grid>
         </Segment>

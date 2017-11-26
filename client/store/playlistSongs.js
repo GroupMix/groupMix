@@ -22,6 +22,12 @@ const myPrioritizeSongs = () => ({ type: PRIORITIZE_SONGS })
  * THUNK CREATORS
  */
 
+ // fetches all the songs belonging to a particular playlist
+export const fetchPlaylistSongs = (eventId) => 
+  dispatch => {
+    axios.get()
+  }
+
 export const addPlaylistSongThunk = (song) =>
   dispatch =>
     axios.post('/api/playlistSongs', song)
