@@ -49,13 +49,13 @@ class EventList extends Component {
                           <List.Item as="li">Type: {event.type}</List.Item>
                           <List.Item as="li">Genres: {
                             event.genres.map(genre => (
-                              `${genre}, `
+                              `${genre.toUpperCase()} `
                             ))
                           }
                           </List.Item>
                         </div>
                         <List.Item as="li">
-                          <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
+                          <List.Content>Date: {event.date} </List.Content>
                         </List.Item>
                         <div className="location-container">
                           <List.Item as="li">Address: {event.address}</List.Item>
@@ -87,7 +87,7 @@ class EventList extends Component {
                       <Button color="green" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
                       <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
                       <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
-                      <Button color="blue" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
+                      <Button color="teal" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
                       <List.List as="ul">
@@ -95,13 +95,13 @@ class EventList extends Component {
                           <List.Item as="li">Type: {event.type}</List.Item>
                           <List.Item as="li">Genres: {
                             event.genres.map(genre => (
-                              `${genre}, `
+                              `${genre.toUpperCase()} `
                             ))
                           }
                           </List.Item>
                         </div>
                         <List.Item as="li">
-                          <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
+                          <List.Content>Date {event.date}</List.Content>
                         </List.Item>
                         <div className="location-container">
                           <List.Item as="li">Address: {event.address}</List.Item>
@@ -141,13 +141,13 @@ class EventList extends Component {
                           <List.Item as="li">Type: {event.type}</List.Item>
                           <List.Item as="li">Genres: {
                             event.genres.map(genre => (
-                              `${genre}, `
+                              `${genre.toUpperCase()} `
                             ))
                           }
                           </List.Item>
                         </div>
                         <List.Item as="li">
-                          <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
+                          <List.Content>Date: {event.date}</List.Content>
                         </List.Item>
                         <div className="location-container">
                           <List.Item as="li">Address: {event.address}</List.Item>
@@ -182,13 +182,13 @@ class EventList extends Component {
                           <List.Item as="li">Type: {event.type}</List.Item>
                           <List.Item as="li">Genres: {
                             event.genres.map(genre => (
-                              `${genre}, `
+                              `${genre.toUpperCase()} `
                             ))
                           }
                           </List.Item>
                         </div>
                         <List.Item as="li">
-                          <List.Content>Date & Time: {event.date} at {event.time}</List.Content>
+                          <List.Content>Date: {event.date}</List.Content>
                         </List.Item>
                         <div className="location-container">
                           <List.Item as="li">Address: {event.address}</List.Item>

@@ -10,20 +10,23 @@ module.exports = router
 
 const filterUniqueTracks = (tracks, tracksCache = {}) => {
     const uniqueTracks = []
+    let userCache = []
+
     tracks.forEach(track => {
-        if (!tracksCache.hasOwnProperty(track.songId)) {
-            uniqueTracks.push(track)
-            tracksCache[track.songId] = track
-        }
-    })
-    return uniqueTracks
+            if (!tracksCache.hasOwnProperty(track.songId)) {
+                uniqueTracks.push(track)
+                userCache.push(track.userId)
+                tracksCache[track.songId] = track
+            }
+        })
+ return uniqueTracks
 }
 
 router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { // Should send back the uriArr, the spotUserId, and the spotPlaylistId
     const spotifyUserId = req.user.user.spotifyUserId
     const accessToken = req.user.access
     const limit = req.body.endParty ? 200 : 100
-    const songAmount = req.body.endParty ? 100 : 10
+    const songAmount = req.body.endParty ? 100 : 30
     let spotifyPlaylistId;
     let tracksToPlay = []
     let uriArr = []
@@ -48,7 +51,15 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
             ))
         })
         .then(tracksWithInfo => {
-            uriArr = tracksWithInfo.map(track => `spotify:track:${track.spotifySongId}`) // Formats the fetched songIds for spotify... 
+            let artistCache = []
+            tracksWithInfo.forEach(track => {
+                if ( artistCache.indexOf(track.spotifyArtistId) === -1 ){
+                  artistCache.push(track.spotifyArtistId)
+                  uriArr.push(`spotify:track:${track.spotifySongId}`)
+                }
+
+            }) // Formats the fetched songIds for spotify...
+            uriArr = uriArr.slice(0,10)
             res.json({
                 uriArr,
                 spotifyUserId,
