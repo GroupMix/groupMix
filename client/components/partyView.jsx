@@ -16,13 +16,15 @@ import {
   deletePlaylistSongs,
   pollingCurrentSong,
   pauseSpotifyPlaylist
+  prioritizeSongs
 } from '../store'
+
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
 import history from '../history'
 import socket from '../socket'
-
+import EventSettings from './eventSettings';
 
 /**
  * COMPONENT
@@ -44,6 +46,7 @@ class PartyView extends React.Component {
       spotifyUri: '',
       isHost: false,
       isCheckedIn: false,
+      editModalShowing: false
       showEndEventModal: false,
     }
   }
@@ -87,6 +90,11 @@ class PartyView extends React.Component {
       })
   }
 
+  handleModal = (evt) => {
+    evt.preventDefault();
+    this.state.editModalShowing ? this.setState({ editModalShowing: false}) : this.setState({ editModalShowing: true })
+  }
+
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
       console.log(this.props.eventId)
@@ -117,6 +125,7 @@ class PartyView extends React.Component {
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
           <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
+          <Segment inverted>
           {
             (isHost && !hasStarted) &&
             <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Start The Event!</Button>
@@ -133,11 +142,32 @@ class PartyView extends React.Component {
               </Modal>
             </div>
           }
+          </Segment>
+          <Segment inverted>
           {
             (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
+          </Segment>
+          <Segment inverted>
+            {
+              isHost &&
+              <div>
+              <Button onClick={(evt) => this.handleModal(evt)}>Edit Event Settings</Button>
+                <Modal open={this.state.editModalShowing}>
+                  <Modal.Header>Event Settings</Modal.Header>
+                  <Modal.Content >
+                    <EventSettings
+                    event={event}
+                    handleModal={this.handleModal}
+                    />
+                  </Modal.Content>
+                </Modal>
+                </div>
+            }
+          </Segment>
         </Segment>
+
         <Segment inverted>
           <Grid
             divided
@@ -173,11 +203,16 @@ class PartyView extends React.Component {
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe>}
             </Grid.Column>
           </Grid>
+
         </Segment>
       </div>
     )
   }
 }
+
+// <Header as="h2" inverted color="purple" textAlign="center"  >Edit Event Settings
+// </Header>
+
 /**
  * CONTAINER
  */
@@ -207,6 +242,9 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   pausePlaylist(spotifyUri) {
     dispatch(pauseSpotifyPlaylist())
+  },
+  prioritize(eventId) {
+    dispatch(prioritizeSongs(eventId))
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
