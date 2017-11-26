@@ -16,6 +16,7 @@ let userIdForSocket
 const Main = (props) => {
   const {children, handleClick, isLoggedIn, user} = props
   userIdForSocket = user.id
+  if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
   return (
     <div>
       <Navbar />
@@ -58,13 +59,13 @@ Main.propTypes = {
 
 //GEOLOCATION
 function sendCoords(lat, long, accuracy, userIdForSocket){
-  console.log("userSock", userIdForSocket)
   let coords = {
     lat,
     long,
     accuracy,
     userIdForSocket
   }
+  console.log("userSock", userIdForSocket, "coords", coords)
   socket.emit('guestCoords', coords);
 }
 
@@ -80,5 +81,3 @@ var geo_options = {
   timeout           : 27000
 };
 
-
-if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
