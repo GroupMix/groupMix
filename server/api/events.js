@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const { Event, User, Playlist } = require('../db/models')
-const SpotifyWebApi = require('spotify-web-api-js');
-const SpotifyApi = new SpotifyWebApi()
+
 
 module.exports = router
 
@@ -26,7 +25,7 @@ router.get('/:eventId', (req, res, next) => {
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
-      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true } })
+      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true, atEvent: true } })
       return event
     })
     .then(event => {
@@ -72,6 +71,25 @@ router.put(`/user/:eventId`, (req, res, next) => {
     })
     .then(() => res.json(req.body.userId))
     .catch(next)
+})
+
+// Flips the has started flag on this event.
+router.put('/start/:eventId', (req, res, next) => {
+  Event.update({ hasStarted: true }, { where: { id: req.params.eventId }, returning: true })
+    .then(updatedEvent => {
+      console.log('Update Succesful')
+      res.send(updatedEvent)
+    })
+    .catch(next)
+})
+
+router.put('/end/:eventId', (req, res, next) => {
+  Event.update({ hasEnded: true }, {where: { id: req.params.eventId }, returning: true})
+  .then(updatedEvent => {
+    console.log('event hasEnded')
+    res.send(updatedEvent)
+  })
+  .catch(next)
 })
 
 router.delete(`/:eventId`, (req, res, next) => {

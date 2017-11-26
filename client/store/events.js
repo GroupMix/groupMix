@@ -1,6 +1,4 @@
 import axios from 'axios';
-const SpotifyWebApi = require('spotify-web-api-js');
-const SpotifyApi = new SpotifyWebApi()
 
 // ACTION TYPES
 const GET_EVENTS = 'GET_EVENTS';

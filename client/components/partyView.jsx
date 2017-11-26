@@ -1,16 +1,31 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-var SpotifyWebApi = require('spotify-web-api-js');
-// import * as SpotifyWebApi from 'spotify-web-api-js'
-var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist, hasCheckedIn, checkUserIn, prioritizeSongs } from '../store'
+import {
+  fetchInvitedUsers,
+  fetchEvent,
+  fetchSpotifyPlaylist,
+  isHost,
+  updateSpotifyPlaylist,
+  hasCheckedIn,
+  checkUserIn,
+  startSpotifyPlaylist,
+  startEvent,
+  endEvent,
+  deletePlaylistSongs,
+  pollingCurrentSong,
+  pauseSpotifyPlaylist
+  prioritizeSongs
+} from '../store'
+
 import GuestListItem from './guestListItem.jsx'
+import EndEventModal from './endEventModal'
+import ErrorModal from './errorModal'
 import history from '../history'
 import socket from '../socket'
-
 import EventSettings from './eventSettings';
+
 /**
  * COMPONENT
  */
@@ -32,42 +47,46 @@ class PartyView extends React.Component {
       isHost: false,
       isCheckedIn: false,
       editModalShowing: false
+      showEndEventModal: false,
     }
-    // this.handleAdd = this.handleAdd.bind(this)
-    // this.handleSubmit = this.handleSubmit.bind(this)
-    // this.getTopArtistTracks = this.getTopArtistTracks.bind(this)
-    // this.getTrackGenres = this.getTrackGenres.bind(this)
-    // this.getAudioFeatures = this.getAudioFeatures.bind(this)
   }
 
   componentWillMount() {
+    this.getUserStatus(+this.props.eventId)
     this.props.fetchInitialData(this.props.eventId)
-    // spotifyApi.setAccessToken(this.props.user.access)
-    this.getUserStatus(this.props.eventId)
+  }
+
+  componentWillUnmount() {
+    this.props.polling(false)
   }
 
   getUserStatus = (eventId) => {
+    const { polling } = this.props
     let hostStatus;
+    let hasStarted
     isHost(eventId)
-      .then(hostStat => {
-        hostStatus = hostStat
+      .then(res => {
+        hostStatus = res.data.isHost
+        hasStarted = res.data.hasStarted
+        if (hostStatus && hasStarted) {
+          polling(true, eventId)
+        }
         return hasCheckedIn(eventId)
       })
-      .then(guestStat => {
-        console.log(guestStat.data)
+      .then(res => {
         this.setState({
-          isCheckedIn: guestStat.data,
-          isHost: hostStatus.data
+          isHost: hostStatus,
+          isCheckedIn: res.data
         })
       })
+      .catch(err => console.log(err))
   }
 
   handleCheckin = (eventId, userId) => {
-    console.log(userId)
     checkUserIn(eventId)
       .then(user => {
         this.setState({ isCheckedIn: true })
-        socket.emit('emmited', eventId, user.id)
+        socket.emit('userArrived', eventId, user.id)
       })
   }
 
@@ -76,34 +95,31 @@ class PartyView extends React.Component {
     this.state.editModalShowing ? this.setState({ editModalShowing: false}) : this.setState({ editModalShowing: true })
   }
 
+  handleEndEvent = (endedEvent) => {
+    if (endedEvent) {
+      console.log(this.props.eventId)
+      this.props.endEvent(this.props.eventId, true, this.props.user.id)
+    } else {
+      this.setState({ showEndEventModal: false })
+    }
+  }
 
   render() {
-    // console.log('songsData', this.state.songsData)
-    // console.log('ARTISTS TOP TRACKS', this.state.topArtistSongs);
-    // console.log('ALL SONGS', this.state.songs);
-    // console.log('ID ARR', this.state.idArr)
-    // console.log('TOP ARTIST SONGS ON STATE', this.state.topArtistSongs)
-    // console.log('SONGS DATA FINALLY', this.state.songsData)
-    // console.log('ARTIST GENRES', this.state.genres)
-
-    const { email, user, eventId, guestlist, event, spotifyPlaylist, startParty } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist } = this.props
     const { isHost, isCheckedIn } = this.state
-
+    const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
-    let spotifyUrl;
+    let spotifyUrl
+    spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
-        startParty(+eventId, user.access, user.user.spotifyUserId)
+        console.log('updating event', eventId)
+        this.props.updatePlaylist(+eventId)
       }
     })
-    // this.setState({spotifyUri: spotifyUri})
-    spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-    // console.log('EVENTTT', this.props.event)
-    // console.log('GUESTLISTTTTT', this.props.guestlist)
-    // console.log('SPOTIFY PLAYLIST', spotifyUrl)
-    // let attending = invitedUsers.some(invitedUser => invitedUser.id === user.id)
+
     return (
       <div>
         <br />
@@ -111,15 +127,25 @@ class PartyView extends React.Component {
           <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
           <Segment inverted>
           {
-            isHost &&
+            (isHost && !hasStarted) &&
+            <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Start The Event!</Button>
+          }
+          {
+            (isHost && hasStarted) &&
             <div>
-              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(eventId, user.access, user.user.spotifyUserId)}>Start The Event!</Button>
+              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
+              <Button style={{ backgroundColor: '#8038AC', color: 'white' }} onClick={() => pausePlaylist(spotifyUri)}>Pause</Button>
+              <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
+              <ErrorModal />
+              <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
+                <EndEventModal endEvent={this.handleEndEvent} />
+              </Modal>
             </div>
           }
           </Segment>
           <Segment inverted>
           {
-            isCheckedIn &&
+            (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
           </Segment>
@@ -159,7 +185,7 @@ class PartyView extends React.Component {
                 itemsPerRow={3}
               >
                 {
-                  guestlist.length ?
+                  guestlist.length > 1 ?
                     guestlist.map(guest => {
                       return (
                         <GuestListItem key={guest.id} user={guest} eventId={eventId} />
@@ -168,10 +194,7 @@ class PartyView extends React.Component {
                     : <h1>No one Has Arrived</h1>
                 }
               </Card.Group>
-
-
             </Grid.Column>
-
             <Grid.Column  >
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
@@ -200,27 +223,43 @@ const mapState = (state, ownProps) => {
     eventId: ownProps.match.params.eventId,
     guestlist: state.invitedUsers,
     event: state.newEvent,
-    spotifyPlaylist: state.spotifyPlaylist
+    spotifyPlaylist: state.spotifyPlaylist,
+    eventStatus: state.eventStatus
   }
 }
 
-const mapDispatch = (dispatch) => ({
+const mapDispatch = (dispatch, ownProps) => ({
   fetchInitialData(eventId) {
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
     dispatch(fetchSpotifyPlaylist(eventId))
+    dispatch(updateSpotifyPlaylist(eventId))
   },
-  startParty(eventId, token, spotifyUserId) {
-    console.log("location based checkin worked!")
-    dispatch(fetchPlaylist(eventId, token, spotifyUserId))
+  startParty(spotifyUri, eventId, hostStat) {
+    dispatch(startSpotifyPlaylist(spotifyUri))
+    dispatch(startEvent(eventId, hostStat))
+    dispatch(pollingCurrentSong(true, eventId))
+  },
+  pausePlaylist(spotifyUri) {
+    dispatch(pauseSpotifyPlaylist())
   },
   prioritize(eventId) {
     dispatch(prioritizeSongs(eventId))
+  },
+  updatePlaylist(eventId) {
+    dispatch(updateSpotifyPlaylist(eventId))
+  },
+  endEvent(eventId, end) {
+    dispatch(updateSpotifyPlaylist(eventId, end))
+      .then(event => {
+        dispatch(deletePlaylistSongs(eventId))
+        dispatch(endEvent(eventId))
+      })
+    ownProps.history.push('/eventList/')
+  },
+  polling(poll, eventId) {
+    dispatch(pollingCurrentSong(poll, eventId))
   }
 })
 
 export default connect(mapState, mapDispatch)(PartyView)
-
-/**
- * PROP TYPES
- */

@@ -1,4 +1,4 @@
-import {createStore, combineReducers, applyMiddleware} from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
 import createLogger from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 import { composeWithDevTools } from 'redux-devtools-extension'
@@ -12,12 +12,25 @@ import eventUsers from './eventUsers'
 import playlist from './playlist'
 import spotifyPlaylist from './spotifyPlaylist'
 import playlistSongs from './playlistSongs'
+import error from './errorHandler'
 
-const reducer = combineReducers({user, events, newEvent, songs, users, invitedUsers, eventUsers, playlistSongs, playlist, spotifyPlaylist})
+const reducer = combineReducers({
+  user,
+  error,
+  users,
+  songs,
+  events,
+  playlist,
+  newEvent,
+  eventUsers,
+  invitedUsers,
+  playlistSongs,
+  spotifyPlaylist,
+})
 
 const middleware = composeWithDevTools(applyMiddleware(
   thunkMiddleware,
-  createLogger({collapsed: true})
+  createLogger({ collapsed: true })
 ))
 const store = createStore(reducer, middleware)
 
@@ -25,11 +38,11 @@ export default store
 export * from './user'
 export * from './songs'
 export * from './events'
+export * from './playlist'
 export * from './newEvent'
 export * from './userList'
 export * from './guestList'
 export * from './eventUsers'
-export * from './playlist'
-export * from './spotifyPlaylist'
 export * from './playlistSongs'
-
+export * from './spotifyPlaylist'
+export * from './errorHandler'

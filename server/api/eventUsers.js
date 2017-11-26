@@ -11,20 +11,20 @@ router.put('/rsvp/:eventId/:userId', (req, res, next) => {
       eventId: req.params.eventId
     }
   })
-  .then(eventUser => eventUser.update({isAttending: req.body.rsvp}))
-  .then(updatedEventUser => {
-    res.json(updatedEventUser)
-  })
-  .catch(next)
+    .then(eventUser => eventUser.update({ isAttending: req.body.rsvp }))
+    .then(updatedEventUser => {
+      res.json(updatedEventUser)
+    })
+    .catch(next)
 })
 
 // Check a User into an event
 router.put('/checkin/:eventId', (req, res, next) => {
-  EventUser.update({atEvent: true}, {where: {userId: req.user.id, eventId: req.params.eventId} })
-  .then(guest => {
-    console.log(guest, "Event Has Updated")
-    res.send(guest)
-  })
+  EventUser.update({ atEvent: true }, { where: { userId: req.user.id, eventId: req.params.eventId } })
+    .then(guest => {
+      console.log(guest, "Event Has Updated")
+      res.send(guest)
+    })
 })
 
 // Get events that a user hosted in descending order
@@ -38,24 +38,29 @@ router.get('/:userId/hosted', (req, res, next) => {
       ['createdAt', 'DESC'],
     ]
   })
-  .then(hostedEvents => {
-    res.send(hostedEvents)
-  })
-  .catch(next)
+    .then(hostedEvents => {
+      res.send(hostedEvents)
+    })
+    .catch(next)
 })
 
 // Checks id this particular user is the host of the party
 router.get('/isHost/:eventId', (req, res, next) => {
+  let isHost;
   EventUser.findOne({
     where: {
       userId: req.user.id,
       eventId: req.params.eventId,
-      isHost: true
     }
   })
-  .then(host => {
-    res.send(host.isHost)
-  })
+    .then(host => {
+      isHost = host.isHost
+      return Event.findById(req.params.eventId)
+    })
+    .then(event => {
+      const { hasStarted } = event
+      res.send({ isHost, hasStarted })
+    })
 })
 
 router.get('/hasCheckedIn/:eventId', (req, res, next) => {
@@ -65,9 +70,9 @@ router.get('/hasCheckedIn/:eventId', (req, res, next) => {
       eventId: req.params.eventId,
     }
   })
-  .then(guest => {
-    res.send(guest.isAttending)
-  })
+    .then(guest => {
+      res.send(guest.atEvent)
+    })
 })
 
 router.get('/:userId/events', (req, res, next) => {
@@ -79,8 +84,8 @@ router.get('/:userId/events', (req, res, next) => {
       ['createdAt', 'DESC'],
     ],
   })
-  .then(userEvents => {
-    res.send(userEvents)
-  })
-  .catch(next)
+    .then(userEvents => {
+      res.send(userEvents)
+    })
+    .catch(next)
 })

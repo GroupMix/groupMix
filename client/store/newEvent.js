@@ -1,5 +1,4 @@
 import axios from 'axios'
-// import history from '../history'
 import { browserHistory } from 'react-router'
 const SpotifyWebApi = require('spotify-web-api-js');
 const SpotifyApi = new SpotifyWebApi()
@@ -20,9 +19,12 @@ const getEvent = event => ({ type: GET_EVENT, event })
 /* THUNK CREATORS */
 export const createNewEvent = (createdEvent, history) =>
   dispatch => {
-    console.log("in event thunk")
-    SpotifyApi.setAccessToken(createdEvent.token)
-    SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
+    axios.get('/api/spotifyPlaylist/refreshtoken')
+    .then(res => {
+      const newToken = res.data
+      SpotifyApi.setAccessToken(newToken)
+     return SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
+    })
       .then((playlist) => {
         createdEvent.uri = playlist.uri
         createdEvent.playlistId = playlist.id
@@ -45,6 +47,7 @@ export const fetchEvent = (eventId) =>
       .then(event => dispatch(getEvent(event)))
       .catch(err => console.log(err))
 
+
 export const editEvent = (eventId, event) =>
   dispatch => {
     axios.put(`/api/events/${eventId}`, event)
@@ -57,6 +60,24 @@ export const editEvent = (eventId, event) =>
       .catch(err => console.log(err))
   }
 
+export const startEvent = (eventId, hostStat) =>
+  dispatch => {
+    if (!hostStat) return 'Only the host can start the event'
+    return axios.put(`/api/events/start/${eventId}`, { hostStat })
+      .then(res => res.data)
+      .then(updatedEvent => {
+        dispatch(getEvent(updatedEvent[1][0]))
+      })
+  }
+
+  export const endEvent = (eventId) => {
+    axios.put(`/api/events/end/${eventId}`)
+    .then(res => res.data)
+    .then(updatedEvent => {
+      console.log('event ended', updatedEvent)
+      dispatchEvent(getEvent(updatedEvent[1][0]))
+    })
+  }
 
 /* REDUCER */
 export default function (state = newEvent, action) {

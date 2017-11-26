@@ -11,25 +11,9 @@ const Event = db.define('event', {
     type: Sequelize.DATEONLY,
     allowNull: false,
   },
-  time: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  address: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  city: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  state: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
   type: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   genres: {
     type: Sequelize.ARRAY(Sequelize.STRING),
@@ -136,6 +120,10 @@ const Event = db.define('event', {
     defaultValue: 2.0
   },
   hasEnded: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+  hasStarted: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
