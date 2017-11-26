@@ -127,7 +127,7 @@ export class EventSettings extends Component {
   }
 
   render() {
-    const { handleSubmit, user } = this.props
+    const { handleModal, handleSubmit, user } = this.props
 
     let eventname = this.state.eventname
     let date = this.state.date
@@ -170,7 +170,10 @@ export class EventSettings extends Component {
 
       <div>
         <Segment inverted>
-          <Form inverted onSubmit={(evt) => handleSubmit(evt, this.props.event.id, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
+          <Form inverted onSubmit={(evt) => {
+            handleSubmit(evt, this.props.event.id, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token);
+            handleModal(evt)
+          }}>
             <Segment inverted>
               <Form.Field
                 control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
@@ -268,7 +271,7 @@ const mapDispatch = (dispatch, ownProps) => {
 
       let updatedEvent = { name, eventId, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token }
 
-      dispatch(editEvent(eventId, updatedEvent, history))
+      dispatch(editEvent(eventId, updatedEvent))
       dispatch(prioritizeSongs(eventId))
     },
   }

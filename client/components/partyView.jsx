@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist, hasCheckedIn, checkUserIn } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist, hasCheckedIn, checkUserIn, prioritizeSongs } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 import socket from '../socket'
@@ -31,6 +31,7 @@ class PartyView extends React.Component {
       spotifyUri: '',
       isHost: false,
       isCheckedIn: false,
+      editModalShowing: false
     }
     // this.handleAdd = this.handleAdd.bind(this)
     // this.handleSubmit = this.handleSubmit.bind(this)
@@ -70,6 +71,11 @@ class PartyView extends React.Component {
       })
   }
 
+  handleModal = (evt) => {
+    evt.preventDefault();
+    this.state.editModalShowing ? this.setState({ editModalShowing: false}) : this.setState({ editModalShowing: true })
+  }
+
 
   render() {
     // console.log('songsData', this.state.songsData)
@@ -82,11 +88,7 @@ class PartyView extends React.Component {
 
     const { email, user, eventId, guestlist, event, spotifyPlaylist, startParty } = this.props
     const { isHost, isCheckedIn } = this.state
-    // const currentEvent = this.props.events.filter(event => {
-    //   return (event.id === this.props.match.params.eventId)
-    //   })
-    //   console.log('CURRENT EVENT!', currentEvent)
-    // let spotifyUser;
+
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl;
 
@@ -124,12 +126,18 @@ class PartyView extends React.Component {
           <Segment inverted>
             {
               isHost &&
-                <Modal trigger={<Button>Edit Event Settings</Button>}>
+              <div>
+              <Button onClick={(evt) => this.handleModal(evt)}>Edit Event Settings</Button>
+                <Modal open={this.state.editModalShowing}>
                   <Modal.Header>Event Settings</Modal.Header>
                   <Modal.Content >
-                    <EventSettings event={event} />
+                    <EventSettings
+                    event={event}
+                    handleModal={this.handleModal}
+                    />
                   </Modal.Content>
                 </Modal>
+                </div>
             }
           </Segment>
         </Segment>
@@ -205,6 +213,9 @@ const mapDispatch = (dispatch) => ({
   startParty(eventId, token, spotifyUserId) {
     console.log("location based checkin worked!")
     dispatch(fetchPlaylist(eventId, token, spotifyUserId))
+  },
+  prioritize(eventId) {
+    dispatch(prioritizeSongs(eventId))
   }
 })
 

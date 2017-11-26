@@ -42,13 +42,10 @@ router.put('/:eventId', (req, res, next) => {
   Event.update(req.body, {
     where: {
       id: req.params.eventId
-    }
+    }, returning: true
   })
-    .then(event => {
-      return event
-    })
     .then(updatedEvent => {
-      res.json(updatedEvent)
+      res.json(updatedEvent[1][0])
     })
     .catch(next)
 })
