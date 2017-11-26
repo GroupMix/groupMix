@@ -29,7 +29,7 @@ module.exports = (io) => {
       let key = userIdForSocket
       coordsCache[key] = { lat, long }
       console.log("coords cache",coordsCache)
-      console.log("sock IDDD",userIdForSocket)
+      console.log("sock ID",userIdForSocket)
       //find most recent Event for user from DB
       return User.findById(userIdForSocket)
         .then((user) => {
@@ -48,7 +48,6 @@ module.exports = (io) => {
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
-          console.log("val", Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId))
           if (Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId)){
           let lat1 = coordsCache[upcomingEvent.userId.toString()].lat
           let lon1 = coordsCache[upcomingEvent.userId.toString()].long
@@ -63,14 +62,14 @@ module.exports = (io) => {
              return userToCheckIn.update({atEvent: true})
             })
             console.log('user has been checked in with geolocation')
-            socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 
+            socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId)
           }
           }
         })
         .catch((err)=>{
           console.log("SOCKET ERROR", err)
         })
-        
+
     }))
 
     socket.on('userArrived', (eventId, userId) => {
