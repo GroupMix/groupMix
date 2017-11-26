@@ -15,7 +15,8 @@ import {
   endEvent,
   deletePlaylistSongs,
   pollingCurrentSong,
-  pauseSpotifyPlaylist
+  pauseSpotifyPlaylist,
+  prioritizeSongs
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
@@ -108,7 +109,13 @@ class PartyView extends React.Component {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
         console.log('updating event', eventId)
-        this.props.updatePlaylist(+eventId)
+        this.props.getPriority(eventId)
+        .then(()=>{
+          this.props.fetchInitialData(eventId)
+        })
+        .then(()=>{
+          this.props.updatePlaylist(+eventId)
+        })
       }
     })
 
@@ -155,7 +162,7 @@ class PartyView extends React.Component {
                 itemsPerRow={3}
               >
                 {
-                  guestlist.length > 1 ?
+                  guestlist.length >= 1 ?
                     guestlist.map(guest => {
                       return (
                         <GuestListItem key={guest.id} user={guest} eventId={eventId} />
@@ -221,6 +228,9 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))
+  },
+  getPriority(eventId){
+    dispatch(prioritizeSongs(eventId))
   }
 })
 
