@@ -10,16 +10,16 @@ import {
 import '../styles/_usersList.scss'
 
 const GuestListItem = ({ user, eventId }) => {
-  let attending;
+  let atEvent;
   let status;
   let color;
   if(user.eventUser) {
-    user.eventUser.isAttending === true ? attending = 'thumbs up' : attending = 'thumbs down'
-    user.eventUser.isAttending === true ? status = 'Attending' : status = 'Currently Not Attending'
-    user.eventUser.isAttending === true ? color = 'green' : color = 'red'
+    user.eventUser.atEvent === true ? atEvent = 'thumbs up' : atEvent = 'thumbs down'
+    user.eventUser.atEvent === true ? status = 'At Event' : status = 'Not here yet'
+    user.eventUser.atEvent === true ? color = 'green' : color = 'red'
   } else {
-    attending = 'thumbs down'
-    status = 'Currently not attending'
+    atEvent = 'thumbs down'
+    status = 'Not here yet'
     color = 'red'
   }
   return (
@@ -31,7 +31,7 @@ const GuestListItem = ({ user, eventId }) => {
           </Card.Content>
           <Card.Content extra>
             <a color={color}>
-              <Icon name={attending} color={color} />
+              <Icon name={atEvent} color={color} />
               {status}
               </a>
           </Card.Content>
