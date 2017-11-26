@@ -25,7 +25,7 @@ router.get('/:eventId', (req, res, next) => {
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
-      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true } })
+      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true, atEvent: true } })
       return event
     })
     .then(event => {
