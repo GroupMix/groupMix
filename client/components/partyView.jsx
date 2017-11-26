@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
-import { 
+import {
   fetchInvitedUsers,
   fetchEvent,
   fetchSpotifyPlaylist,
@@ -18,6 +18,7 @@ import {
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
+import ErrorModal from './errorModal'
 import history from '../history'
 import socket from '../socket'
 
@@ -49,7 +50,6 @@ class PartyView extends React.Component {
   componentWillMount() {
     this.getUserStatus(+this.props.eventId)
     this.props.fetchInitialData(this.props.eventId)
-    pollingCurrentSong(true)
   }
 
   componentWillUnmount() {
@@ -61,6 +61,9 @@ class PartyView extends React.Component {
     isHost(eventId)
       .then(res => {
         hostStatus = res.data
+        if (hostStatus) {
+          pollingCurrentSong(true)
+        }
         return hasCheckedIn(eventId)
       })
       .then(res => {
@@ -79,6 +82,7 @@ class PartyView extends React.Component {
         socket.emit('userArrived', eventId, user.id)
       })
   }
+
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
       console.log(this.props.eventId)
@@ -118,6 +122,7 @@ class PartyView extends React.Component {
             <div>
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
+              <ErrorModal />
               <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
                 <EndEventModal endEvent={this.handleEndEvent} />
               </Modal>
@@ -191,7 +196,7 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(updateSpotifyPlaylist(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {
-    startSpotifyPlaylist(spotifyUri)
+    dispatch(startSpotifyPlaylist(spotifyUri))
     dispatch(startEvent(eventId, hostStat))
   },
   updatePlaylist(eventId) {
@@ -199,10 +204,10 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
-    .then(event => {
-      dispatch(deletePlaylistSongs(eventId))
-      dispatch(endEvent(eventId))
-    })
+      .then(event => {
+        dispatch(deletePlaylistSongs(eventId))
+        dispatch(endEvent(eventId))
+      })
     ownProps.history.push('/eventList/')
   }
 })

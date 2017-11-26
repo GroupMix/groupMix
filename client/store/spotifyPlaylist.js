@@ -3,6 +3,8 @@ import axios from 'axios'
 import { browserHistory } from 'react-router'
 import SpotifyWebApi from 'spotify-web-api-js'
 const SpotifyApi = new SpotifyWebApi()
+import { ERROR } from 'socket.io-parser';
+import { errorState } from './errorHandler'
 
 /* ACTION TYPES*/
 const GET_SPOTIFY_PLAYLIST = 'GET_SPOTIFY_PLAYLIST'
@@ -53,18 +55,29 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
       .catch(err => console.log(err))
   }
 
-export const startSpotifyPlaylist = (spotifyUri) => {
-  axios.get('/api/spotifyPlaylist/refreshtoken')
-    .then(res => res.data)
-    .then(token => {
-      SpotifyApi.setAccessToken(token)
-      SpotifyApi.play({ 'context_uri': spotifyUri })
-    })
-}
+export const startSpotifyPlaylist = (spotifyUri) =>
+  dispatch => {
+    axios.get('/api/spotifyPlaylist/refreshtoken')
+      .then(res => res.data)
+      .then(token => {
+        SpotifyApi.setAccessToken(token)
+        SpotifyApi.getMyDevices()
+          .then(data => {
+            console.log(data, 'My devices')
+            SpotifyApi.play({ 'device_id': data.devices[0].id, 'context_uri': spotifyUri })
+          })
+          .catch(err => {
+            dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+            console.log(err)
+          })
+      })
+      .catch(err => console.log(err, 'error'))
+  }
 
 let interval
 export const pollingCurrentSong = (poll) => {
-  console.log('got to polling')
+  console.log('polling')
+  let error;
   if (poll) {
     interval = setInterval(() => {
       return axios.get('/api/spotifyPlaylist/refreshtoken')
@@ -72,16 +85,19 @@ export const pollingCurrentSong = (poll) => {
           let token = res.data
           SpotifyApi.setAccessToken(token)
           return SpotifyApi.getMyCurrentPlayingTrack()
-          .then(track => {
-            console.log(track)
-            axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
-          })
-          .catch(err => console.log(err))
+            .then(track => {
+              console.log('polling', track)
+              if (track.is_playing) {
+                console.log(track.item.name, 'has played')
+                axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
+              }
+            })
         })
-    }, 3000)
+        .catch(err => console.log(err, 'err'))
+    }, 30000)
   }
   if (!poll) {
-    console.log(interval)
+    console.log(interval, 'stopped pollling')
     clearInterval(interval)
   }
 }
