@@ -14,7 +14,8 @@ import {
   startEvent,
   endEvent,
   deletePlaylistSongs,
-  pollingCurrentSong
+  pollingCurrentSong,
+  pauseSpotifyPlaylist
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
@@ -53,16 +54,19 @@ class PartyView extends React.Component {
   }
 
   componentWillUnmount() {
-    pollingCurrentSong(false)
+    this.props.polling(false)
   }
 
   getUserStatus = (eventId) => {
+    const { polling } = this.props
     let hostStatus;
+    let hasStarted
     isHost(eventId)
       .then(res => {
-        hostStatus = res.data
-        if (hostStatus) {
-          pollingCurrentSong(true)
+        hostStatus = res.data.isHost
+        hasStarted = res.data.hasStarted
+        if (hostStatus && hasStarted) {
+          polling(true, eventId)
         }
         return hasCheckedIn(eventId)
       })
@@ -93,7 +97,7 @@ class PartyView extends React.Component {
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist } = this.props
     const { isHost, isCheckedIn } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
@@ -121,6 +125,7 @@ class PartyView extends React.Component {
             (isHost && hasStarted) &&
             <div>
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
+              <Button style={{ backgroundColor: '#8038AC', color: 'white' }} onClick={() => pausePlaylist(spotifyUri)}>Pause</Button>
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
               <ErrorModal />
               <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
@@ -198,6 +203,10 @@ const mapDispatch = (dispatch, ownProps) => ({
   startParty(spotifyUri, eventId, hostStat) {
     dispatch(startSpotifyPlaylist(spotifyUri))
     dispatch(startEvent(eventId, hostStat))
+    dispatch(pollingCurrentSong(true, eventId))
+  },
+  pausePlaylist(spotifyUri) {
+    dispatch(pauseSpotifyPlaylist())
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
@@ -209,6 +218,9 @@ const mapDispatch = (dispatch, ownProps) => ({
         dispatch(endEvent(eventId))
       })
     ownProps.history.push('/eventList/')
+  },
+  polling(poll, eventId) {
+    dispatch(pollingCurrentSong(poll, eventId))
   }
 })
 
