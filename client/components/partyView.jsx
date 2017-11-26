@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
-import { 
+import {
   fetchInvitedUsers,
   fetchEvent,
   fetchSpotifyPlaylist,
@@ -13,10 +13,13 @@ import {
   startSpotifyPlaylist,
   startEvent,
   endEvent,
-  deletePlaylistSongs
+  deletePlaylistSongs,
+  pollingCurrentSong,
+  pauseSpotifyPlaylist
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
+import ErrorModal from './errorModal'
 import history from '../history'
 import socket from '../socket'
 
@@ -50,11 +53,21 @@ class PartyView extends React.Component {
     this.props.fetchInitialData(this.props.eventId)
   }
 
+  componentWillUnmount() {
+    this.props.polling(false)
+  }
+
   getUserStatus = (eventId) => {
+    const { polling } = this.props
     let hostStatus;
+    let hasStarted
     isHost(eventId)
       .then(res => {
-        hostStatus = res.data
+        hostStatus = res.data.isHost
+        hasStarted = res.data.hasStarted
+        if (hostStatus && hasStarted) {
+          polling(true, eventId)
+        }
         return hasCheckedIn(eventId)
       })
       .then(res => {
@@ -73,6 +86,7 @@ class PartyView extends React.Component {
         socket.emit('userArrived', eventId, user.id)
       })
   }
+
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
       console.log(this.props.eventId)
@@ -83,7 +97,7 @@ class PartyView extends React.Component {
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist } = this.props
     const { isHost, isCheckedIn } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
@@ -111,7 +125,9 @@ class PartyView extends React.Component {
             (isHost && hasStarted) &&
             <div>
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
+              <Button style={{ backgroundColor: '#8038AC', color: 'white' }} onClick={() => pausePlaylist(spotifyUri)}>Pause</Button>
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
+              <ErrorModal />
               <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
                 <EndEventModal endEvent={this.handleEndEvent} />
               </Modal>
@@ -185,19 +201,26 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(updateSpotifyPlaylist(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {
-    startSpotifyPlaylist(spotifyUri)
+    dispatch(startSpotifyPlaylist(spotifyUri))
     dispatch(startEvent(eventId, hostStat))
+    dispatch(pollingCurrentSong(true, eventId))
+  },
+  pausePlaylist(spotifyUri) {
+    dispatch(pauseSpotifyPlaylist())
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
   },
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
-    .then(event => {
-      dispatch(deletePlaylistSongs(eventId))
-      dispatch(endEvent(eventId))
-    })
+      .then(event => {
+        dispatch(deletePlaylistSongs(eventId))
+        dispatch(endEvent(eventId))
+      })
     ownProps.history.push('/eventList/')
+  },
+  polling(poll, eventId) {
+    dispatch(pollingCurrentSong(poll, eventId))
   }
 })
 
