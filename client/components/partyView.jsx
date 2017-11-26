@@ -1,11 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, updateSpotifyPlaylist, hasCheckedIn, checkUserIn, startSpotifyPlaylist, startEvent } from '../store'
+import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
+import { 
+  fetchInvitedUsers,
+  fetchEvent,
+  fetchSpotifyPlaylist,
+  isHost,
+  updateSpotifyPlaylist,
+  hasCheckedIn,
+  checkUserIn,
+  startSpotifyPlaylist,
+  startEvent,
+  endEvent,
+  deletePlaylistSongs
+} from '../store'
 import GuestListItem from './guestListItem.jsx'
+import EndEventModal from './endEventModal'
 import history from '../history'
 import socket from '../socket'
+
 
 /**
  * COMPONENT
@@ -27,6 +41,7 @@ class PartyView extends React.Component {
       spotifyUri: '',
       isHost: false,
       isCheckedIn: false,
+      showEndEventModal: false,
     }
   }
 
@@ -58,7 +73,14 @@ class PartyView extends React.Component {
         socket.emit('userArrived', eventId, user.id)
       })
   }
-
+  handleEndEvent = (endedEvent) => {
+    if (endedEvent) {
+      console.log(this.props.eventId)
+      this.props.endEvent(this.props.eventId, true, this.props.user.id)
+    } else {
+      this.setState({ showEndEventModal: false })
+    }
+  }
 
   render() {
     const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus } = this.props
@@ -86,8 +108,14 @@ class PartyView extends React.Component {
             <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Start The Event!</Button>
           }
           {
-            (isHost && hasStarted) && 
-            <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
+            (isHost && hasStarted) &&
+            <div>
+              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Play</Button>
+              <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
+              <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
+                <EndEventModal endEvent={this.handleEndEvent} />
+              </Modal>
+            </div>
           }
           {
             (hasStarted && !isCheckedIn && !isHost) &&
@@ -120,10 +148,7 @@ class PartyView extends React.Component {
                     : <h1>No one Has Arrived</h1>
                 }
               </Card.Group>
-
-
             </Grid.Column>
-
             <Grid.Column  >
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
@@ -152,7 +177,7 @@ const mapState = (state, ownProps) => {
   }
 }
 
-const mapDispatch = (dispatch) => ({
+const mapDispatch = (dispatch, ownProps) => ({
   fetchInitialData(eventId) {
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
@@ -165,6 +190,14 @@ const mapDispatch = (dispatch) => ({
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
+  },
+  endEvent(eventId, end) {
+    dispatch(updateSpotifyPlaylist(eventId, end))
+    .then(event => {
+      dispatch(deletePlaylistSongs(eventId))
+      dispatch(endEvent(eventId))
+    })
+    ownProps.history.push('/eventList/')
   }
 })
 

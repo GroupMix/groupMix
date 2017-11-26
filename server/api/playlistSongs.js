@@ -141,6 +141,18 @@ router.get('/:playlistId', (req, res, next) => {
     .catch(next);
 });
 
+router.delete('/clearPLSongs/:eventId', (req, res, next) => {
+  Playlist.findOne({ where: { eventId: req.params.eventId } })
+    .then(playlist => playlist.id)
+    .then(playlistId => {
+      console.log(playlistId)
+      return PlaylistSong.destroy({ where: { playlistId: playlistId } })
+    })
+    .then(deletedSongs => {
+      res.send('songs deleted')
+    })
+    .catch(next)
+})
 router.delete('/:playlistId/:songId', (req, res, next) => {
   let playId = req.params.playlistId;
   let songId = req.params.songId;
@@ -151,6 +163,7 @@ router.delete('/:playlistId/:songId', (req, res, next) => {
     .catch(next);
 });
 
+
 router.put('/:playlistId/:songId', (req, res, next) => {
   let playId = req.params.playlistId;
   let songId = req.params.songId;
@@ -159,6 +172,3 @@ router.put('/:playlistId/:songId', (req, res, next) => {
     .then(song => res.status(201).send(song))
     .catch(next);
 });
-
-
-
