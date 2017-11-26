@@ -15,11 +15,7 @@ import {
   endEvent,
   deletePlaylistSongs,
   pollingCurrentSong,
-<<<<<<< HEAD
   pauseSpotifyPlaylist,
-=======
-  pauseSpotifyPlaylist
->>>>>>> master
   prioritizeSongs
 } from '../store'
 
@@ -50,8 +46,8 @@ class PartyView extends React.Component {
       spotifyUri: '',
       isHost: false,
       isCheckedIn: false,
-      editModalShowing: false
-      showEndEventModal: false,
+      editModalShowing: false,
+      showEndEventModal: false
     }
   }
 
