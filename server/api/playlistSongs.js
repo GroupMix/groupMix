@@ -47,11 +47,11 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
         else requestCount[key]++
         return playlistSong.songId
       })
- 
+
       let promisesArr = idsArr.map((id) => {
         return Song.findById(id)
       })
-      
+
       //returns promise that resolves to array of values
       Bluebird.all(promisesArr)
         .then((songsArr) => {
@@ -73,7 +73,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
                 match += 'mediumpopular'
             }
             if (genreMatch) {
-              pointsToAdd += 24 
+              pointsToAdd += 24
               match += ('genrematchof' + matchGenre)
             }
             if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) {
@@ -105,13 +105,13 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
               .then((playlistSong) => {
                 playlistSong.forEach((duplicateSong) => {
                  duplicateSong.update({ priority: pointsToAdd, match: match })
-                }) 
+                })
               })
           })
           Bluebird.all(songMatchPromisesArr)
         })
     })
-   
+
 })
 
 
@@ -145,7 +145,6 @@ router.delete('/clearPLSongs/:eventId', (req, res, next) => {
   Playlist.findOne({ where: { eventId: req.params.eventId } })
     .then(playlist => playlist.id)
     .then(playlistId => {
-      console.log(playlistId)
       return PlaylistSong.destroy({ where: { playlistId: playlistId } })
     })
     .then(deletedSongs => {
