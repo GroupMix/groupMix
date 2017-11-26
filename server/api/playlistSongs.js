@@ -163,6 +163,17 @@ router.delete('/:playlistId/:songId', (req, res, next) => {
     .catch(next);
 });
 
+router.put('/markAsPlayed/:spotifySongId', (req, res, next) => {
+  Song.findOne({where: {spotifySongId: req.params.spotifySongId}})
+  .then(song => {
+    return PlaylistSong.update({played: true}, {where: {songId: song.id}})
+  })
+  .then(() => {
+    console.log('song updated')
+    res.sendStatus(204)
+  })
+  .catch(next)
+})
 
 router.put('/:playlistId/:songId', (req, res, next) => {
   let playId = req.params.playlistId;

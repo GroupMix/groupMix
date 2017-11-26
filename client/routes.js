@@ -1,23 +1,23 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import {Router} from 'react-router'
-import {Route, Switch} from 'react-router-dom'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Router } from 'react-router'
+import { Route, Switch } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import history from './history'
-import {Main, Login, Signup, UserHome, EventList, NewEvent, EventGenres, LandingPage, UsersList, Playlist, PartyView} from './components'
-import {withRouter} from 'react-router-dom'
-import {me} from './store'
+import { Main, Login, Signup, UserHome, EventList, NewEvent, EventGenres, LandingPage, UsersList, Playlist, PartyView } from './components'
+import { withRouter } from 'react-router-dom'
+import { me } from './store'
 
 /**
  * COMPONENT
  */
 class Routes extends Component {
-  componentDidMount () {
+  componentDidMount() {
     this.props.loadInitialData()
   }
 
-  render () {
-    const {isLoggedIn} = this.props
+  render() {
+    const { isLoggedIn } = this.props
 
     return (
       <Router history={history}>
@@ -31,15 +31,15 @@ class Routes extends Component {
             {
               isLoggedIn &&
               <Switch>
-              {/* Routes placed here are only available after logging in */}
+                {/* Routes placed here are only available after logging in */}
 
-              <Route path="/events/:eventId/partyview" component={PartyView} />
-              <Route path="/:eventId/users/invite" component={UsersList} />
-              <Route path="/viewPlaylist/:eventId" component={Playlist} />
-              <Route path="/eventList" component={EventList} />
-              <Route path="/events/:eventId" component={UserHome} />
-              <Route path="/newevent" component={NewEvent} />
-                </Switch>
+                <Route path="/events/:eventId/partyview" component={PartyView} />
+                <Route path="/:eventId/users/invite" component={UsersList} />
+                <Route path="/viewPlaylist/:eventId" component={Playlist} />
+                <Route path="/eventList" component={EventList} />
+                <Route path="/events/:eventId" component={UserHome} />
+                <Route path="/newevent" component={NewEvent} />
+              </Switch>
             }
             {/* Displays our Login component as a fallback */}
             <Route component={Login} />
@@ -64,7 +64,7 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch) => {
   return {
-    loadInitialData () {
+    loadInitialData() {
       dispatch(me())
     }
   }
