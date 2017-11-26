@@ -28,11 +28,11 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
       hostAcousticness = event.acousticness * 0.9;
       hostValence = event.valence * 0.9
       hostGenres = event.genres
-      hostDanceabilityWeight = event.danceabilityWeight;
-      hostLoudnessWeight = event.loudnessWeight;
-      hostEnergyWeight = event.energyWeight ;
-      hostAcousticnessWeight = event.acoustisnessWeight;
-      hostValenceWeight = event.valenceWeight;
+      hostDanceabilityWeight = event.danceabilityWeight !== 0 ? event.danceabilityWeight : 1;
+      hostLoudnessWeight = event.loudnessWeight !== 0 ? event.loudnessWeight : 1;
+      hostEnergyWeight = event.energyWeight !== 0 ? event.energyWeight : 1;
+      hostAcousticnessWeight = event.acoustisnessWeight !== 0 ? event.acousticnessWeight : 1;
+      hostValenceWeight = event.valenceWeight !== 0 ? event.valenceWeight : 1;
       return Playlist.findOne({ where: { eventId: req.params.eventId } })
     })
     .then((playlist) => {
@@ -68,6 +68,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
                 pointsToAdd += 4
             }
             if (genreMatch) pointsToAdd += 15
+
             if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) pointsToAdd += (6* hostDanceabilityWeight)
             if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) pointsToAdd += (4* hostLoudnessWeight)
             if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) pointsToAdd += (5*hostEnergyWeight)
@@ -77,10 +78,12 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
             let keyName = song.id.toString()
             if (requestCount[keyName] > 1){pointsToAdd += requestCount[keyName] * 4}
 
+
            //produces promise warning in back-end console; optimize if time
               return PlaylistSong.findAll({where: {songId: song.id}})
               .then((playlistSong) => {
                 playlistSong.forEach((duplicateSong)=>{
+                  console.log('POINTS TO ADD', pointsToAdd);
                   return duplicateSong.update({priority: pointsToAdd})
                 })
               })

@@ -7,6 +7,8 @@ const SpotifyApi = new SpotifyWebApi()
 /* ACTION TYPES*/
 const CREATE_EVENT = 'CREATE_EVENT'
 const GET_EVENT = 'GET_EVENT'
+const UPDATE_EVENT = 'UPDATE_EVENT'
+
 /* INITIAL STATE */
 const newEvent = {}
 
@@ -42,13 +44,16 @@ export const fetchEvent = (eventId) =>
       .then(event => dispatch(getEvent(event)))
       .catch(err => console.log(err))
 
+
 /* REDUCER */
 export default function (state = newEvent, action) {
   switch (action.type) {
     case CREATE_EVENT:
       return action.event
+
       case GET_EVENT:
       return action.event
+
     default:
       return state
   }

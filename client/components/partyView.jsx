@@ -4,11 +4,13 @@ import { connect } from 'react-redux'
 var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
-import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
 import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, fetchSpotifyPlaylist, isHost, fetchPlaylist, updateSpotifyPlaylist, hasCheckedIn, checkUserIn } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 import socket from '../socket'
+
+import EventSettings from './eventSettings';
 /**
  * COMPONENT
  */
@@ -51,21 +53,21 @@ class PartyView extends React.Component {
         return hasCheckedIn(eventId)
       })
       .then(guestStat => {
-        console.log(guesStat.data)
+        console.log(guestStat.data)
         this.setState({
           isCheckedIn: guestStat.data,
           isHost: hostStatus.data
         })
       })
   }
-  
+
   handleCheckin = (eventId, userId) => {
     console.log(userId)
     checkUserIn(eventId)
-    .then(user => {
-      this.setState({ isCheckedIn: true })
-      socket.emit('emmited', eventId, user.id)
-    })
+      .then(user => {
+        this.setState({ isCheckedIn: true })
+        socket.emit('emmited', eventId, user.id)
+      })
   }
 
 
@@ -80,6 +82,10 @@ class PartyView extends React.Component {
 
     const { email, user, eventId, guestlist, event, spotifyPlaylist, startParty } = this.props
     const { isHost, isCheckedIn } = this.state
+    // const currentEvent = this.props.events.filter(event => {
+    //   return (event.id === this.props.match.params.eventId)
+    //   })
+    //   console.log('CURRENT EVENT!', currentEvent)
     // let spotifyUser;
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl;
@@ -101,17 +107,33 @@ class PartyView extends React.Component {
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
           <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
+          <Segment inverted>
           {
             isHost &&
             <div>
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(eventId, user.access, user.user.spotifyUserId)}>Start The Event!</Button>
             </div>
           }
+          </Segment>
+          <Segment inverted>
           {
             isCheckedIn &&
-            <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id) }>Check-in</Button>
+            <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
+          </Segment>
+          <Segment inverted>
+            {
+              isHost &&
+                <Modal trigger={<Button>Edit Event Settings</Button>}>
+                  <Modal.Header>Event Settings</Modal.Header>
+                  <Modal.Content >
+                    <EventSettings event={event} />
+                  </Modal.Content>
+                </Modal>
+            }
+          </Segment>
         </Segment>
+
         <Segment inverted>
           <Grid
             divided
@@ -150,11 +172,16 @@ class PartyView extends React.Component {
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe>}
             </Grid.Column>
           </Grid>
+
         </Segment>
       </div>
     )
   }
 }
+
+// <Header as="h2" inverted color="purple" textAlign="center"  >Edit Event Settings
+// </Header>
+
 /**
  * CONTAINER
  */

@@ -133,7 +133,7 @@ export class NewEvent extends Component {
     let time = this.state.time
     let city = this.state.city
     let state = this.state.state
-    let zip = this.state.eventname
+    let zip = this.state.zip
     let address = this.state.address
     let type = this.state.type
     let genres = this.state.genres
