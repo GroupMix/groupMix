@@ -55,6 +55,15 @@ export const startEvent = (eventId, hostStat) =>
       })
   }
 
+  export const endEvent = (eventId) => {
+    axios.put(`/api/events/end/${eventId}`)
+    .then(res => res.data)
+    .then(updatedEvent => {
+      console.log('event ended', updatedEvent)
+      dispatchEvent(getEvent(updatedEvent[1][0]))
+    })
+  }
+
 // REDUCER
 /* REDUCER */
 export default function (state = newEvent, action) {

@@ -36,7 +36,6 @@ const GuestListItem = ({ user, eventId }) => {
               </a>
           </Card.Content>
         </Card>
-
   )
 }
 

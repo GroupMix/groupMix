@@ -22,14 +22,14 @@ export const fetchSpotifyPlaylist = (eventId) =>
       .catch(err => console.log(err))
   }
 
-export const updateSpotifyPlaylist = (eventId) =>
+export const updateSpotifyPlaylist = (eventId, endParty) =>
   dispatch => {
     let newPlaylistData = {};
     let spotifyUserId;
     let spotifyPlaylistId;
     let tracksToAdd;
 
-    axios.get(`/api/spotifyPlaylist/updatePlaylist/${eventId}`)
+    return axios.put(`/api/spotifyPlaylist/getPrioritizedSongs/${eventId}`, {endParty})
       .then(res => res.data)
       .then(data => {
         newPlaylistData = data
