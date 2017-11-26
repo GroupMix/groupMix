@@ -73,8 +73,10 @@ export const pollingCurrentSong = (poll) => {
           SpotifyApi.setAccessToken(token)
           return SpotifyApi.getMyCurrentPlayingTrack()
           .then(track => {
-            console.log(track, 'current playing track')
+            console.log(track)
+            axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
           })
+          .catch(err => console.log(err))
         })
     }, 3000)
   }
