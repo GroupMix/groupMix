@@ -36,6 +36,20 @@ router.post('/', (req, res, next) => {
     .catch(next)
 })
 
+// Edit an event
+router.put('/:eventId', (req, res, next) => {
+  Event.update(req.body, {
+    where: {
+      id: req.params.eventId
+    }, returning: true
+  })
+    .then(updatedEvent => {
+      res.json(updatedEvent[1][0])
+    })
+    .catch(next)
+})
+
+
 router.post('/user/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)
     .then(event => {

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import SpotifyWebApi from 'spotify-web-api-js'
-const SpotifyApi = new SpotifyWebApi()
 
 // ACTION TYPES
 const GET_EVENTS = 'GET_EVENTS';
@@ -33,8 +31,10 @@ export const cancelEvent = (eventId, userId) =>
 // REDUCER
 export default function (events = [], action) {
   switch (action.type) {
+
     case GET_EVENTS:
       return action.events
+
     case SET_RSVP:
       return events.map(event => {
         if (action.eventId === event.id) {
