@@ -29,7 +29,7 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
     let spotifyPlaylistId;
     let tracksToAdd;
 
-    return axios.put(`/api/spotifyPlaylist/getPrioritizedSongs/${eventId}`, {endParty})
+    return axios.put(`/api/spotifyPlaylist/getPrioritizedSongs/${eventId}`, { endParty })
       .then(res => res.data)
       .then(data => {
         newPlaylistData = data
@@ -60,6 +60,28 @@ export const startSpotifyPlaylist = (spotifyUri) => {
       SpotifyApi.setAccessToken(token)
       SpotifyApi.play({ 'context_uri': spotifyUri })
     })
+}
+
+let interval
+export const pollingCurrentSong = (poll) => {
+  console.log('got to polling')
+  if (poll) {
+    interval = setInterval(() => {
+      return axios.get('/api/spotifyPlaylist/refreshtoken')
+        .then(res => {
+          let token = res.data
+          SpotifyApi.setAccessToken(token)
+          return SpotifyApi.getMyCurrentPlayingTrack()
+          .then(track => {
+            console.log(track, 'current playing track')
+          })
+        })
+    }, 3000)
+  }
+  if (!poll) {
+    console.log(interval)
+    clearInterval(interval)
+  }
 }
 
 /* REDUCER */

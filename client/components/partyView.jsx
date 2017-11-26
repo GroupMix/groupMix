@@ -13,7 +13,8 @@ import {
   startSpotifyPlaylist,
   startEvent,
   endEvent,
-  deletePlaylistSongs
+  deletePlaylistSongs,
+  pollingCurrentSong
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
@@ -48,6 +49,11 @@ class PartyView extends React.Component {
   componentWillMount() {
     this.getUserStatus(+this.props.eventId)
     this.props.fetchInitialData(this.props.eventId)
+    pollingCurrentSong(true)
+  }
+
+  componentWillUnmount() {
+    pollingCurrentSong(false)
   }
 
   getUserStatus = (eventId) => {
