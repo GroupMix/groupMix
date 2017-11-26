@@ -33,10 +33,6 @@ const User = db.define('user', {
   },
 })
 
-User.afterCreate((user, options) => {
-   user.name = user.spotifyUserId
-});
-
 module.exports = User
 
 /**
