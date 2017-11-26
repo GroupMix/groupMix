@@ -6,6 +6,7 @@ const SpotifyApi = new SpotifyWebApi()
 /* ACTION TYPES*/
 const CREATE_EVENT = 'CREATE_EVENT'
 const GET_EVENT = 'GET_EVENT'
+
 /* INITIAL STATE */
 const newEvent = {}
 
@@ -50,12 +51,10 @@ export const startEvent = (eventId, hostStat) =>
     return axios.put(`/api/events/start/${eventId}`, { hostStat })
       .then(res => res.data)
       .then(updatedEvent => {
-        console.log('event updated', updatedEvent)
         dispatch(getEvent(updatedEvent[1][0]))
       })
   }
 
-// REDUCER
 /* REDUCER */
 export default function (state = newEvent, action) {
   switch (action.type) {

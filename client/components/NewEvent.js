@@ -250,9 +250,7 @@ export class NewEvent extends Component {
     )
   }
   renderError() {
-    console.log("HITTING IF")
     if (this.state.visible) {
-console.log("ERROR SHOWING")
       return (
         <Message
           onDismiss={this.handleDismiss}
