@@ -147,6 +147,29 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
           })
         .catch(next)
     })
+    .catch(next)
+
+})
+
+router.post('/', (req, res, next) => {
+  PlaylistSong.findOrCreate({
+    where: req.body
+  })
+    .then(song => {
+      res.status(201).json(song)
+    }
+    )
+    .catch(next);
+});
+
+router.get('/:playlistId/:songId', (req, res, next) => {
+  let playId = req.params.playlistId;
+  let songId = req.params.songId;
+  PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
+    .then(song => res.status(201).send(song))
+    .catch(next);
+});
+
 
 
   router.post('/', (req, res, next) => {
@@ -186,6 +209,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
       })
       .catch(next)
   })
+
   router.delete('/:playlistId/:songId', (req, res, next) => {
     let playId = req.params.playlistId;
     let songId = req.params.songId;

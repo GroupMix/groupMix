@@ -16,12 +16,14 @@ import {
   deletePlaylistSongs,
   pollingCurrentSong,
   pauseSpotifyPlaylist,
+  fetchPlaylistSongs,
   prioritizeSongs
 } from '../store'
 
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
+import PlaylistQueue from './playlistQueue'
 import history from '../history'
 import socket from '../socket'
 import EventSettings from './eventSettings';
@@ -107,13 +109,13 @@ class PartyView extends React.Component {
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, playlistSongs } = this.props
     const { isHost, isCheckedIn } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
+    console.log(spotifyUrl, 'url??????')
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
@@ -126,6 +128,10 @@ class PartyView extends React.Component {
           this.props.updatePlaylist(+eventId)
         })
       }
+    })
+    socket.on(`UpdatePlaylist/${eventId}`, () => {
+      console.log("Socket update playlist", eventId)
+      this.props.fetchInitialData(eventId)
     })
 
     return (
@@ -207,8 +213,11 @@ class PartyView extends React.Component {
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
             </Header>
-              {spotifyUrl &&
-                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="1000" frameBorder="0" allowtransparency="true"></iframe>}
+              {
+                spotifyUrl &&
+                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
+              }
+              <PlaylistQueue songs={playlistSongs}/> 
             </Grid.Column>
           </Grid>
 
@@ -232,7 +241,8 @@ const mapState = (state, ownProps) => {
     guestlist: state.invitedUsers,
     event: state.newEvent,
     spotifyPlaylist: state.spotifyPlaylist,
-    eventStatus: state.eventStatus
+    eventStatus: state.eventStatus,
+    playlistSongs: state.playlistSongs
   }
 }
 
@@ -242,6 +252,7 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchEvent(eventId))
     dispatch(fetchSpotifyPlaylist(eventId))
     dispatch(updateSpotifyPlaylist(eventId))
+    dispatch(fetchPlaylistSongs(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {
     dispatch(startSpotifyPlaylist(spotifyUri))
@@ -256,6 +267,7 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
+    dispatch(fetchPlaylistSongs(eventId))    
   },
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
