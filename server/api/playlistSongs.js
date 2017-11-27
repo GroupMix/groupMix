@@ -147,9 +147,6 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
           })
         .catch(next)
     })
-    .catch(next)
-
-})
 
 router.post('/', (req, res, next) => {
   PlaylistSong.findOrCreate({

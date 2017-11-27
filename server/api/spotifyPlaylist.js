@@ -92,7 +92,7 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
             let artistCache = []
             if (req.body.endParty) {
                 tracksWithInfo.forEach(track => {
-                        uriArr.push(`spotify:track:${track.spotifySongId}`)
+                    uriArr.push(`spotify:track:${track.spotifySongId}`)
                 })
             } else {
                 tracksWithInfo.forEach(track => {
