@@ -16,15 +16,17 @@ import {
   deletePlaylistSongs,
   pollingCurrentSong,
   pauseSpotifyPlaylist,
-  fetchPlaylistSongs
+  fetchPlaylistSongs,
+  prioritizeSongs
 } from '../store'
+
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
 import PlaylistQueue from './playlistQueue'
 import history from '../history'
 import socket from '../socket'
-
+import EventSettings from './eventSettings';
 
 /**
  * COMPONENT
@@ -46,7 +48,10 @@ class PartyView extends React.Component {
       spotifyUri: '',
       isHost: false,
       isCheckedIn: false,
+      editModalShowing: false,
       showEndEventModal: false,
+      isDirty: false
+
     }
   }
 
@@ -89,6 +94,11 @@ class PartyView extends React.Component {
       })
   }
 
+  handleModal = (evt) => {
+    evt.preventDefault();
+    this.state.editModalShowing ? this.setState({ editModalShowing: false}) : this.setState({ editModalShowing: true })
+  }
+
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
       console.log(this.props.eventId)
@@ -110,7 +120,13 @@ class PartyView extends React.Component {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
         console.log('updating event', eventId)
-        this.props.updatePlaylist(+eventId)
+        this.props.getPriority(eventId)
+        .then(()=>{
+          this.props.fetchInitialData(eventId)
+        })
+        .then(()=>{
+          this.props.updatePlaylist(+eventId)
+        })
       }
     })
     socket.on(`UpdatePlaylist/${eventId}`, () => {
@@ -123,6 +139,7 @@ class PartyView extends React.Component {
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
           <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
+          <Segment inverted>
           {
             (isHost && !hasStarted) &&
             <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => startParty(spotifyUri, eventId, isHost)}>Start The Event!</Button>
@@ -139,11 +156,32 @@ class PartyView extends React.Component {
               </Modal>
             </div>
           }
+          </Segment>
+          <Segment inverted>
           {
             (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
+          </Segment>
+          <Segment inverted>
+            {
+              isHost &&
+              <div>
+              <Button onClick={(evt) => this.handleModal(evt)}>Edit Event Settings</Button>
+                <Modal open={this.state.editModalShowing}>
+                  <Modal.Header>Event Settings</Modal.Header>
+                  <Modal.Content >
+                    <EventSettings
+                    event={event}
+                    handleModal={this.handleModal}
+                    />
+                  </Modal.Content>
+                </Modal>
+                </div>
+            }
+          </Segment>
         </Segment>
+
         <Segment inverted>
           <Grid
             divided
@@ -161,7 +199,7 @@ class PartyView extends React.Component {
                 itemsPerRow={3}
               >
                 {
-                  guestlist.length > 1 ?
+                  guestlist.length >= 1 ?
                     guestlist.map(guest => {
                       return (
                         <GuestListItem key={guest.id} user={guest} eventId={eventId} />
@@ -182,11 +220,16 @@ class PartyView extends React.Component {
               <PlaylistQueue songs={playlistSongs}/> 
             </Grid.Column>
           </Grid>
+
         </Segment>
       </div>
     )
   }
 }
+
+// <Header as="h2" inverted color="purple" textAlign="center"  >Edit Event Settings
+// </Header>
+
 /**
  * CONTAINER
  */
@@ -219,6 +262,9 @@ const mapDispatch = (dispatch, ownProps) => ({
   pausePlaylist(spotifyUri) {
     dispatch(pauseSpotifyPlaylist())
   },
+  prioritize(eventId) {
+    dispatch(prioritizeSongs(eventId))
+  },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
     dispatch(fetchPlaylistSongs(eventId))    
@@ -234,6 +280,9 @@ const mapDispatch = (dispatch, ownProps) => ({
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))
   },
+  getPriority(eventId){
+    dispatch(prioritizeSongs(eventId))
+  }
 })
 
 export default connect(mapState, mapDispatch)(PartyView)

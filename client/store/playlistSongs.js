@@ -43,7 +43,7 @@ export const addPlaylistSongThunk = (song) =>
 
 export const prioritizeSongs = (eventId) =>
   dispatch => {
-    axios.get(`/api/playlistSongs/prioritize/${eventId}`)
+    return axios.get(`/api/playlistSongs/prioritize/${eventId}`)
       .then(res => {
         dispatch(myPrioritizeSongs())
       })

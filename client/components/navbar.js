@@ -33,22 +33,19 @@ const Navbar = (props) => {
     </Header>
       <Container>
         <Menu inverted pointing secondary size="large" style={{ paddingTop: '1em'}}>
-          <Menu.Item as={Link} to="/"><Icon name="home" />Home</Menu.Item>
-          <Menu.Item as={Link} to="/aboutus">About Us</Menu.Item>
           {
-
           isLoggedIn
           ?
             <Menu.Item position="right" >
               {/* The navbar will show these links after you log in */}
 
-              <Button inverted as={Link} to="/eventList"><Icon name="list layout" />Events</Button>
+              <Button inverted as={Link} to="/" name="home"  ><Icon name="home" />Home</Button>
+
+              <Button inverted as={Link} to="/eventList" style={{ marginLeft: '0.5em' }}><Icon name="list layout" />Events</Button>
 
               <Button inverted as={Link} to="/newevent" style={{ marginLeft: '0.5em' }}><Icon name="users" />Host Event</Button>
 
-              <Button inverted as={Link} to="/profile" style={{ marginLeft: '0.5em' }}><Icon name="user circle outline" />Profile</Button>
-
-              <Button inverted as={Link} onClick={handleClick} to="/login" style={{ marginLeft: '0.5em' }}>Log Out</Button>
+              <Button inverted as={Link} onClick={handleClick} to="/login" style={{ marginLeft: '0.5em' }}><Icon name="user circle outline" />Log Out</Button>
 
             </Menu.Item>
           :
