@@ -109,17 +109,29 @@ class PartyView extends React.Component {
       this.setState({ showEndEventModal: false })
     }
   }
+  handlePlayback = (eventId) => {
+    if (this.state.isPlaying){
+      this.props.pausePlaylist()
+      this.setState({ isPlaying: false })
+    }
+    if (!this.state.isPlaying){
+      this.props.resumePlaylist(eventId)
+      this.setState({ isPlaying: true })
+    }
+  }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs} = this.props
     const { isHost, isCheckedIn, isPlaying, currentTrackUri } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
+    let playbackButton;
+    isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
-      console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
+      console.log('RECEIVED EMITTER! eventID:', eventId, 'userId', userId)
       if (isHost) {
         console.log('updating event', eventId)
         this.props.getPriority(eventId)
@@ -132,7 +144,7 @@ class PartyView extends React.Component {
       }
     })
     socket.on(`UpdatePlaylist/${eventId}`, () => {
-      console.log("Socket update playlist", eventId)
+      console.log('Socket update playlist', eventId)
       this.props.fetchInitialData(eventId)
     })
 
@@ -154,8 +166,8 @@ class PartyView extends React.Component {
             (isHost && hasStarted) &&
             <div>
 
-              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => resumePlaylist(eventId)}>Play</Button>
-              <Button style={{ backgroundColor: '#8038AC', color: 'white' }} onClick={() => pausePlaylist()}>Pause</Button>
+              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => this.handlePlayback(eventId)}>{playbackButton}</Button>
+
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
               <ErrorModal />
               <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>

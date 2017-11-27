@@ -92,8 +92,6 @@ export const startSpotifyPlaylist = (spotifyUri) =>
       .catch(err => console.log(err, 'error'))
   }
 
-//
-
 export const resumeSpotifyPlaylist = () =>
 dispatch => {
   let currentTrackUri;
@@ -118,21 +116,6 @@ dispatch => {
     .catch(err => console.log(err, 'error'))
 }
 
-// export const pauseSpotifyPlaylist = (spotifyUri) =>
-// dispatch => {
-//   // let currentTrackUri;
-//   setSpotifyToken()
-//   .then(() => {
-//     return SpotifyApi.getMyCurrentPlayingTrack()
-//   })
-//   .then((playingSong) => {
-//     // console.log('PAUSEEEEED', playingSong.item.uri )
-//     // currentTrackUri = playingSong.item.uri
-//       SpotifyApi.pause()
-//       dispatch(pollingCurrentSong(false))
-//     })
-// }
-
 
 export const pauseSpotifyPlaylist = () =>
 dispatch => {
@@ -146,18 +129,6 @@ dispatch => {
   })
   .catch(err => console.error(err));
 }
-
-//
-
-
-// export const pauseSpotifyPlaylist = (spotifyUri) =>
-//   dispatch => {
-//     setSpotifyToken()
-//       .then(() => {
-//         SpotifyApi.pause({ 'context_uri': spotifyUri })
-//         dispatch(pollingCurrentSong(false))
-//       })
-//   }
 
 let interval
 export const pollingCurrentSong = (poll, eventId) =>
@@ -174,10 +145,6 @@ dispatch => {
                 // console.log('polling')
                 console.log('CURRENT SONG', currentSongId)
                 if (track.is_playing) {
-
-                  if (currentSongId === undefined) {
-                    currentSongId = track.item.id
-                  }
 
                   if (track.item.id !== currentSongId){
                     dispatch(updateSpotifyPlaylist(eventId))
