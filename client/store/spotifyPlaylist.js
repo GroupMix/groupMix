@@ -91,19 +91,77 @@ export const startSpotifyPlaylist = (spotifyUri) =>
       .catch(err => console.log(err, 'error'))
   }
 
-export const pauseSpotifyPlaylist = (spotifyUri) =>
-  dispatch => {
-    setSpotifyToken()
-      .then(() => {
-        SpotifyApi.pause({ 'context_uri': spotifyUri })
-        dispatch(pollingCurrentSong(false))
-      })
-  }
+//
 
-let currentSongId
+export const resumeSpotifyPlaylist = () =>
+dispatch => {
+  let currentTrackUri;
+  setSpotifyToken()
+    .then(() => {
+      return SpotifyApi.getMyCurrentPlayingTrack()
+    })
+    .then((playingSong) => {
+      console.log('PLAYING SONGGG FOR RESUME', playingSong)
+      currentTrackUri = playingSong.item.uri
+      SpotifyApi.getMyDevices()
+        .then(data => {
+          console.log(data, 'My devices')
+          SpotifyApi.play({ 'device_id': data.devices[0].id })
+        })
+        .catch(err => {
+          dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+          dispatch(pollingCurrentSong(false))
+          console.log(err)
+        })
+    })
+    .catch(err => console.log(err, 'error'))
+}
+
+// export const pauseSpotifyPlaylist = (spotifyUri) =>
+// dispatch => {
+//   // let currentTrackUri;
+//   setSpotifyToken()
+//   .then(() => {
+//     return SpotifyApi.getMyCurrentPlayingTrack()
+//   })
+//   .then((playingSong) => {
+//     // console.log('PAUSEEEEED', playingSong.item.uri )
+//     // currentTrackUri = playingSong.item.uri
+//       SpotifyApi.pause()
+//       dispatch(pollingCurrentSong(false))
+//     })
+// }
+
+
+export const pauseSpotifyPlaylist = () =>
+dispatch => {
+  setSpotifyToken()
+  .then(() => {
+    return SpotifyApi.getMyDevices()
+  })
+    .then(data => {
+      SpotifyApi.pause({ 'device_id': data.devices[0].id })
+      dispatch(pollingCurrentSong(false))
+  })
+  .catch(err => console.error(err));
+}
+
+//
+
+
+// export const pauseSpotifyPlaylist = (spotifyUri) =>
+//   dispatch => {
+//     setSpotifyToken()
+//       .then(() => {
+//         SpotifyApi.pause({ 'context_uri': spotifyUri })
+//         dispatch(pollingCurrentSong(false))
+//       })
+//   }
+
 let interval
 export const pollingCurrentSong = (poll, eventId) =>
-  dispatch => {
+dispatch => {
+  let currentSongId;
     // console.log('polling')
     let error;
     if (poll) {
@@ -112,19 +170,26 @@ export const pollingCurrentSong = (poll, eventId) =>
           .then(() => {
             return SpotifyApi.getMyCurrentPlayingTrack()
               .then(track => {
-                console.log('polling')
+                // console.log('polling')
+                console.log('CURRENT SONG', currentSongId)
                 if (track.is_playing) {
+
+                  if (currentSongId === undefined) {
+                    currentSongId = track.item.id
+                  }
+
                   if (track.item.id !== currentSongId){
                     dispatch(updateSpotifyPlaylist(eventId))
                     currentSongId = track.item.id
                   }
+
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
                 } else {
                   console.log('no song playing')
-                  dispatch(updateSpotifyPlaylist(eventId))
-                    .then(() => {
+                  // dispatch(updateSpotifyPlaylist(eventId))
+                  //   .then(() => {
                       // dispatch(startSpotifyPlaylist())
-                    })
+                    // })
                 }
               })
           })
