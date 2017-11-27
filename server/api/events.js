@@ -86,7 +86,7 @@ router.put('/start/:eventId', (req, res, next) => {
 router.put('/end/:eventId', (req, res, next) => {
   Event.update({ hasEnded: true }, {where: { id: req.params.eventId }, returning: true})
   .then(updatedEvent => {
-    console.log('event hasEnded')
+    console.log('event hasEnded', updatedEvent)
     res.send(updatedEvent)
   })
   .catch(next)

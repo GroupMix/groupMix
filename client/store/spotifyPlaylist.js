@@ -65,6 +65,7 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
           })
           .then(() => {
             console.log('Spotify Updated')
+            dispatch(fetchPlaylistSongs(eventId))
             socket.emit(`UpdateEvents`, eventId)
             // dispatch(fetchPlaylistSongs(eventId))
 
