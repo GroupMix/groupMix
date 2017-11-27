@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import axios from 'axios'
 import { connect } from 'react-redux'
 import { Button, Form, Grid, Header, Segment, Icon, List, Card, Modal } from 'semantic-ui-react'
 import {
@@ -116,7 +117,7 @@ class PartyView extends React.Component {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
         console.log('updating event', eventId)
-        this.props.getPriority(eventId)
+        axios.get(`/api/playlistSongs/prioritize/${eventId}`)
         .then(()=>{
           this.props.fetchInitialData(eventId)
         })
