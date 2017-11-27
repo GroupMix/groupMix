@@ -126,7 +126,6 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
 
 })
 
-
 router.post('/', (req, res, next) => {
   PlaylistSong.findOrCreate({
     where: req.body
@@ -180,7 +179,7 @@ router.put('/markAsPlayed/:spotifySongId', (req, res, next) => {
     return PlaylistSong.update({played: true, priority: 0}, {where: {songId: song.id}})
   })
   .then(() => {
-    console.log('song updated')
+    console.log(red('song updated'), )
     res.sendStatus(204)
   })
   .catch(next)
