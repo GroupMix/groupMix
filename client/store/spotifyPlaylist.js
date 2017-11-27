@@ -5,6 +5,8 @@ import SpotifyWebApi from 'spotify-web-api-js'
 const SpotifyApi = new SpotifyWebApi()
 import { ERROR } from 'socket.io-parser';
 import { errorState } from './errorHandler'
+import { fetchPlaylistSongs } from './playlistSongs'
+
 
 // Helper Functions
 const setSpotifyToken = () => {
@@ -61,7 +63,10 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
           .then(() => {
             return SpotifyApi.addTracksToPlaylist(spotifyUserId, newPlaylistData.spotifyPlaylistId, tracksToAdd)
           })
-          .then(() => console.log('Spotify Updated'))
+          .then(() => {
+            console.log('Spotify Updated')
+            dispatch(fetchPlaylistSongs(eventId))
+          })
           .catch(err => console.log(err))
       })
   }
@@ -83,6 +88,7 @@ export const startSpotifyPlaylist = (spotifyUri) =>
       })
       .catch(err => console.log(err, 'error'))
   }
+
 export const pauseSpotifyPlaylist = (spotifyUri) =>
   dispatch => {
     setSpotifyToken()
@@ -92,10 +98,11 @@ export const pauseSpotifyPlaylist = (spotifyUri) =>
       })
   }
 
+let currentSongId
 let interval
 export const pollingCurrentSong = (poll, eventId) =>
   dispatch => {
-    console.log('polling')
+    // console.log('polling')
     let error;
     if (poll) {
       interval = setInterval(() => {
@@ -103,20 +110,23 @@ export const pollingCurrentSong = (poll, eventId) =>
           .then(() => {
             return SpotifyApi.getMyCurrentPlayingTrack()
               .then(track => {
-                console.log('polling', track)
+                console.log('polling')
                 if (track.is_playing) {
-                  console.log(track.item.name, 'has played')
+                  if (track.item.id !== currentSongId){
+                    dispatch(updateSpotifyPlaylist(eventId))
+                    currentSongId = track.item.id
+                  }
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
                 } else {
                   console.log('no song playing')
                   dispatch(updateSpotifyPlaylist(eventId))
                     .then(() => {
-                      dispatch(startSpotifyPlaylist())
+                      // dispatch(startSpotifyPlaylist())
                     })
                 }
               })
           })
-      }, 3000)
+      }, 6000)
     }
     if (!poll) {
       console.log(interval, 'stopped pollling')

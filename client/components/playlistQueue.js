@@ -5,16 +5,39 @@ import {
     Header,
     Divider,
     Segment,
-    Container
+    Container,
+    Icon
 } from 'semantic-ui-react'
-
-const PlaylistQueue = (props) => {
+import '../styles/_playlistSong.scss'
+const PlaylistQueue = ({ songs }) => {
     return (
-        <Container>
-            <List>
-                <h1>Hey</h1>
+        <Segment inverted>
+            <List divided relaxed inverted className="playlistSong-Container">
+                {  
+                    songs &&
+                    songs.map((song, i) => {
+                        return (
+                            <List.Item key={song.id}>
+                                <List.Content>
+                                    <div className="playlistSong-Item" >
+                                        <h3>
+                                            {i+1} -
+                                            <span id="song-name">{`${song.name} `}</span>
+                                            ~ by ~
+                                            <span id="song-artist"> {` ${song.artist}`}</span>
+                                        </h3>
+                                        <div id="vote-container">
+                                            <Icon onClick={() => console.log('UpVote')} name="caret up" size="big" style={{ color: '#6A8CDF', cursor: 'pointer' }} />
+                                            <Icon onClick={() => console.log('DownVote')} name="caret down" size="big" style={{ color: '#AF5090', cursor: 'pointer' }} />
+                                        </div>
+                                    </div>
+                                </List.Content>
+                            </List.Item>
+                        )
+                    })
+                }
             </List>
-        </Container>
+        </Segment>
     )
 }
 

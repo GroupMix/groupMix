@@ -15,7 +15,8 @@ import {
   endEvent,
   deletePlaylistSongs,
   pollingCurrentSong,
-  pauseSpotifyPlaylist
+  pauseSpotifyPlaylist,
+  fetchPlaylistSongs
 } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
@@ -98,13 +99,13 @@ class PartyView extends React.Component {
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, playlistSongs } = this.props
     const { isHost, isCheckedIn } = this.state
     const { hasStarted } = event
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
+    console.log(spotifyUrl, 'url??????')
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
@@ -174,7 +175,7 @@ class PartyView extends React.Component {
                 spotifyUrl &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
               }
-              {/* <PlaylistQueue />  NOTE this component needs to fetch its playlistSongs and pass it down to the playlistQueue*/}
+              <PlaylistQueue songs={playlistSongs}/> 
             </Grid.Column>
           </Grid>
         </Segment>
@@ -193,7 +194,8 @@ const mapState = (state, ownProps) => {
     guestlist: state.invitedUsers,
     event: state.newEvent,
     spotifyPlaylist: state.spotifyPlaylist,
-    eventStatus: state.eventStatus
+    eventStatus: state.eventStatus,
+    playlistSongs: state.playlistSongs
   }
 }
 
@@ -203,6 +205,7 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchEvent(eventId))
     dispatch(fetchSpotifyPlaylist(eventId))
     dispatch(updateSpotifyPlaylist(eventId))
+    dispatch(fetchPlaylistSongs(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {
     dispatch(startSpotifyPlaylist(spotifyUri))
