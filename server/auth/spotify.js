@@ -32,7 +32,9 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
 
   const strategy = new SpotifyStrategy(spotifyConfig, (token, refreshToken, profile, done) => {
     const spotifyUserId = profile.id
-    const name = profile.displayName
+    let name;
+    if (profile.displayName === null) name = profile.id
+    else name = profile.displayName
     const email = profile.emails[0].value
 
     User.find({where: {spotifyUserId}})

@@ -23,6 +23,19 @@ module.exports = app
  */
 if (process.env.NODE_ENV !== 'production') require('../secrets')
 
+//https redirect
+const forceSsl = function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  return next();
+};
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(forceSsl);
+}
+
+
 // passport registration
 passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((user, done) =>

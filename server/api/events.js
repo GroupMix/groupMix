@@ -25,7 +25,7 @@ router.get('/:eventId', (req, res, next) => {
 router.post('/', (req, res, next) => {
   Event.create(req.body)
     .then(event => {
-      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true } })
+      event.setUsers([req.user.id], { through: { isHost: true, isAttending: true, atEvent: true } })
       return event
     })
     .then(event => {
@@ -35,6 +35,20 @@ router.post('/', (req, res, next) => {
     })
     .catch(next)
 })
+
+// Edit an event
+router.put('/:eventId', (req, res, next) => {
+  Event.update(req.body, {
+    where: {
+      id: req.params.eventId
+    }, returning: true
+  })
+    .then(updatedEvent => {
+      res.json(updatedEvent[1][0])
+    })
+    .catch(next)
+})
+
 
 router.post('/user/:eventId', (req, res, next) => {
   Event.findById(req.params.eventId)

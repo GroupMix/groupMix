@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { PlaylistSong, Event, Playlist, Song, eventUsers } = require('../db/models');
+const { PlaylistSong, Event, Playlist, Song, EventUser } = require('../db/models');
 const Sequelize = require('sequelize')
 const Bluebird = require('bluebird')
 const red = require('chalk').red
@@ -20,6 +20,11 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
   let hostGenres = [];
   let playlistId = 0;
   let requestCount = {}
+  let presentUsersArr = []
+  EventUser.findAll({where: {eventId: req.params.eventId, atEvent: true}})
+  .then((presentUsers)=>{
+    presentUsers.forEach((presentUser)=>presentUsersArr.push(presentUser.userId))
+  })
   Event.findById(req.params.eventId)
     .then(event => {
       hostDanceability = event.danceability * 0.9;
@@ -66,43 +71,49 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
             })
            if (song.popularity > 75){
                 pointsToAdd += 8
-                match += 'highlypopular'
+                match += 'highlypopular,'
            }
            if (song.popularity <= 75 && song.popularity > 50){
                 pointsToAdd += 4
-                match += 'mediumpopular'
+                match += 'mediumpopular,'
             }
             if (genreMatch) {
               pointsToAdd += 24
-              match += ('genrematchof' + matchGenre)
+              match += ('genrematchof' + matchGenre + ',')
             }
             if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) {
               pointsToAdd +=  (6 * hostDanceabilityWeight)
-              match += 'danceability'
+              match += 'danceability,'
             }
             if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) {
               pointsToAdd += (6 * hostLoudnessWeight)
-              match += 'loudness'
+              match += 'loudness,'
             }
             if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) {
               pointsToAdd += (6 * hostEnergyWeight)
-              match += 'energy'
+              match += 'energy,'
             }
             if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) {
               pointsToAdd += (6 * hostAcousticnessWeight)
-              match += 'acousticness'
+              match += 'acousticness,'
             }
             if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) {
               pointsToAdd += (6 * hostValenceWeight)
-              match += 'valence'
+              match += 'valence,'
             }
 
             let keyName = song.id.toString()
             if (requestCount[keyName] > 1) { pointsToAdd += requestCount[keyName] * 4 }
 
+
             //QUESTION: warning: a promise was created in a handler at /Users/steveaksamit/steve_projects/Group_Mix/server/api/playlistSongs.js:83:59 but was not returned from it
             return PlaylistSong.findAll({ where: { songId: song.id } })
               .then((playlistSong) => {
+                console.log("SDSDFDS",playlistSong[0].userId)
+                if (presentUsersArr.indexOf(playlistSong[0].userId) !== -1){
+                  pointsToAdd += 20
+                  match += 'atevent,'
+                }
                 playlistSong.forEach((duplicateSong) => {
                  duplicateSong.update({ priority: pointsToAdd, match: match })
                 })
@@ -111,6 +122,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
           Bluebird.all(songMatchPromisesArr)
         })
     })
+    .catch(next)
 
 })
 
