@@ -55,12 +55,13 @@ export const startEvent = (eventId, hostStat) =>
       })
   }
 
-  export const endEvent = (eventId) => {
+  export const endEvent = (eventId) => 
+    dispatch => {
     axios.put(`/api/events/end/${eventId}`)
     .then(res => res.data)
     .then(updatedEvent => {
       console.log('event ended', updatedEvent)
-      dispatchEvent(getEvent(updatedEvent[1][0]))
+      dispatch(getEvent(updatedEvent[1][0]))
     })
   }
 

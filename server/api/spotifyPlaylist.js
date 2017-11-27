@@ -69,7 +69,6 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
     let spotifyPlaylistId;
     let tracksToPlay = []
     let uriArr = []
-
     SpotifyApi.setAccessToken(req.user.access)
     Playlist.findOne({ where: { eventId: req.params.eventId } }) //Gets PlaylistId
         .then(playlist => {
@@ -91,14 +90,21 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
         })
         .then(tracksWithInfo => {
             let artistCache = []
-            tracksWithInfo.forEach(track => {
-                if (artistCache.indexOf(track.spotifyArtistId) === -1) {
-                    artistCache.push(track.spotifyArtistId)
-                    uriArr.push(`spotify:track:${track.spotifySongId}`)
-                }
+            if (req.body.endParty) {
+                tracksWithInfo.forEach(track => {
+                        uriArr.push(`spotify:track:${track.spotifySongId}`)
+                })
+            } else {
+                tracksWithInfo.forEach(track => {
+                    if (artistCache.indexOf(track.spotifyArtistId) === -1) {
+                        artistCache.push(track.spotifyArtistId)
+                        uriArr.push(`spotify:track:${track.spotifySongId}`)
+                    }
+                }) // Formats the fetched songIds for spotify...
 
-            }) // Formats the fetched songIds for spotify...
-            uriArr = uriArr.slice(0, 10)
+            }
+            uriArr = uriArr.slice(0, songAmount)
+            console.log(uriArr)
             res.json({
                 uriArr,
                 spotifyUserId,
