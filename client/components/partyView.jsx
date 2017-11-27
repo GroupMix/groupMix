@@ -113,6 +113,10 @@ class PartyView extends React.Component {
         this.props.updatePlaylist(+eventId)
       }
     })
+    socket.on(`UpdatePlaylist/${eventId}`, () => {
+      console.log("Socket update playlist", eventId)
+      this.props.fetchInitialData(eventId)
+    })
 
     return (
       <div>
@@ -217,6 +221,7 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   updatePlaylist(eventId) {
     dispatch(updateSpotifyPlaylist(eventId))
+    dispatch(fetchPlaylistSongs(eventId))    
   },
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
@@ -228,7 +233,7 @@ const mapDispatch = (dispatch, ownProps) => ({
   },
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))
-  }
+  },
 })
 
 export default connect(mapState, mapDispatch)(PartyView)

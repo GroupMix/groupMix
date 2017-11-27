@@ -6,7 +6,7 @@ const SpotifyApi = new SpotifyWebApi()
 import { ERROR } from 'socket.io-parser';
 import { errorState } from './errorHandler'
 import { fetchPlaylistSongs } from './playlistSongs'
-
+import socket from '../socket'
 
 // Helper Functions
 const setSpotifyToken = () => {
@@ -65,7 +65,9 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
           })
           .then(() => {
             console.log('Spotify Updated')
-            dispatch(fetchPlaylistSongs(eventId))
+            socket.emit(`UpdateEvents`, eventId)
+            // dispatch(fetchPlaylistSongs(eventId))
+
           })
           .catch(err => console.log(err))
       })
