@@ -5,7 +5,8 @@ import SpotifyWebApi from 'spotify-web-api-js'
 const SpotifyApi = new SpotifyWebApi()
 import { ERROR } from 'socket.io-parser';
 import { errorState } from './errorHandler'
-import { fetchPlaylistSongs } from './playlistSongs'
+import { fetchPlaylistSongs, prioritizeSongs } from './playlistSongs'
+import { addSongsThunk} from './songs'
 import socket from '../socket'
 
 // Helper Functions
@@ -81,7 +82,7 @@ export const startSpotifyPlaylist = (spotifyUri) =>
             SpotifyApi.play({ 'device_id': data.devices[0].id, 'context_uri': spotifyUri })
           })
           .catch(err => {
-            dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+            dispatch(errorState(new Error('Please Open Spotify on your device before trying to start your Playlist!')))
             dispatch(pollingCurrentSong(false))
             console.log(err)
           })
@@ -89,6 +90,97 @@ export const startSpotifyPlaylist = (spotifyUri) =>
       .catch(err => console.log(err, 'error'))
   }
 
+  export const getTrackGenres = (data) => dispatch => {
+    let songArtistIds = data.songs.map(song => song.artists[0].id)
+    let nestedArtistIds = [];
+console.log("getting track genres")
+    while (songArtistIds.length) {
+      nestedArtistIds.push(songArtistIds.splice(0, 50))
+    }
+    let genreCalls = [];
+
+    nestedArtistIds.forEach(artistsIds => {
+      genreCalls.push(SpotifyApi.getArtists(artistsIds))
+    })
+
+    Promise.all(genreCalls)
+      .then(artistData => {
+        let genres = [];
+        artistData.forEach(collection => {
+          collection.artists.forEach(artist => {
+            genres.push(artist.genres)
+          })
+        })
+        return genres
+      })
+      .then(genres => {
+        console.log('GENRESSSSS', genres)
+        getAudioFeatures(data, genres, dispatch)
+      })
+      .catch(err => console.log(err))
+  }
+
+  export const getAudioFeatures = ({ idArr, songs, eventId, userId }, genres, dispatch) =>  {
+    let persistSongs = [];
+    SpotifyApi.getAudioFeaturesForTracks(idArr)
+      .then((data) => {
+
+        songs.forEach((song, index) => {
+          const meta = data.audio_features[index];
+
+          let songData = {
+            name: song.name,
+            artist: song.artists[0].name,
+            spotifyArtistId: song.artists[0].id,
+            spotifySongId: song.id,
+            danceability: meta.danceability,
+            energy: meta.energy,
+            loudness: meta.loudness,
+            speechiness: meta.speechiness,
+            acousticness: meta.acousticness,
+            instrumentalness: meta.instrumentalness,
+            valence: meta.valence,
+            tempo: meta.tempo,
+            popularity: song.popularity,
+            genres: genres[index] || null,
+            playlistId: eventId,
+            userId: userId
+          }
+
+          persistSongs.push(songData);
+        })
+
+        return persistSongs;
+      })
+      .then((finalSongs) =>  {
+        console.log('SONGSSSS PERSISTING', persistSongs)
+        finalSongs.forEach( song =>  {
+          dispatch(addSongsThunk(song))
+          return finalSongs
+        })
+      })
+      .catch(err => {
+        console.error(err);
+      })
+
+  }
+export const getSimilarSongs = (seedInfo, eventId) =>
+  dispatch => {
+    setSpotifyToken()
+    .then(() => {
+      return SpotifyApi.getRecommendations(seedInfo)
+    })
+    .then((similarSongs) => {
+      getTrackGenres(similarSongs)
+    })
+    .then( () => {
+      dispatch(prioritizeSongs(eventId))
+    })
+    .catch(err => {
+      console.error(err)
+    })
+
+}
 export const resumeSpotifyPlaylist = () =>
   dispatch => {
     let currentTrackUri;
@@ -110,7 +202,7 @@ export const resumeSpotifyPlaylist = () =>
           })
       })
       .catch(err => {
-        dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+        dispatch(errorState(new Error('Please Open Spotify on your device before trying to start your Playlist!')))
         console.log(err, 'error')
       })
   }
