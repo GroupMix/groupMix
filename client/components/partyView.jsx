@@ -222,7 +222,7 @@ class PartyView extends React.Component {
                 </div>
               }
               {
-                spotifyUrl && isHost &&
+                (spotifyUrl && isHost) &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`}  height="100" frameBorder="0" allowtransparency="true" id="spotifyPlayer"></iframe>
               }
               <PlaylistQueue songs={playlistSongs} eventId={eventId} />
