@@ -54,8 +54,7 @@ export const editEvent = (eventId, event) =>
     axios.put(`/api/events/${eventId}`, event)
       .then(res => {
         return res.data
-      }
-      )
+      })
       .then(updatedEvent => {
         dispatch(updateEvent(updatedEvent))
       })
@@ -72,22 +71,26 @@ export const startEvent = (eventId, hostStat) =>
       })
   }
 
-export const endEvent = (eventId) =>
+export const endEvent = (eventId, spotifyUserId, SpotifyPlaylistId) =>
   dispatch => {
     setSpotifyToken()
       .then(() => {
-        return SpotifyApi.getMe()
+        return SpotifyApi.getPlaylist(spotifyUserId, SpotifyPlaylistId)
       })
       .then(data => {
-        console.log(data, 'DATA TO END EVENT')
+        console.log(data)
+        const spotifyURL = data.external_urls.spotify
+        return spotifyURL
+      })
+      .then(spotifyUrl => {
+        return axios.put(`/api/events/end/${eventId}`, {spotifyUrl})
+      })
+      .then(res => res.data)
+      .then(updatedEvent => {
+        console.log('event ended', updatedEvent)
+        dispatch(getEvent(updatedEvent[1][0]))
       })
       .catch(err => console.log(err, "ENDING ERRORRRR"))
-    // axios.put(`/api/events/end/${eventId}`)
-    //   .then(res => res.data)
-    //   .then(updatedEvent => {
-    //     console.log('event ended', updatedEvent)
-    //     dispatch(getEvent(updatedEvent[1][0]))
-    //   })
   }
 
 /* REDUCER */
