@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { browserHistory } from 'react-router'
+import { setSpotifyToken } from './index'
 const SpotifyWebApi = require('spotify-web-api-js');
 const SpotifyApi = new SpotifyWebApi()
 
@@ -20,11 +21,11 @@ const getEvent = event => ({ type: GET_EVENT, event })
 export const createNewEvent = (createdEvent, history) =>
   dispatch => {
     axios.get('/api/spotifyPlaylist/refreshtoken')
-    .then(res => {
-      const newToken = res.data
-      SpotifyApi.setAccessToken(newToken)
-     return SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
-    })
+      .then(res => {
+        const newToken = res.data
+        SpotifyApi.setAccessToken(newToken)
+        return SpotifyApi.createPlaylist(createdEvent.spotifyUserId, { name: createdEvent.name, public: true })
+      })
       .then((playlist) => {
         createdEvent.uri = playlist.uri
         createdEvent.playlistId = playlist.id
@@ -52,7 +53,8 @@ export const editEvent = (eventId, event) =>
   dispatch => {
     axios.put(`/api/events/${eventId}`, event)
       .then(res => {
-        return res.data}
+        return res.data
+      }
       )
       .then(updatedEvent => {
         dispatch(updateEvent(updatedEvent))
@@ -70,14 +72,22 @@ export const startEvent = (eventId, hostStat) =>
       })
   }
 
-  export const endEvent = (eventId) => 
-    dispatch => {
-    axios.put(`/api/events/end/${eventId}`)
-    .then(res => res.data)
-    .then(updatedEvent => {
-      console.log('event ended', updatedEvent)
-      dispatch(getEvent(updatedEvent[1][0]))
-    })
+export const endEvent = (eventId) =>
+  dispatch => {
+    setSpotifyToken()
+      .then(() => {
+        return SpotifyApi.getMe()
+      })
+      .then(data => {
+        console.log(data, 'DATA TO END EVENT')
+      })
+      .catch(err => console.log(err, "ENDING ERRORRRR"))
+    // axios.put(`/api/events/end/${eventId}`)
+    //   .then(res => res.data)
+    //   .then(updatedEvent => {
+    //     console.log('event ended', updatedEvent)
+    //     dispatch(getEvent(updatedEvent[1][0]))
+    //   })
   }
 
 /* REDUCER */

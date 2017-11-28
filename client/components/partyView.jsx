@@ -127,11 +127,10 @@ class PartyView extends React.Component {
     const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs } = this.props
     const { isHost, isCheckedIn, isPlaying, currentTrackUri } = this.state
     const { hasStarted } = event
-
+    console.log(spotifyPlaylist, "playlist sdofiasdjf")
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
