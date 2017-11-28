@@ -15,7 +15,6 @@ const User = db.define('user', {
   },
   imgurPhoto: {
     type: Sequelize.STRING,
-    defaultValue: faker.image.avatar(),
   },
   email: {
     type: Sequelize.STRING,
