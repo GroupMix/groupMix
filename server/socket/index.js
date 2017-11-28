@@ -29,20 +29,27 @@ module.exports = (io) => {
       let key = userIdForSocket
       coordsCache[key] = { lat, long }
       //find most recent Event for user from DB
+      console.log("user Id for socket",userIdForSocket)
       return User.findById(userIdForSocket)
         .then((user) => {
           return user.getEvents()
         })
         .then((events) => {
-          let eventsObj = {}
+          const eventsObj = {}
           let dates = events.map((event) => {
             let myDate = Date.parse(event.date)
+            console.log("mydate", myDate)
             let now = Date.now() - (1000 * 60 * 60 * 23.9)
-            if (myDate >= now) eventsObj[myDate] = event.id
+            console.log("now", now)
+            if (myDate >= now) {
+              eventsObj[myDate] = event.id
+             return myDate
+            }
           })
           return eventsObj[Math.min.apply(null, dates)]
         })
         .then((upcomingEventId) => {
+          console.log("id",upcomingEventId)
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
