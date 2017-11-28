@@ -33,6 +33,7 @@ const GuestListItem = ({ user, eventId }) => {
           </Card.Content>
           <hr/>
         </List.Item>
+
   )
 }
 
