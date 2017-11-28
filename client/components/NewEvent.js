@@ -26,11 +26,11 @@ export class NewEvent extends Component {
       energy: 0,
       acousticness: 0,
       valence: 0,
-      danceabilityWeight: 0,
-      loudnessWeight: 0,
-      energyWeight: 0,
-      acousticnessWeight: 0,
-      valenceWeight: 0,
+      danceabilityWeight: 2,
+      loudnessWeight: 2,
+      energyWeight: 2,
+      acousticnessWeight: 2,
+      valenceWeight: 2,
       weightPoints: 10,
       visible: false,
       submitVisible: false,
@@ -55,7 +55,7 @@ export class NewEvent extends Component {
     this.setState(change)
   }
   handleDateChange = (evt) => {
-    this.setState({ date: evt})
+    this.setState({ date: evt })
   }
 
   handleGenreChange = (evt, { value }) => {
@@ -143,84 +143,101 @@ export class NewEvent extends Component {
     let valenceWeight = this.state.valenceWeight
     let spotifyUserId = user.user.spotifyUserId
     let token = user.access
+    const StyleFormGroup = (props) => {
+      return (
+        <Form.Field inline inverted style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {props.children}
+        </Form.Field>
+      )
+    }
 
     return (
 
-      <div>
-        <Segment inverted>
-          <Header textAlign="center" as="h1" color="purple">Add New Event</Header>
-          <Form inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
-            <Form.Field>
-              <label>Event Name</label>
-              <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="event name" />
-            </Form.Field>
-            <Form.Field>
-              <label>Date</label>
-              <DatePicker
-                name="date"
-                selected={this.state.date}
-                value={this.state.date}
-                onChange={this.handleDateChange.bind(this)}
-                required={true}
+      <div style={{ marginLeft: '9em', marginRight: '9em', background: '#2184d0' }}>
+        <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: '-webkit-fill-available', marginTop: '.85em' }}>
+          <Header textAlign="center" as="h1" color="purple" size= "huge" >Create New Event</Header>
+          <Form size="large" inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>Event Name</label>
+                <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="New Year's Celebration" />
+              </Form.Field>
+              <Form.Field width = {6}>
+                <label>Date</label>
+                <DatePicker
+                  name="date"
+                  selected={this.state.date}
+                  value={this.state.date}
+                  onChange={this.handleDateChange.bind(this)}
+                  required={true}
+                />
+              </Form.Field>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>Event Type</label>
+                <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="Party" required={true} />
+              </Form.Field>
+              <Form.Field
+                control={Dropdown} label="Genre Preferences" name="genres" placeholder="Hip Hop, Electronic, Pop" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
               />
-            </Form.Field>
-            <Form.Field>
-              <label>Event Type</label>
-              <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="event type" required={true} />
-            </Form.Field>
-            <Form.Field
-              control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
-            />
-            <Form.Field inverted>
-              <label>Danceability: {this.state.danceability}</label>
-              <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
-              <br />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup inverted>
+                <label>Danceability: {this.state.danceability}</label>
+                <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
 
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Danceability Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Loudness: {this.state.loudness}</label>
-              <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Loudness Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Energy: {this.state.energy}</label>
-              <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Energy Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Acousticness: {this.state.acousticness}</label>
-              <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
-              <br />
 
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Acousticness Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Valence: {this.state.valence}</label>
-              <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Valence Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
-            </Form.Field>
-            <div>
+              </StyleFormGroup>
+              <StyleFormGroup>
+                <label>Danceability Importance: </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Loudness: {this.state.loudness}</label>
+                <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Loudness Importance:    </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Energy: {this.state.energy}</label>
+                <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted >
+                <label>Energy Importance:      </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Acousticness: {this.state.acousticness}</label>
+                <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
+
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Acousticness Importance:</label>
+                <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Valence: {this.state.valence}</label>
+                <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Valence Importance:     </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {this.renderError()}
-              <Button disabled={this.state.submitVisible} color="purple" type="submit">Submit</Button>
+              <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge" >Create Event</Button>
             </div>
           </Form>
         </Segment>
@@ -229,7 +246,7 @@ export class NewEvent extends Component {
   }
   renderError() {
     if (this.state.visible) {
-      console.log("ERROR SHOWING")
+      console.log('ERROR SHOWING')
       return (
         <Message
           onDismiss={this.handleDismiss}
