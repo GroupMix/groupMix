@@ -26,11 +26,11 @@ async function seed () {
   // executed until that promise resolves!
 
   const users = await Promise.all([
-    User.create({name: 'Chris', email: 'chris@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
-    User.create({name: 'Jesse', email: 'jesse@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
-    User.create({name: 'Steve', email: 'steve@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
-    User.create({name: 'Max', email: 'max@email.com', password: '123', imgurPhoto: faker.image.avatar()}),
-    User.create({name: 'Jesse Barron', spotifyUserId: '1235276482', email: 'jessebarron1113@gmail.com', password: 'null', imgurPhoto: faker.image.avatar()}),
+    User.create({name: 'Rhonda', email: 'rhonda@email.com', password: '123'}),
+    User.create({name: 'Ben', email: 'ben@email.com', password: '123'}),
+    User.create({name: 'Collin', email: 'collin@email.com', password: '123'}),
+    User.create({name: 'Connie', email: 'connie@email.com', password: '123'}),
+    User.create({name: 'Jesse Barron', spotifyUserId: '1235276482', email: 'jessebarron1113@gmail.com', password: 'null'}),
   ])
 
   const events = await Promise.all([
