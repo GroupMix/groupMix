@@ -42,6 +42,10 @@
 
 
 
+// <Button style={{ backgroundColor: '#8038AC', color: 'white' }} onClick={() => pausePlaylist()}>Pause</Button>
+
+
+
 
 
 
