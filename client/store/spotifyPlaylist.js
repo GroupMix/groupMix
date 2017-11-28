@@ -157,6 +157,7 @@ dispatch => {
                       // dispatch(startSpotifyPlaylist())
                     // })
                 }
+                dispatch(updateSpotifyPlaylist(eventId)) // Event Emmiter may need to happen here too
               })
           })
       }, 6000)

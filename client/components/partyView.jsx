@@ -126,9 +126,11 @@ class PartyView extends React.Component {
     const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs} = this.props
     const { isHost, isCheckedIn, isPlaying, currentTrackUri } = this.state
     const { hasStarted } = event
+
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
+   
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
@@ -137,7 +139,6 @@ class PartyView extends React.Component {
       this.props.socketUpdates(eventId)
       if (isHost) {
         console.log('updating event', eventId)
-        //emit update user --> need to send to server
         this.props.runUpdates(eventId)
       } else {
         _.debounce(this.props.socketUpdates(eventId), 3000)
@@ -168,7 +169,6 @@ class PartyView extends React.Component {
             <div>
 
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => this.handlePlayback(eventId)}>{playbackButton}</Button>
-
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
               <ErrorModal />
               <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
@@ -237,7 +237,7 @@ class PartyView extends React.Component {
                 spotifyUrl &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
               }
-              <PlaylistQueue songs={playlistSongs}/>
+              <PlaylistQueue songs={playlistSongs} eventId={eventId} />
             </Grid.Column>
           </Grid>
 
@@ -246,9 +246,6 @@ class PartyView extends React.Component {
     )
   }
 }
-
-// <Header as="h2" inverted color="purple" textAlign="center"  >Edit Event Settings
-// </Header>
 
 /**
  * CONTAINER
