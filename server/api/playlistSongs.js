@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { PlaylistSong, Event, Playlist, Song } = require('../db/models');
+const { PlaylistSong, Event, Playlist, Song, EventUser } = require('../db/models');
 const Sequelize = require('sequelize')
 const Bluebird = require('bluebird')
 const red = require('chalk').red
@@ -20,11 +20,19 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
   let hostGenres = [];
   let playlistId = 0;
   let requestCount = {}
-  Event.findById(req.params.eventId)
+  let presentUsersArr = []
+  let pointsCache = {}
+  let matchCache = {}
+  EventUser.findAll({ where: { eventId: req.params.eventId, atEvent: true } })
+    .then((presentUsers) => {
+      presentUsers.forEach((presentUser) => presentUsersArr.push(presentUser.userId))
+    })
+    .then(() => {
+      return Event.findById(req.params.eventId)
+    })
     .then(event => {
       hostDanceability = event.danceability * 0.9;
       hostLoudness = (((1.4 - +event.loudness) * 12)) * -1;
-      console.log("loud", hostLoudness)
       hostEnergy = event.energy * 0.9;
       hostAcousticness = event.acousticness * 0.9;
       hostValence = event.valence * 0.9
@@ -32,92 +40,129 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
       hostDanceabilityWeight = event.danceabilityWeight;
       hostLoudnessWeight = event.loudnessWeight;
       hostEnergyWeight = event.energyWeight;
-      hostAcousticnessWeight = event.acoustisnessWeight;
+      hostAcousticnessWeight = event.acousticnessWeight;
       hostValenceWeight = event.valenceWeight;
       return Playlist.findOne({ where: { eventId: req.params.eventId } })
     })
     .then((playlist) => {
       playlistId = playlist.id
-      return PlaylistSong.findAll({ where: { playlistId: playlist.id } })
+      return PlaylistSong.findAll({ where: { playlistId: playlist.id, played: false } })
     })
     .then((playlistSongs) => {
       let itemsProcessed = 0;
-      let idsArr = playlistSongs.map((playlistSong) => {
+      return playlistSongs.map((playlistSong) => {
         let key = playlistSong.songId.toString()
         if (!requestCount.hasOwnProperty(key)) requestCount[key] = 1
         else requestCount[key]++
         return playlistSong.songId
       })
-
-      let promisesArr = idsArr.map((id) => {
+    })
+    .then((idsArr) => {
+      return idsArr.map((id) => {
         return Song.findById(id)
       })
-      //resturns promise that resolves to array of values
-      Bluebird.all(promisesArr)
-        .then((songsArr) => {
-          let songMatchPromisesArr = songsArr.map((song) => {
-            let pointsToAdd = 0
-            let genreMatch = false
-            genreMatch = hostGenres.some((genre) => {
-              return song.genres.indexOf(genre) > -1
-            })
-            switch (song.popularity) {
-              case (song.popularity > 75):
-                pointsToAdd += 8
-              case (song.popularity <= 75 && song.popularity > 50):
-                pointsToAdd += 4
-            }
-            if (genreMatch) pointsToAdd += 15
-            if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) pointsToAdd += (6 * hostDanceabilityWeight)
-            if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) pointsToAdd += (4 * hostLoudnessWeight)
-            if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) pointsToAdd += (5 * hostEnergyWeight)
-            if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) pointsToAdd += (7 * hostAcousticnessWeight)
-            if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) pointsToAdd += (3 * hostValenceWeight)
-
-            let keyName = song.id.toString()
-            if (requestCount[keyName] > 1) { pointsToAdd += requestCount[keyName] * 4 }
-
-            //produces promise warning in back-end console; optimize if time
-            return PlaylistSong.findAll({ where: { songId: song.id } })
-              .then((playlistSong) => {
-                playlistSong.forEach((duplicateSong) => {
-                  return duplicateSong.update({ priority: pointsToAdd })
-                })
-              })
-          })
-          Bluebird.all(songMatchPromisesArr)
-            .then(() => {
-              console.log(red("DONE"))
-            })
-        })
     })
+    .then((promisesArr) => {
+      //returns promise that resolves to array of values
+      return Bluebird.all(promisesArr)
+    })
+    .then((songsArr) => {
+      return songsArr.map((song) => {
+        let pointsToAdd = 0
+        let match = ''
+        let genreMatch = false
+        let matchGenre = ''
+        genreMatch = hostGenres.some((genre) => {
+          matchGenre = genre
+          return song.genres.indexOf(genre) > -1
+        })
+        if (song.popularity > 75) {
+          pointsToAdd += 8
+          match += 'highlypopular,'
+        }
+        if (song.popularity <= 75 && song.popularity > 50) {
+          pointsToAdd += 4
+          match += 'mediumpopular,'
+        }
+        if (genreMatch) {
+          pointsToAdd += 24
+          match += ('genrematchof' + matchGenre + ',')
+        }
+        if (song.danceability > hostDanceability - 0.12 && song.danceability < hostDanceability + 0.15) {
+          pointsToAdd += (6 * hostDanceabilityWeight)
+          match += 'danceability,'
+        }
+        if (song.loudness > hostLoudness - 3 && song.loudness < hostLoudness + 3) {
+          pointsToAdd += (6 * hostLoudnessWeight)
+          match += 'loudness,'
+        }
+        if (song.energy > hostEnergy - 0.12 && song.energy < hostEnergy + 0.15) {
+          pointsToAdd += (6 * hostEnergyWeight)
+          match += 'energy,'
+        }
+        if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) {
+          pointsToAdd += (6 * hostAcousticnessWeight)
+          match += 'acousticness,'
+        }
+        if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) {
+          pointsToAdd += (6 * hostValenceWeight)
+          match += 'valence,'
+        }
+
+        let keyName = song.id.toString()
+        if (requestCount[keyName] > 1) { pointsToAdd += requestCount[keyName] * 4 }
+
+
+        let key = song.id.toString()
+        pointsCache[key] = pointsToAdd
+        matchCache[key] = match
+
+        return PlaylistSong.findAll({ where: { songId: song.id } })
+      })
+    })
+        .then((songMatchPromisesArr) => {
+          return Bluebird.all(songMatchPromisesArr)
+        })
+        .then((playlistSongArr) => {
+          return playlistSongArr.map((duplicateSongArr) => {
+            let tempKey = duplicateSongArr[0].userId.toString()
+            let checkedIn = false
+            if (presentUsersArr.indexOf(tempKey) !== -1) {
+              checkedIn = true
+            }
+            //QUESTION --> is this forEach->update loop okay here ?
+             duplicateSongArr.forEach((duplicate) => {
+              let key = duplicate.songId.toString()
+              if (checkedIn) pointsCache[key] += 20
+              matchCache[key] += 'atevent,'
+              duplicate.update({ priority: pointsCache[key], match: matchCache[key] })
+            })
+          })
+        })
+          .then((songsToUpdate) => {
+            Bluebird.all(songsToUpdate)
+          })
+          .then(()=>{
+            res.json(201)
+          })
+        .catch(next)
+    })
+
+router.put('/voteSong/:eventId', (req, res, next) => {
+  console.log(req.body)
+  Playlist.findOne({ where: {eventId: req.params.eventId} })
+  .then(playlist => {
+    return PlaylistSong.findOne({
+      where: {
+        playlistId: playlist.id,
+        songId: req.body.songId
+      }})
+  })
+  .then(song => {
+    req.body.vote == 'up' ? song.increment('priority') : song.decrement('priority')
+    res.json(song.priority)
+  })
 })
-
-
-// .then(() => {
-//   console.log('sdf')
-// })
-// .then(() => {
-//   return PlaylistSong.findAll({
-//     // attributes:[[Sequelize.literal('distinct `userId`'),'userId'], [Sequelize.literal('`songId`'),'songId']]
-//     attributes:[[Sequelize.literal('distinct `userId`'),'userId'], [Sequelize.literal('`songId`'),'songId']]
-//   })
-// .then((distinctPlaylistSongs) => {
-//   console.log('Distinct Playlist Songs Length: ', distinctPlaylistSongs.length)
-//   distinctPlaylistSongs.forEach((distinctPlaylistSong) => {
-//     PlaylistSong.findAll({where: {playlistId: playlistId, songId: distinctPlaylistSong.id}})
-//     })
-//     .then((similarSongs) => {
-//       let songInstanceCount = similarSongs.length
-//       similarSongs.forEach((similarSong) => {
-//       similarSong.increment('priority', {by: songInstanceCount * 6})
-//       })
-//     })
-//   })
-// })
-// })
-
-
 
 router.post('/', (req, res, next) => {
   PlaylistSong.findOrCreate({
@@ -138,41 +183,73 @@ router.get('/:playlistId/:songId', (req, res, next) => {
     .catch(next);
 });
 
-router.get('/:playlistId', (req, res, next) => {
-  let id = req.params.playlistId;
-  PlaylistSong.findAll({ where: { playlistId: id } })
-    .then(song => res.status(201).send(song))
-    .catch(next);
-});
 
-router.delete('/clearPLSongs/:eventId', (req, res, next) => {
-  Playlist.findOne({ where: { eventId: req.params.eventId } })
-    .then(playlist => playlist.id)
-    .then(playlistId => {
-      console.log(playlistId)
-      return PlaylistSong.destroy({ where: { playlistId: playlistId } })
+
+  router.post('/', (req, res, next) => {
+    PlaylistSong.findOrCreate({
+      where: req.body
     })
-    .then(deletedSongs => {
-      res.send('songs deleted')
-    })
-    .catch(next)
-})
-router.delete('/:playlistId/:songId', (req, res, next) => {
-  let playId = req.params.playlistId;
-  let songId = req.params.songId;
+      .then(song => {
+        res.status(201).json(song)
+      }
+      )
+      .catch(next);
+  });
 
-  PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
-    .then(song => song.destroy())
-    .then(() => res.status(204).end())
-    .catch(next);
-});
+  router.get('/:playlistId/:songId', (req, res, next) => {
+    let playId = req.params.playlistId;
+    let songId = req.params.songId;
+    PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
+      .then(song => res.status(201).send(song))
+      .catch(next);
+  });
 
+  router.get('/:playlistId', (req, res, next) => {
+    let id = req.params.playlistId;
+    PlaylistSong.findAll({ where: { playlistId: id } })
+      .then(song => res.status(201).send(song))
+      .catch(next);
+  });
 
-router.put('/:playlistId/:songId', (req, res, next) => {
-  let playId = req.params.playlistId;
-  let songId = req.params.songId;
-  PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
-    .then(song => song.update({ priority: req.body }))
-    .then(song => res.status(201).send(song))
-    .catch(next);
-});
+  router.delete('/clearPLSongs/:eventId', (req, res, next) => {
+    Playlist.findOne({ where: { eventId: req.params.eventId } })
+      .then(playlist => playlist.id)
+      .then(playlistId => {
+        return PlaylistSong.destroy({ where: { playlistId: playlistId } })
+      })
+      .then(deletedSongs => {
+        res.send('songs deleted')
+      })
+      .catch(next)
+  })
+
+  router.delete('/:playlistId/:songId', (req, res, next) => {
+    let playId = req.params.playlistId;
+    let songId = req.params.songId;
+
+    PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
+      .then(song => song.destroy())
+      .then(() => res.status(204).end())
+      .catch(next);
+  });
+
+  router.put('/markAsPlayed/:spotifySongId', (req, res, next) => {
+    Song.findOne({ where: { spotifySongId: req.params.spotifySongId } })
+      .then(song => {
+        return PlaylistSong.update({ played: true, priority: 0 }, { where: { songId: song.id } })
+      })
+      .then(() => {
+        console.log('song updated')
+        res.sendStatus(204)
+      })
+      .catch(next)
+  })
+
+  router.put('/:playlistId/:songId', (req, res, next) => {
+    let playId = req.params.playlistId;
+    let songId = req.params.songId;
+    PlaylistSong.findAll({ where: { playlistId: playId, songId: songId } })
+      .then(song => song.update({ priority: req.body }))
+      .then(song => res.status(201).send(song))
+      .catch(next);
+  });

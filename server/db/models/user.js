@@ -5,7 +5,7 @@ const faker = require('faker')
 
 const User = db.define('user', {
   name: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING
   },
   spotifyUserId: {
     type: Sequelize.STRING,
@@ -30,7 +30,7 @@ const User = db.define('user', {
   },
   googleId: {
     type: Sequelize.STRING
-  },
+  }
 })
 
 module.exports = User

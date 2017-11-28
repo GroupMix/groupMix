@@ -16,6 +16,7 @@ let userIdForSocket
 const Main = (props) => {
   const {children, handleClick, isLoggedIn, user} = props
   userIdForSocket = user.id
+  if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)
   return (
     <div>
       <Navbar />
@@ -58,7 +59,6 @@ Main.propTypes = {
 
 //GEOLOCATION
 function sendCoords(lat, long, accuracy, userIdForSocket){
-  console.log("userSock", userIdForSocket)
   let coords = {
     lat,
     long,
@@ -72,7 +72,7 @@ function geo_success(position) {
   sendCoords(position.coords.latitude, position.coords.longitude, position.coords.accuracy, userIdForSocket);
 }
 function geo_error() {
-  console.log("Sorry, no position available.");
+
 }
 var geo_options = {
   enableHighAccuracy: true,
@@ -80,5 +80,3 @@ var geo_options = {
   timeout           : 27000
 };
 
-
-if (userIdForSocket) navigator.geolocation.watchPosition(geo_success, geo_error, geo_options)

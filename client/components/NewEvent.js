@@ -6,6 +6,9 @@ import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Rating, Segment, Header, Message } from 'semantic-ui-react'
 import { EventGenres } from '/'
 import genreList from './genreList'
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css'
 
 /**
  * COMPONENT
@@ -15,12 +18,7 @@ export class NewEvent extends Component {
     super(props);
     this.state = {
       eventname: '',
-      date: '',
-      time: '',
-      city: '',
-      state: '',
-      zip: '',
-      address: '',
+      date: moment(),
       type: '',
       genres: [],
       danceability: 0,
@@ -28,11 +26,11 @@ export class NewEvent extends Component {
       energy: 0,
       acousticness: 0,
       valence: 0,
-      danceabilityWeight: 0,
-      loudnessWeight: 0,
-      energyWeight: 0,
-      acousticnessWeight: 0,
-      valenceWeight: 0,
+      danceabilityWeight: 2,
+      loudnessWeight: 2,
+      energyWeight: 2,
+      acousticnessWeight: 2,
+      valenceWeight: 2,
       weightPoints: 10,
       visible: false,
       submitVisible: false,
@@ -43,13 +41,11 @@ export class NewEvent extends Component {
   }
 
   checkPoints() {
-    if (this.state.weightPoints < 0){
+    if (this.state.weightPoints < 0) {
       this.setState({ visible: true, submitVisible: true })
-      console.log('pointsssss', this.state.submitVisible )
     }
-    else if (this.state.weightPoints >= 0){
+    else if (this.state.weightPoints >= 0) {
       this.setState({ visible: false, submitVisible: false })
-
     }
 
   }
@@ -58,6 +54,10 @@ export class NewEvent extends Component {
     change[evt.target.name] = evt.target.value
     this.setState(change)
   }
+  handleDateChange = (evt) => {
+    this.setState({ date: evt })
+  }
+
   handleGenreChange = (evt, { value }) => {
     this.setState({ genres: value })
   }
@@ -81,7 +81,7 @@ export class NewEvent extends Component {
 
 
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints})
+    this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 2000)
@@ -127,14 +127,8 @@ export class NewEvent extends Component {
 
   render() {
     const { handleSubmit, user } = this.props
-
     let eventname = this.state.eventname
     let date = this.state.date
-    let time = this.state.time
-    let city = this.state.city
-    let state = this.state.state
-    let zip = this.state.eventname
-    let address = this.state.address
     let type = this.state.type
     let genres = this.state.genres
     let danceability = this.state.danceability / 10
@@ -149,100 +143,101 @@ export class NewEvent extends Component {
     let valenceWeight = this.state.valenceWeight
     let spotifyUserId = user.user.spotifyUserId
     let token = user.access
+    const StyleFormGroup = (props) => {
+      return (
+        <Form.Field inline inverted style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {props.children}
+        </Form.Field>
+      )
+    }
 
     return (
 
-      <div>
-        <Segment inverted>
-          <Header textAlign="center" as="h1" color="purple">Add New Event</Header>
-          <Form inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
-            <Form.Field>
-              <label>Event Name</label>
-              <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="event name" />
-            </Form.Field>
-            <Form.Field>
-              <label>Date</label>
-              <input name="date" onChange={this.handleChange.bind(this)} value={this.state.date} placeholder="date" />
-            </Form.Field>
-            <Form.Field>
-              <label>Time</label>
-              <input name="time" onChange={this.handleChange.bind(this)} value={this.state.time} placeholder="time" />
-            </Form.Field>
-            <Form.Field>
-              <label>City</label>
-              <input name="city" onChange={this.handleChange.bind(this)} value={this.state.city} placeholder="state" />
-            </Form.Field>
-            <Form.Field>
-              <label>State</label>
-              <input name="state" onChange={this.handleChange.bind(this)} value={this.state.state} placeholder="state" />
-            </Form.Field>
-            <Form.Field>
-              <label>Zip</label>
-              <input name="zip" onChange={this.handleChange.bind(this)} value={this.state.zip} placeholder="zip" />
-            </Form.Field>
-            <Form.Field>
-              <label>Address</label>
-              <input name="address" onChange={this.handleChange.bind(this)} value={this.state.address} placeholder="address" />
-            </Form.Field>
-            <Form.Field>
-              <label>Event Type</label>
-              <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="event type" />
-            </Form.Field>
-            <Form.Field
-              control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
-            />
-            <Form.Field inverted>
-              <label>Danceability: {this.state.danceability}</label>
-              <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
-              <br />
-
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Danceability Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
-            </Form.Field>
+      <div style={{ marginLeft: '9em', marginRight: '9em', background: '#2184d0' }}>
+        <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: '-webkit-fill-available', marginTop: '.85em' }}>
+          <Header textAlign="center" as="h1" color="purple" size= "huge" >Create New Event</Header>
+          <Form size="large" inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token)}>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>Event Name</label>
+                <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="New Year's Celebration" />
+              </Form.Field>
+              <Form.Field width = {6}>
+                <label>Date</label>
+                <DatePicker
+                  name="date"
+                  selected={this.state.date}
+                  value={this.state.date}
+                  onChange={this.handleDateChange.bind(this)}
+                  required={true}
+                />
+              </Form.Field>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Field>
+                <label>Event Description</label>
+                <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="Party" required={true} />
+              </Form.Field>
+              <Form.Field
+                control={Dropdown} label="Genre Preferences" name="genres" placeholder="Hip Hop, Electronic, Pop" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
+              />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup inverted>
+                <label>Danceability: {this.state.danceability}</label>
+                <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
 
 
-            <Form.Field>
-              <label>Loudness: {this.state.loudness}</label>
-              <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Loudness Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Energy: {this.state.energy}</label>
-              <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Energy Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Acousticness: {this.state.acousticness}</label>
-              <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
-              <br />
+              </StyleFormGroup>
+              <StyleFormGroup>
+                <label>Danceability Importance: </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Loudness: {this.state.loudness}</label>
+                <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Loudness Importance:    </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Energy: {this.state.energy}</label>
+                <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted >
+                <label>Energy Importance:      </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Acousticness: {this.state.acousticness}</label>
+                <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
 
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Acousticness Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
-            </Form.Field>
-            <Form.Field>
-              <label>Valence: {this.state.valence}</label>
-              <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
-              <label>Valence Importance:</label>
-              <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
-            </Form.Field>
-            <div>
-            { this.renderError() }
-              <Button disabled={this.state.submitVisible} color="purple" type="submit">Submit</Button>
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Acousticness Importance:</label>
+                <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Valence: {this.state.valence}</label>
+                <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup inline inverted>
+                <label>Valence Importance:     </label>
+                <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {this.renderError()}
+              <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge" >Create Event</Button>
             </div>
           </Form>
         </Segment>
@@ -250,13 +245,12 @@ export class NewEvent extends Component {
     )
   }
   renderError() {
-    console.log("HITTING IF")
     if (this.state.visible) {
-console.log("ERROR SHOWING")
+      console.log('ERROR SHOWING')
       return (
         <Message
           onDismiss={this.handleDismiss}
-          color = "red"
+          color="red"
           header="You have used too many points!"
           content="You only have 10 total points to split between the importance fields."
         />
@@ -274,9 +268,9 @@ const mapState = (state) => {
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    handleSubmit(evt, name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token) {
+    handleSubmit(evt, name, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token) {
       let { history } = ownProps
-      let newEvent = { name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token }
+      let newEvent = { name, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token }
       evt.preventDefault()
       dispatch(createNewEvent(newEvent, history))
     }

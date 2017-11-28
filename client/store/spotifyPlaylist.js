@@ -3,6 +3,19 @@ import axios from 'axios'
 import { browserHistory } from 'react-router'
 import SpotifyWebApi from 'spotify-web-api-js'
 const SpotifyApi = new SpotifyWebApi()
+import { ERROR } from 'socket.io-parser';
+import { errorState } from './errorHandler'
+import { fetchPlaylistSongs } from './playlistSongs'
+import socket from '../socket'
+
+// Helper Functions
+const setSpotifyToken = () => {
+  return axios.get('/api/spotifyPlaylist/refreshtoken')
+    .then(res => res.data)
+    .then(token => {
+      SpotifyApi.setAccessToken(token)
+    })
+}
 
 /* ACTION TYPES*/
 const GET_SPOTIFY_PLAYLIST = 'GET_SPOTIFY_PLAYLIST'
@@ -29,7 +42,7 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
     let spotifyPlaylistId;
     let tracksToAdd;
 
-    return axios.put(`/api/spotifyPlaylist/getPrioritizedSongs/${eventId}`, {endParty})
+    return axios.put(`/api/spotifyPlaylist/getPrioritizedSongs/${eventId}`, { endParty })
       .then(res => res.data)
       .then(data => {
         newPlaylistData = data
@@ -37,31 +50,131 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
         spotifyPlaylistId = newPlaylistData.spotifyPlaylistId
         tracksToAdd = newPlaylistData.uriArr
 
-        SpotifyApi.setAccessToken(newPlaylistData.accessToken)
-        return SpotifyApi.getPlaylistTracks(spotifyUserId, spotifyPlaylistId)
+        setSpotifyToken()
+          .then(() => {
+            return SpotifyApi.getPlaylistTracks(spotifyUserId, spotifyPlaylistId)
+          })
+          .then(playlistTracks => {
+            return playlistTracks.items.map(item => item.track.uri)
+          })
+          .then(tracksToRemove => {
+            return SpotifyApi.removeTracksFromPlaylist(spotifyUserId, spotifyPlaylistId, tracksToRemove)
+          })
+          .then(() => {
+            return SpotifyApi.addTracksToPlaylist(spotifyUserId, newPlaylistData.spotifyPlaylistId, tracksToAdd)
+          })
+          .then(() => {
+            console.log('Spotify Updated')
+            dispatch(fetchPlaylistSongs(eventId))
+          })
+          .catch(err => console.log(err))
       })
-      .then(playlistTracks => {
-        return playlistTracks.items.map(item => item.track.uri)
-      })
-      .then(tracksToRemove => {
-        return SpotifyApi.removeTracksFromPlaylist(spotifyUserId, spotifyPlaylistId, tracksToRemove)
-      })
-      .then(() => {
-        return SpotifyApi.addTracksToPlaylist(spotifyUserId, newPlaylistData.spotifyPlaylistId, tracksToAdd)
-      })
-      .then(() => console.log('Spotify Updated'))
-      .catch(err => console.log(err))
   }
 
-export const startSpotifyPlaylist = (spotifyUri) => {
-  axios.get('/api/spotifyPlaylist/refreshtoken')
-    .then(res => res.data)
-    .then(token => {
-      SpotifyApi.setAccessToken(token)
-      SpotifyApi.play({ 'context_uri': spotifyUri })
-    })
-}
+export const startSpotifyPlaylist = (spotifyUri) =>
+  dispatch => {
+    setSpotifyToken()
+      .then(() => {
+        SpotifyApi.getMyDevices()
+          .then(data => {
+            console.log(data, 'My devices')
+            SpotifyApi.play({ 'device_id': data.devices[0].id, 'context_uri': spotifyUri })
+          })
+          .catch(err => {
+            dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+            dispatch(pollingCurrentSong(false))
+            console.log(err)
+          })
+      })
+      .catch(err => console.log(err, 'error'))
+  }
 
+export const resumeSpotifyPlaylist = () =>
+  dispatch => {
+    let currentTrackUri;
+    setSpotifyToken()
+      .then(() => {
+        return SpotifyApi.getMyCurrentPlayingTrack()
+      })
+      .then((playingSong) => {
+        console.log('PLAYING SONGGG FOR RESUME', playingSong)
+        currentTrackUri = playingSong.item.uri
+        SpotifyApi.getMyDevices()
+          .then(data => {
+            console.log(data, 'My devices')
+            SpotifyApi.play({ 'device_id': data.devices[0].id })
+          })
+          .catch(err => {
+            dispatch(pollingCurrentSong(false))
+            console.log(err)
+          })
+      })
+      .catch(err => {
+        dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+        console.log(err, 'error')
+      })
+  }
+
+
+export const pauseSpotifyPlaylist = () =>
+  dispatch => {
+    setSpotifyToken()
+      .then(() => {
+        return SpotifyApi.getMyDevices()
+      })
+      .then(data => {
+        SpotifyApi.pause({ 'device_id': data.devices[0].id })
+        dispatch(pollingCurrentSong(false))
+      })
+      .catch(err => console.error(err));
+  }
+
+let interval
+export const pollingCurrentSong = (poll, eventId) =>
+  dispatch => {
+    let currentSongId;
+    // console.log('polling')
+    let error;
+    if (poll) {
+      interval = setInterval(() => {
+        setSpotifyToken()
+          .then(() => {
+            return SpotifyApi.getMyCurrentPlayingTrack()
+              .then(track => {
+                // console.log('polling')
+                console.log('CURRENT SONG', currentSongId)
+                if (track.is_playing) {
+
+                  if (track.item.id !== currentSongId) {
+                    dispatch(updateSpotifyPlaylist(eventId))
+                    currentSongId = track.item.id
+                    dispatch(updateGuests(eventId))
+                  }
+
+                  axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
+                } else {
+                  console.log('no song playing')
+                  // dispatch(updateSpotifyPlaylist(eventId))
+                  //   .then(() => {
+                  // dispatch(startSpotifyPlaylist())
+                  // })
+                }
+                dispatch(updateSpotifyPlaylist(eventId))
+              })
+          })
+      }, 9000)
+    }
+    if (!poll) {
+      console.log(interval, 'stopped pollling')
+      clearInterval(interval)
+    }
+  }
+
+export const updateGuests = (eventId) =>
+  dispatch => {
+    console.log('thunk updateGuests Emmited')
+    socket.emit('/pollerSongChange', eventId)
+  }
 /* REDUCER */
 export default function (state = defaultSpotifyPlaylist, action) {
   switch (action.type) {

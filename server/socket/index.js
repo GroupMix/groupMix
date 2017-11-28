@@ -28,8 +28,6 @@ module.exports = (io) => {
       let { lat, long, userIdForSocket } = coords
       let key = userIdForSocket
       coordsCache[key] = { lat, long }
-      console.log("coords cache",coordsCache)
-      console.log("sock IDDD",userIdForSocket)
       //find most recent Event for user from DB
       return User.findById(userIdForSocket)
         .then((user) => {
@@ -39,8 +37,8 @@ module.exports = (io) => {
           let eventsObj = {}
           let dates = events.map((event) => {
             let myDate = Date.parse(event.date)
-            eventsObj[myDate] = event.id
-            return myDate
+            let now = Date.now() - (1000 * 60 * 60 * 23.9)
+            if (myDate >= now) eventsObj[myDate] = event.id
           })
           return eventsObj[Math.min.apply(null, dates)]
         })
@@ -48,7 +46,6 @@ module.exports = (io) => {
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
-          console.log("val", Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId))
           if (Object.keys(upcomingEvent).length > 0 && coordsCache.hasOwnProperty(upcomingEvent.userId)){
           let lat1 = coordsCache[upcomingEvent.userId.toString()].lat
           let lon1 = coordsCache[upcomingEvent.userId.toString()].long
@@ -56,23 +53,25 @@ module.exports = (io) => {
           let lon2 = coordsCache[userIdForSocket.toString()].long
           let unit = 'N'
           let distanceBetween = distance(lat1, lon1, lat2, lon2, unit)
-          console.log('distance between', distanceBetween)
           if(distanceBetween < 0.03 ) {
             EventUser.findOne({ where: { eventId: upcomingEvent.eventId, userId: userIdForSocket } })
             .then((userToCheckIn)=>{
              return userToCheckIn.update({atEvent: true})
             })
             console.log('user has been checked in with geolocation')
-            socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId) 
+            socket.broadcast.emit(`userHere/${upcomingEvent.eventId}`, upcomingEvent.userId, upcomingEvent.eventId)
           }
           }
         })
         .catch((err)=>{
           console.log("SOCKET ERROR", err)
         })
-        
-    }))
 
+    }))
+    socket.on('UpdateEvents', (eventId) => {
+      console.log(eventId, 'from emmit')
+      socket.broadcast.emit(`UpdatePlaylist/${eventId}`, eventId)
+    })
     socket.on('userArrived', (eventId, userId) => {
       console.log('A User Has Manually Checked in')
       socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
@@ -80,6 +79,11 @@ module.exports = (io) => {
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
     })
+
+    socket.on('/pollerSongChange', (eventId) => {
+      socket.broadcast.emit(`/songChange/${eventId}`, eventId)
+    })
+
 
     socket.on('hasArrived', () => {
       console.log(`${socket.id} has arrived`)

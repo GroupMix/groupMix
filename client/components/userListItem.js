@@ -3,7 +3,8 @@ import {
     List,
     Container,
     Image,
-    Button
+    Button,
+    Icon
 } from 'semantic-ui-react'
 import '../styles/_usersList.scss'
 
@@ -14,8 +15,13 @@ const UserListItem = ({ user, hideUser, eventId, inviteUser, uninviteUser, invit
             <List.Content>
                 <div id="userName">
                     <h2>{user.name}</h2>
-                    <Image id="profilePic" size="small" src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
+                    {
+                      user.imgurPhoto ?
+                      <Image id="profilePic" size="small" src={user.imgurPhoto} />
+                      : <Icon name="music" size="huge" color="blue" />
+                    }
                 </div>
+                <br />
                 <div className="ui three buttons">
                     <Button.Group fluid>
                         <Button onClick={() => hideUser(user.id)}>Hide</Button>

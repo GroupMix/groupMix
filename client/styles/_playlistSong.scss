@@ -1,0 +1,25 @@
+.playlistSong-Container {
+    .playlistSong-Item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        #vote-container {
+            display: flex;
+            flex-direction: column;
+        }
+        h3 {
+            padding-right: 1px;
+            #song-name {
+                color: #6A8CDF;
+            }
+            #song-artist {
+                color: #B358BA;
+            }
+            #now-playing {
+                color: #12A293;
+            }
+        }
+    }
+}
+

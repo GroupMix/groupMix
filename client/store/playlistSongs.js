@@ -1,8 +1,9 @@
 import axios from 'axios'
+import { updateGuests } from './index'
 /**
  * ACTION TYPES
  */
-
+const GET_PLAYLIST_SONGS = 'GET_PLAYLIST_SONGS'
 const ADD_PLAYLIST_SONG = 'ADD_PLAYLIST_SONG'
 const PRIORITIZE_SONGS = 'PRIORITIZE_SONGS'
 
@@ -14,13 +15,24 @@ const defaultSongs = []
 /**
  * ACTION CREATORS
  */
-
+const getPlaylistSongs = (songs) => ({ type: GET_PLAYLIST_SONGS, songs })
 const addPlaylistSong = (song) => ({ type: ADD_PLAYLIST_SONG, song })
 const myPrioritizeSongs = () => ({ type: PRIORITIZE_SONGS })
 
 /**
  * THUNK CREATORS
  */
+
+ // fetches all the songs belonging to a particular playlist
+export const fetchPlaylistSongs = (eventId) =>
+dispatch => {
+    axios.get(`/api/spotifyPlaylist/eventSongs/${eventId}`)
+    .then(res => res.data)
+    .then(tracks => {
+      dispatch(getPlaylistSongs(tracks))
+    })
+    .catch(err => console.log(err))
+  }
 
 export const addPlaylistSongThunk = (song) =>
   dispatch =>
@@ -32,18 +44,29 @@ export const addPlaylistSongThunk = (song) =>
 
 export const prioritizeSongs = (eventId) =>
   dispatch => {
-    axios.get(`/api/playlistSongs/prioritize/${eventId}`)
+    return axios.get(`/api/playlistSongs/prioritize/${eventId}`)
       .then(res => {
         dispatch(myPrioritizeSongs())
       })
       .catch(err => console.log(err))
   }
+export const voteForSong = (vote, songId, eventId) => 
+  dispatch => {
+  return axios.put(`/api/playlistSongs/voteSong/${eventId}`, {vote, songId})
+    .then(res => res.data)
+    .then(data => {
+      dispatch(fetchPlaylistSongs(eventId))
+      dispatch(updateGuests(eventId))      
+    })
+}
 export default (playlistSongs = defaultSongs, action) => {
   switch (action.type) {
     case ADD_PLAYLIST_SONG:
       return [...playlistSongs, action.song];
     case PRIORITIZE_SONGS:
       return playlistSongs;
+    case  GET_PLAYLIST_SONGS:
+      return action.songs
     default:
       return playlistSongs;
   }

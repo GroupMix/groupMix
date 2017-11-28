@@ -32,20 +32,23 @@ if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
 
   const strategy = new SpotifyStrategy(spotifyConfig, (token, refreshToken, profile, done) => {
     const spotifyUserId = profile.id
-    const name = profile.displayName
+    let name;
+    if (profile.displayName === null) name = profile.id
+    else name = profile.displayName
     const email = profile.emails[0].value
+    const imgurPhoto = profile.photos[0];
 
     User.find({where: {spotifyUserId}})
       .then(foundUser => {
         if (!foundUser) {
-          User.create({name, email, spotifyUserId})
+          User.create({name, email, spotifyUserId, imgurPhoto})
           .then(createdUser => {
             let user = { id: createdUser.id, user: createdUser, access: token, refreshToken }
            return done(null, user);
           })
         }
         else {
-          let user = {id: foundUser.id, user:foundUser, access: token, refreshToken}
+          let user = {id: foundUser.id, user: foundUser, access: token, refreshToken}
           return done(null, user)
         }
       })

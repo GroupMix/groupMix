@@ -64,8 +64,8 @@ class UserHome extends React.Component {
         console.error(err);
       })
   }
-//will run this on component did mount for Chris' component
-  componentWillUnmount(){
+  //will run this on component did mount for Chris' component
+  componentWillUnmount() {
     this.props.prioritize(this.props.match.params.eventId * 1)
   }
 
@@ -184,64 +184,65 @@ class UserHome extends React.Component {
     const { email, user, eventId, guestlist, event } = this.props
     return (
       <div>
-      <br />
-      <Segment inverted style={{marginTop: '-.75em', marginBottom: '-.7em'}}>
-      <Header as="h2" inverted color="purple" textAlign="center"  >Get ready for the {event.name}!</Header>
+        <br />
+        <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
+          <Header as="h2" inverted color="purple" textAlign="center"  >Get ready for the {event.name}!</Header>
         </Segment>
         <Segment inverted>
-        <Grid
-          divided
-          textAlign="left"
-          columns={2}
-        >
+          <Grid
+            divided
+            textAlign="left"
+            columns={2}
+          >
 
-          <Grid.Column  >
-            <Header as="h2" color="blue" textAlign="center">
-              Guestlist
-        </Header>
-        <Card.Group itemsPerRow = {3}>
-        {
-            guestlist.length ?
-                guestlist.map(guest => {
+            <Grid.Column width={11}>
+              <Header as="h2" color="blue" textAlign="center">
+                Guestlist
+              </Header>
+              <Card.Group itemsPerRow={4}>
+                {
+                  guestlist.length ?
+                    guestlist.map(guest => {
+                      return (
+                        <GuestListItem key={guest.id} user={guest} eventId={eventId} />
+                      )
+                    })
+                    : <h1>No one Has been Invited</h1>
+                }
+              </Card.Group>
+            </Grid.Column>
+
+            <Grid.Column width={5}>
+              <Header as="h2" color="blue" textAlign="center" float="left">
+                Top Artists
+                <Button onClick={this.handleSubmit} color="blue" floated="right" style={{ marginRight: '0.25em' }}>
+                  Submit
+                </Button>
+              </Header>
+
+              <List divided inverted relaxed>
+                {this.state.topArtists &&
+                  this.state.topArtists.map(item => {
                     return (
-                        <GuestListItem key={guest.id} user={guest} eventId={eventId}  />
-                    )
-                })
-                : <h1>No one Has been Invited</h1>
-        }
-    </Card.Group>
-
-
-          </Grid.Column>
-
-          <Grid.Column  >
-            <Header as="h2" color="blue" textAlign="center">
-              Top Artists
-            <Button onClick={this.handleSubmit} color="blue" floated="right">
-                Submit Artists
-            </Button>
-            </Header>
-            <List >
-              {this.state.topArtists &&
-                this.state.topArtists.map(item => {
-                  return (
-                    <List.Item key={item.id}>
-                      <List.Content floated="right">
-                        <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
-                          <Icon name="add" color="white" />
-                          Add
-              </Button>
-                      </List.Content>
-                      <Icon name="music" color="blue" />
-                      <List.Content>
-                        {item.name}
-                      </List.Content>
-                    </List.Item>)
-                })
-              }
-            </List>
-          </Grid.Column>
-        </Grid>
+                      <List.Item key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+                        <Icon name="music" color="blue" size="large" />
+                        <List.Content floated="left" style={{ width: '-webkit-fill-available' }} >
+                          {item.name}
+                        </List.Content>
+                        <div inverted style={{ width: '-webkit-fill-available', verticalAlign: 'middle' }}>
+                          <List.Content floated="right">
+                            <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
+                              <Icon name="add" color="white" />
+                              Add
+                            </Button>
+                          </List.Content>
+                        </div>
+                      </List.Item>)
+                  })
+                }
+              </List>
+            </Grid.Column>
+          </Grid>
         </Segment>
       </div>
     )
@@ -262,17 +263,17 @@ const mapState = (state, ownProps) => {
 
 
 const mapDispatch = (dispatch) => ({
-    userSongs(songs) {
-      dispatch(addSongsThunk(songs))
-    },
-    playListSong(song) {
-      dispatch(addPlaylistSongThunk(song))
-    },
-    fetchInitialData(eventId) {
-      dispatch(fetchInvitedUsers(eventId))
-      dispatch(fetchEvent(eventId))
-    },
-    prioritize(eventId) {
+  userSongs(songs) {
+    dispatch(addSongsThunk(songs))
+  },
+  playListSong(song) {
+    dispatch(addPlaylistSongThunk(song))
+  },
+  fetchInitialData(eventId) {
+    dispatch(fetchInvitedUsers(eventId))
+    dispatch(fetchEvent(eventId))
+  },
+  prioritize(eventId) {
     dispatch(prioritizeSongs(eventId))
   }
 })

@@ -1,0 +1,28 @@
+.partyView-Container {
+    max-width: 90%;
+    margin: auto;
+    #guestlist-container {
+        margin-left: 18%;
+    }
+    #header-container {
+        margin: auto;
+    }
+    #playlistBttns {
+        display: flex;
+        justify-content: center;
+    }
+    #host-Bttn {
+        margin: 14px;
+        transition: all 1s;
+    }
+    #spotifyPlayer {
+        width: 90%;
+    }
+}
+.lists-container {
+    margin-top: 20px;
+    background-color: '#1B1C1D';
+}
+#playlist-contianer {
+    margin-left: 10%;
+}
