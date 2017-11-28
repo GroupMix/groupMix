@@ -195,22 +195,6 @@ class UserHome extends React.Component {
             columns={2}
           >
 
-            <Grid.Column width={10} >
-              <Header as="h2" color="blue" textAlign="center">
-                Guestlist
-        </Header>
-              <Card.Group itemsPerRow={3}>
-                {
-                  guestlist.length ?
-                    guestlist.map(guest => {
-                      return (
-                        <GuestListItem key={guest.id} user={guest} eventId={eventId} />
-                      )
-                    })
-                    : <h1>No one Has been Invited</h1>
-                }
-              </Card.Group>
-
             <Grid.Column width={11}>
               <Header as="h2" color="blue" textAlign="center">
                 Guestlist

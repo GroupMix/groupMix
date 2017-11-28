@@ -175,7 +175,7 @@ export class NewEvent extends Component {
             </Form.Group>
             <Form.Group widths="equal">
               <Form.Field>
-                <label>Event Type</label>
+                <label>Event Description</label>
                 <input name="type" onChange={this.handleChange.bind(this)} value={this.state.type} placeholder="Party" required={true} />
               </Form.Field>
               <Form.Field
