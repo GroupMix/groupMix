@@ -27,7 +27,7 @@ class EventList extends Component {
 
         <Segment className="invited-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Invitations" color="purple" />
+            <Header as="h2" content="Invitations" color="purple" style={{marginLeft: '1em'}} />
           </Segment>
           <List divided inverted>
             {events &&
@@ -66,7 +66,7 @@ class EventList extends Component {
 
         <Segment className="hosted-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Hosted Events" color="purple" />
+            <Header as="h2" content="Hosted Events" color="purple" style={{marginLeft: '1em'}} />
           </Segment>
           <List divided inverted>
             {events &&
@@ -102,7 +102,7 @@ class EventList extends Component {
 
         <Segment className="upcoming-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Upcoming Events" color="purple" />
+            <Header as="h2" content="Upcoming Events" color="purple" style={{marginLeft: '1em'}} />
           </Segment>
           <List divided inverted>
             {events &&
@@ -136,7 +136,7 @@ class EventList extends Component {
 
         <Segment className="past-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h1" content="Past Events" color="purple" />
+            <Header as="h1" content="Past Events" color="purple" style={{marginLeft: '1em'}} />
           </Segment>
           <List divided inverted>
             {events &&
