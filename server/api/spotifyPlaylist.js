@@ -5,6 +5,7 @@ const { tokenRefresh } = require('../middleware/spotifyRefresh')
 const { Playlist, PlaylistSong, Song } = require('../db/models')
 const green = require('chalk').green
 const red = require('chalk').red
+const socket = require('../socket')
 
 module.exports = router
 

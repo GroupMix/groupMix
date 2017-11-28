@@ -15,8 +15,8 @@ const inviteUser = user => ({ type: INVITE_USER, user })
 const uninviteUser = userId => ({ type: UNINVITE_USER, userId })
 /* THUNK CREATORS */
 
-export const removeUserInvite = (eventId, userId) => 
-    dispatch => 
+export const removeUserInvite = (eventId, userId) =>
+    dispatch =>
         axios.put(`/api/events/user/${eventId}`, {userId})
         .then(res => res.data)
         .then(uninvitedUserId => {

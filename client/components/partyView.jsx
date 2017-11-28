@@ -21,6 +21,7 @@ import {
   prioritizeSongs
 } from '../store'
 
+import _ from 'lodash'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
@@ -65,6 +66,7 @@ class PartyView extends React.Component {
   componentWillUnmount() {
     this.props.polling(false)
   }
+
 
   getUserStatus = (eventId) => {
     const { polling } = this.props
@@ -131,21 +133,20 @@ class PartyView extends React.Component {
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
-      console.log('RECEIVED EMITTER! eventID:', eventId, 'userId', userId)
+      console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
+      this.props.socketUpdates(eventId)
       if (isHost) {
         console.log('updating event', eventId)
-        this.props.getPriority(eventId)
-        .then(()=>{
-          this.props.fetchInitialData(eventId)
-        })
-        .then(()=>{
-          this.props.updatePlaylist(+eventId)
-        })
+        //emit update user --> need to send to server
+        this.props.runUpdates(eventId)
+      } else {
+        _.debounce(this.props.socketUpdates(eventId), 3000)
       }
     })
-    socket.on(`UpdatePlaylist/${eventId}`, () => {
-      console.log('Socket update playlist', eventId)
-      this.props.fetchInitialData(eventId)
+    socket.on(`/songChange/${eventId}`, (eventId) => {
+      if (!isHost) {
+        _.debounce(this.props.socketUpdates(eventId), 3000)
+      }
     })
 
     return (
@@ -231,13 +232,13 @@ class PartyView extends React.Component {
             <Grid.Column  >
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
-                </Header>
-                {
-                  spotifyUrl &&
-                  <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
-                }
-                <PlaylistQueue songs={playlistSongs}/>
-              </Grid.Column>
+            </Header>
+              {
+                spotifyUrl &&
+                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
+              }
+              <PlaylistQueue songs={playlistSongs}/>
+            </Grid.Column>
           </Grid>
 
         </Segment>
@@ -270,8 +271,14 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
     dispatch(fetchSpotifyPlaylist(eventId))
-    dispatch(updateSpotifyPlaylist(eventId))
     dispatch(fetchPlaylistSongs(eventId))
+    dispatch(updateSpotifyPlaylist(eventId))
+
+  },
+  socketUpdates(eventId){
+    console.log("FETCH SONGS AFTER SOCKET" )
+    dispatch(fetchPlaylistSongs(eventId))
+    dispatch(fetchInvitedUsers(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {
     dispatch(startSpotifyPlaylist(spotifyUri))
@@ -292,6 +299,20 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(updateSpotifyPlaylist(eventId))
     dispatch(fetchPlaylistSongs(eventId))
   },
+  runUpdates(eventId){
+    dispatch(getPriority(eventId))
+    .then(()=>{
+      dispatch(fetchInvitedUsers(eventId))
+      dispatch(fetchEvent(eventId))
+      dispatch(fetchSpotifyPlaylist(eventId))
+      dispatch(updateSpotifyPlaylist(eventId))
+      dispatch(fetchPlaylistSongs(eventId))
+    })
+    .then(()=>{
+      this.props.updatePlaylist(+eventId)
+    })
+  }
+,
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
       .then(event => {

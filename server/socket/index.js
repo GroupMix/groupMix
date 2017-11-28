@@ -83,6 +83,11 @@ module.exports = (io) => {
       console.log(`Connection ${socket.id} has left the building`)
     })
 
+    socket.on('/pollerSongChange', (eventId) => {
+      socket.broadcast.emit(`/songChange/${eventId}`, eventId)
+    })
+
+
     socket.on('hasArrived', () => {
       console.log(`${socket.id} has arrived`)
     })

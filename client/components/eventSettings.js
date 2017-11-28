@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { editEvent, prioritizeSongs } from '../store'
+import { editEvent, prioritizeSongs, updateSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Segment, Message } from 'semantic-ui-react'
 import genreList from './genreList'
@@ -240,9 +240,7 @@ export class EventSettings extends Component {
     )
   }
   renderError() {
-    console.log("HITTING IF")
     if (this.state.visible) {
-      console.log("ERROR SHOWING")
       return (
         <Message
           onDismiss={this.handleDismiss}
@@ -273,6 +271,9 @@ const mapDispatch = (dispatch, ownProps) => {
 
       dispatch(editEvent(eventId, updatedEvent))
       dispatch(prioritizeSongs(eventId))
+      .then(()=>{
+        dispatch(updateSpotifyPlaylist(eventId))
+      })
     },
   }
 }

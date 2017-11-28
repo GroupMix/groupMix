@@ -49,6 +49,7 @@ export const prioritizeSongs = (eventId) =>
       })
       .catch(err => console.log(err))
   }
+
 export default (playlistSongs = defaultSongs, action) => {
   switch (action.type) {
     case ADD_PLAYLIST_SONG:
