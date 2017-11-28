@@ -28,8 +28,6 @@ module.exports = (io) => {
       let { lat, long, userIdForSocket } = coords
       let key = userIdForSocket
       coordsCache[key] = { lat, long }
-      console.log("coords cache",coordsCache)
-      console.log("sock ID",userIdForSocket)
       //find most recent Event for user from DB
       return User.findById(userIdForSocket)
         .then((user) => {
@@ -39,8 +37,8 @@ module.exports = (io) => {
           let eventsObj = {}
           let dates = events.map((event) => {
             let myDate = Date.parse(event.date)
-            eventsObj[myDate] = event.id
-            return myDate
+            let now = Date.now() - (1000 * 60 * 60 * 23.9)
+            if (myDate >= now) eventsObj[myDate] = event.id
           })
           return eventsObj[Math.min.apply(null, dates)]
         })
@@ -55,7 +53,6 @@ module.exports = (io) => {
           let lon2 = coordsCache[userIdForSocket.toString()].long
           let unit = 'N'
           let distanceBetween = distance(lat1, lon1, lat2, lon2, unit)
-          console.log('distance between', distanceBetween)
           if(distanceBetween < 0.03 ) {
             EventUser.findOne({ where: { eventId: upcomingEvent.eventId, userId: userIdForSocket } })
             .then((userToCheckIn)=>{

@@ -65,7 +65,6 @@ function sendCoords(lat, long, accuracy, userIdForSocket){
     accuracy,
     userIdForSocket
   }
-  console.log("userSock", userIdForSocket, "coords", coords)
   socket.emit('guestCoords', coords);
 }
 
@@ -73,7 +72,7 @@ function geo_success(position) {
   sendCoords(position.coords.latitude, position.coords.longitude, position.coords.accuracy, userIdForSocket);
 }
 function geo_error() {
-  console.log("Sorry, no position available.");
+
 }
 var geo_options = {
   enableHighAccuracy: true,

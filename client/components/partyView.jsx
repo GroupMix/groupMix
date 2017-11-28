@@ -130,7 +130,7 @@ class PartyView extends React.Component {
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-   
+
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
@@ -167,7 +167,6 @@ class PartyView extends React.Component {
           {
             (isHost && hasStarted) &&
             <div>
-
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => this.handlePlayback(eventId)}>{playbackButton}</Button>
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
               <ErrorModal />
@@ -234,7 +233,7 @@ class PartyView extends React.Component {
                 Playlist
             </Header>
               {
-                spotifyUrl &&
+                spotifyUrl && isHost &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
               }
               <PlaylistQueue songs={playlistSongs} eventId={eventId} />
