@@ -90,47 +90,49 @@ export const startSpotifyPlaylist = (spotifyUri) =>
   }
 
 export const resumeSpotifyPlaylist = () =>
-dispatch => {
-  let currentTrackUri;
-  setSpotifyToken()
-    .then(() => {
-      return SpotifyApi.getMyCurrentPlayingTrack()
-    })
-    .then((playingSong) => {
-      console.log('PLAYING SONGGG FOR RESUME', playingSong)
-      currentTrackUri = playingSong.item.uri
-      SpotifyApi.getMyDevices()
-        .then(data => {
-          console.log(data, 'My devices')
-          SpotifyApi.play({ 'device_id': data.devices[0].id })
-        })
-        .catch(err => {
-          dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
-          dispatch(pollingCurrentSong(false))
-          console.log(err)
-        })
-    })
-    .catch(err => console.log(err, 'error'))
-}
+  dispatch => {
+    let currentTrackUri;
+    setSpotifyToken()
+      .then(() => {
+        return SpotifyApi.getMyCurrentPlayingTrack()
+      })
+      .then((playingSong) => {
+        console.log('PLAYING SONGGG FOR RESUME', playingSong)
+        currentTrackUri = playingSong.item.uri
+        SpotifyApi.getMyDevices()
+          .then(data => {
+            console.log(data, 'My devices')
+            SpotifyApi.play({ 'device_id': data.devices[0].id })
+          })
+          .catch(err => {
+            dispatch(pollingCurrentSong(false))
+            console.log(err)
+          })
+      })
+      .catch(err => {
+        dispatch(errorState(new Error("Please Open Spotify on your device before trying to start your Playlist!")))
+        console.log(err, 'error')
+      })
+  }
 
 
 export const pauseSpotifyPlaylist = () =>
-dispatch => {
-  setSpotifyToken()
-  .then(() => {
-    return SpotifyApi.getMyDevices()
-  })
-    .then(data => {
-      SpotifyApi.pause({ 'device_id': data.devices[0].id })
-      dispatch(pollingCurrentSong(false))
-  })
-  .catch(err => console.error(err));
-}
+  dispatch => {
+    setSpotifyToken()
+      .then(() => {
+        return SpotifyApi.getMyDevices()
+      })
+      .then(data => {
+        SpotifyApi.pause({ 'device_id': data.devices[0].id })
+        dispatch(pollingCurrentSong(false))
+      })
+      .catch(err => console.error(err));
+  }
 
 let interval
 export const pollingCurrentSong = (poll, eventId) =>
-dispatch => {
-  let currentSongId;
+  dispatch => {
+    let currentSongId;
     // console.log('polling')
     let error;
     if (poll) {
@@ -143,10 +145,10 @@ dispatch => {
                 console.log('CURRENT SONG', currentSongId)
                 if (track.is_playing) {
 
-                  if (track.item.id !== currentSongId){
+                  if (track.item.id !== currentSongId) {
                     dispatch(updateSpotifyPlaylist(eventId))
                     currentSongId = track.item.id
-                    socket.emit('/pollerSongChange', eventId)
+                    dispatch(updateGuests(eventId))
                   }
 
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
@@ -154,13 +156,13 @@ dispatch => {
                   console.log('no song playing')
                   // dispatch(updateSpotifyPlaylist(eventId))
                   //   .then(() => {
-                      // dispatch(startSpotifyPlaylist())
-                    // })
+                  // dispatch(startSpotifyPlaylist())
+                  // })
                 }
-                dispatch(updateSpotifyPlaylist(eventId)) // Event Emmiter may need to happen here too
+                dispatch(updateSpotifyPlaylist(eventId))
               })
           })
-      }, 6000)
+      }, 9000)
     }
     if (!poll) {
       console.log(interval, 'stopped pollling')
@@ -168,6 +170,11 @@ dispatch => {
     }
   }
 
+export const updateGuests = (eventId) =>
+  dispatch => {
+    console.log('thunk updateGuests Emmited')
+    socket.emit('/pollerSongChange', eventId)
+  }
 /* REDUCER */
 export default function (state = defaultSpotifyPlaylist, action) {
   switch (action.type) {
