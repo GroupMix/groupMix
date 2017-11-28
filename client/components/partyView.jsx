@@ -141,12 +141,12 @@ class PartyView extends React.Component {
         console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
     socket.on(`/songChange/${eventId}`, (eventId) => {
       if (!isHost) {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
 
@@ -273,7 +273,7 @@ const mapDispatch = (dispatch, ownProps) => ({
 
   },
   socketUpdates(eventId){
-    console.log("FETCH SONGS AFTER SOCKET" )
+    console.log("FETCH SONGS AFTER SOCKET")
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
   },
