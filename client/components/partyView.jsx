@@ -130,7 +130,7 @@ class PartyView extends React.Component {
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-   
+
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
@@ -141,12 +141,12 @@ class PartyView extends React.Component {
         console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
     socket.on(`/songChange/${eventId}`, (eventId) => {
       if (!isHost) {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
 
@@ -167,7 +167,6 @@ class PartyView extends React.Component {
           {
             (isHost && hasStarted) &&
             <div>
-
               <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => this.handlePlayback(eventId)}>{playbackButton}</Button>
               <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
               <ErrorModal />
@@ -234,7 +233,7 @@ class PartyView extends React.Component {
                 Playlist
             </Header>
               {
-                spotifyUrl &&
+                spotifyUrl && isHost &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
               }
               <PlaylistQueue songs={playlistSongs} eventId={eventId} />
@@ -273,7 +272,7 @@ const mapDispatch = (dispatch, ownProps) => ({
 
   },
   socketUpdates(eventId){
-    console.log("FETCH SONGS AFTER SOCKET" )
+    console.log("FETCH SONGS AFTER SOCKET")
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
   },

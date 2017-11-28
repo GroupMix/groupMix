@@ -67,8 +67,10 @@ class UsersList extends Component {
                             value={this.state.search}
                             id="userSearchBar"
                         />
-                        <Button id="invitedFilterBttn" onClick={() => this.setState({ filterInvited: !this.state.filterInvited })}>Invited</Button>
+                        <Button id="invitedFilterBttn" onClick={() => this.setState({ filterInvited: !this.state.filterInvited })} >Invited</Button>
                         <Button id="clearFilterBttn" onClick={() => this.clearAllFilters()}>Clear Filters</Button>
+                        <Button color="blue" onClick={() => history.push(`/events/${event.id}`)} style={{ marginLeft: '5em' }}>Set Music Preferences</Button>
+                        <Button color="teal" onClick={() => history.push(`/events/${event.id}/partyview`)} style={{ marginLeft: '0.5em' }}>Party View</Button>
                     </div>
                     <List divided relaxed horizontal size="small">
                         {
