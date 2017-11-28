@@ -6,7 +6,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 var spotifyApi = new SpotifyWebApi();
 
 import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs, getTrackGenres, getAudioFeatures } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 
@@ -31,8 +31,9 @@ class UserHome extends React.Component {
     this.handleAdd = this.handleAdd.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.getTopArtistTracks = this.getTopArtistTracks.bind(this)
-    this.getTrackGenres = this.getTrackGenres.bind(this)
-    this.getAudioFeatures = this.getAudioFeatures.bind(this)
+    // this.getTrackGenres = this.getTrackGenres.bind(this)
+    // this.getAudioFeatures = this.getAudioFeatures.bind(this)
+    this.getInfoAndPersist = this.getInfoAndPersist.bind(this)
   }
 
   componentDidMount() {
@@ -101,84 +102,21 @@ class UserHome extends React.Component {
             uniqueSongs.push(song)
           }
         })
-        return { songs: uniqueSongs, idArr: idArr }
+        return { songs: uniqueSongs, idArr: idArr, eventId: this.props.eventId, userId: this.props.user.id }
       })
       .then((data) => {
-        this.getTrackGenres(data);
+        this.getInfoAndPersist(data);
       })
   }
 
-  getTrackGenres = (data) => {
-    let songArtistIds = data.songs.map(song => song.artists[0].id)
-    let nestedArtistIds = [];
+  getInfoAndPersist = (data) => {
+    console.log("PERSIST data", data)
+    this.props.getTrackInfo(data)
 
-    while (songArtistIds.length) {
-      nestedArtistIds.push(songArtistIds.splice(0, 50))
-    }
-    let genreCalls = [];
+    history.push(`/events/${this.props.eventId}/partyview`)
 
-    nestedArtistIds.forEach(artistsIds => {
-      genreCalls.push(spotifyApi.getArtists(artistsIds))
-    })
-
-    Promise.all(genreCalls)
-      .then(artistData => {
-        let genres = [];
-        artistData.forEach(collection => {
-          collection.artists.forEach(artist => {
-            genres.push(artist.genres)
-          })
-        })
-        return genres
-      })
-      .then(genres => {
-        this.getAudioFeatures(data, genres)
-      })
-      .catch(err => console.log(err))
   }
 
-  getAudioFeatures = ({ idArr, songs }, genres) => {
-    spotifyApi.getAudioFeaturesForTracks(idArr)
-      .then((data) => {
-        let persistSongs = [];
-
-        songs.forEach((song, index) => {
-          const meta = data.audio_features[index];
-
-          let songData = {
-            name: song.name,
-            artist: song.artists[0].name,
-            spotifyArtistId: song.artists[0].id,
-            spotifySongId: song.id,
-            danceability: meta.danceability,
-            energy: meta.energy,
-            loudness: meta.loudness,
-            speechiness: meta.speechiness,
-            acousticness: meta.acousticness,
-            instrumentalness: meta.instrumentalness,
-            valence: meta.valence,
-            tempo: meta.tempo,
-            popularity: song.popularity,
-            genres: genres[index] || null,
-            playlistId: this.props.eventId,
-            userId: this.props.user.id
-          }
-
-          persistSongs.push(songData);
-          this.setState({ songsData: [...this.state.songsData, songData] })
-        })
-        return persistSongs;
-      })
-      .then(persistSongs => {
-        persistSongs.forEach(song => {
-          this.props.userSongs(song);
-        })
-        history.push(`/events/${this.props.eventId}/partyview`)
-      })
-      .catch(err => {
-        console.error(err);
-      })
-  }
 
   render() {
     const { email, user, eventId, guestlist, event } = this.props
@@ -275,6 +213,10 @@ const mapDispatch = (dispatch) => ({
   },
   prioritize(eventId) {
     dispatch(prioritizeSongs(eventId))
+  },
+  getTrackInfo(data) {
+
+    dispatch(getTrackGenres(data))
   }
 })
 
