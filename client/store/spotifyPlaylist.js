@@ -66,9 +66,6 @@ export const updateSpotifyPlaylist = (eventId, endParty) =>
           .then(() => {
             console.log('Spotify Updated')
             dispatch(fetchPlaylistSongs(eventId))
-            socket.emit(`UpdateEvents`, eventId)
-            // dispatch(fetchPlaylistSongs(eventId))
-
           })
           .catch(err => console.log(err))
       })
@@ -118,6 +115,7 @@ export const pollingCurrentSong = (poll, eventId) =>
                   if (track.item.id !== currentSongId){
                     dispatch(updateSpotifyPlaylist(eventId))
                     currentSongId = track.item.id
+                    socket.emit('/pollerSongChange', eventId)
                   }
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
                 } else {
