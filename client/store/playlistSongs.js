@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { updateGuests } from './index'
 /**
  * ACTION TYPES
  */
@@ -53,9 +54,10 @@ export const voteForSong = (vote, songId, eventId) =>
   dispatch => {
   return axios.put(`/api/playlistSongs/voteSong/${eventId}`, {vote, songId})
     .then(res => res.data)
-    .then(data => 
-      dispatch(fetchPlaylistSongs(eventId)
-    ))
+    .then(data => {
+      dispatch(fetchPlaylistSongs(eventId))
+      dispatch(updateGuests(eventId))      
+    })
 }
 export default (playlistSongs = defaultSongs, action) => {
   switch (action.type) {
