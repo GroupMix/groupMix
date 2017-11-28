@@ -20,13 +20,13 @@ class EventList extends Component {
     const rsvpNo = false;
     return (
       <div className="event-list-container">
-      <br />
-      <Segment textAlign="center" inverted style={{ marginTop: 'inherit'}}>
-      <Header as="h1" icon="list ul" content="Your Events" textAlign="center"  />
-</Segment>
+        <br />
+        <Segment textAlign="center" inverted style={{ marginTop: 'inherit' }}>
+          <Header as="h1" icon="list ul" content="Your Events" textAlign="center" />
+        </Segment>
         <Segment className="invited-events" inverted>
           <Segment compact={true} inverted>
-          <Header as="h2" content="Invitations" color="purple" />
+            <Header as="h2" content="Invitations" color="purple" />
 
           </Segment>
           <List divided inverted>
@@ -34,9 +34,14 @@ class EventList extends Component {
               events.map((event) => (
                 (event.eventUser.isAttending === null && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                <Header as="h3" icon="sound" content={event.name} />
+                  <Header as="h3" icon="sound" content={event.name} />
                   <List.Content floated="left">
-                    <Button positive onClick={evt => handleSubmit(evt, event.id, user.id, rsvpYes)}>Yes</Button>
+                    <Button
+                      positive
+                      onClick={evt => {
+                      handleSubmit(evt, event.id, user.id, rsvpYes)
+                      history.push(`/events/${event.id}`)
+                    }}>Yes</Button>
                     <Button negative onClick={evt => handleSubmit(evt, event.id, user.id, rsvpNo)}>No</Button>
                   </List.Content>
                   <List.Content>
@@ -57,11 +62,6 @@ class EventList extends Component {
                         <List.Item as="li">
                           <List.Content>Date: {event.date} </List.Content>
                         </List.Item>
-                        <div className="location-container">
-                          <List.Item as="li">Address: {event.address}</List.Item>
-                          <List.Item as="li">City: {event.city}</List.Item>
-                          <List.Item as="li">State: {event.state}</List.Item>
-                        </div>
                       </List.List>
                     </List.Description>
                   </List.Content>
@@ -73,7 +73,7 @@ class EventList extends Component {
 
         <Segment className="upcoming-events" inverted>
           <Segment compact={true} inverted>
-          <Header as="h2" content="Hosted Events" color="purple" />
+            <Header as="h2" content="Hosted Events" color="purple" />
           </Segment>
           <List divided inverted>
             {events &&
@@ -103,11 +103,6 @@ class EventList extends Component {
                         <List.Item as="li">
                           <List.Content>Date {event.date}</List.Content>
                         </List.Item>
-                        <div className="location-container">
-                          <List.Item as="li">Address: {event.address}</List.Item>
-                          <List.Item as="li">City: {event.city}</List.Item>
-                          <List.Item as="li">State: {event.state}</List.Item>
-                        </div>
                       </List.List>
                     </List.Description>
                   </List.Content>
@@ -118,13 +113,13 @@ class EventList extends Component {
         </Segment>
 
         <Segment className="upcoming-events" inverted>
-        <Segment compact={true} inverted>
-        <Header as="h2" content="Upcoming Events" color="purple" />
-        </Segment>
+          <Segment compact={true} inverted>
+            <Header as="h2" content="Upcoming Events" color="purple" />
+          </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
-                (!event.eventUser.isHost && !event.hasEnded) &&
+                (event.eventUser.isAttending && !event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
                   <Header as="h3" icon="sound" content={event.name} />
 
@@ -149,11 +144,6 @@ class EventList extends Component {
                         <List.Item as="li">
                           <List.Content>Date: {event.date}</List.Content>
                         </List.Item>
-                        <div className="location-container">
-                          <List.Item as="li">Address: {event.address}</List.Item>
-                          <List.Item as="li">City: {event.city}</List.Item>
-                          <List.Item as="li">State: {event.state}</List.Item>
-                        </div>
                       </List.List>
                     </List.Description>
                   </List.Content>
@@ -164,9 +154,9 @@ class EventList extends Component {
         </Segment>
 
         <Segment className="past-events" inverted>
-        <Segment compact={true} inverted>
-        <Header as="h1" content="Past Events" color="purple" />
-        </Segment>
+          <Segment compact={true} inverted>
+            <Header as="h1" content="Past Events" color="purple" />
+          </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
@@ -190,11 +180,6 @@ class EventList extends Component {
                         <List.Item as="li">
                           <List.Content>Date: {event.date}</List.Content>
                         </List.Item>
-                        <div className="location-container">
-                          <List.Item as="li">Address: {event.address}</List.Item>
-                          <List.Item as="li">City: {event.city}</List.Item>
-                          <List.Item as="li">State: {event.state}</List.Item>
-                        </div>
                       </List.List>
                     </List.Description>
                   </List.Content>
