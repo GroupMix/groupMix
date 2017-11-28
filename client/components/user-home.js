@@ -211,35 +211,48 @@ class UserHome extends React.Component {
                 }
               </Card.Group>
 
-
+            <Grid.Column width={11}>
+              <Header as="h2" color="blue" textAlign="center">
+                Guestlist
+              </Header>
+              <Card.Group itemsPerRow={4}>
+                {
+                  guestlist.length ?
+                    guestlist.map(guest => {
+                      return (
+                        <GuestListItem key={guest.id} user={guest} eventId={eventId} />
+                      )
+                    })
+                    : <h1>No one Has been Invited</h1>
+                }
+              </Card.Group>
             </Grid.Column>
 
             <Grid.Column width={5}>
-              <Header as="h2" color="blue" textAlign="center">
+              <Header as="h2" color="blue" textAlign="center" float="left">
                 Top Artists
-            <Button onClick={this.handleSubmit} color="blue" floated="right">
-                  Submit Artists
-            </Button>
+                <Button onClick={this.handleSubmit} color="blue" floated="right" style={{ marginRight: '0.25em' }}>
+                  Submit
+                </Button>
               </Header>
-              <List >
+
+              <List divided inverted relaxed>
                 {this.state.topArtists &&
                   this.state.topArtists.map(item => {
                     return (
-                      <List.Item key={item.id}>
-                      <List.Icon name="music" color="blue" />
-
-                      <List.Content floated="left">
-                      {item.name}
-                      </List.Content>
-                      <div inverted>
-                      <List.Content floated="right">
-                      <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
-                      <Icon name="add" color="white" />
-                      Add
-                      </Button>
-                      </List.Content>
-                      </div>
-
+                      <List.Item key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+                        <Icon name="music" color="blue" size="large" />
+                        <List.Content floated="left" style={{ width: '-webkit-fill-available' }} >
+                          {item.name}
+                        </List.Content>
+                        <div inverted style={{ width: '-webkit-fill-available', verticalAlign: 'middle' }}>
+                          <List.Content floated="right">
+                            <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
+                              <Icon name="add" color="white" />
+                              Add
+                            </Button>
+                          </List.Content>
+                        </div>
                       </List.Item>)
                   })
                 }

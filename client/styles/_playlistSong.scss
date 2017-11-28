@@ -1,7 +1,4 @@
 .playlistSong-Container {
-    overflow: scroll;
-    overflow-x: hidden;
-    height: 100vh;
     .playlistSong-Item {
         display: flex;
         flex-direction: row;
@@ -18,6 +15,9 @@
             }
             #song-artist {
                 color: #B358BA;
+            }
+            #now-playing {
+                color: #12A293;
             }
         }
     }

@@ -20,6 +20,7 @@ import {
   fetchPlaylistSongs,
   prioritizeSongs
 } from '../store'
+import '../styles/_partyView.scss'
 
 import _ from 'lodash'
 import GuestListItem from './guestListItem.jsx'
@@ -100,7 +101,7 @@ class PartyView extends React.Component {
 
   handleModal = (evt) => {
     evt.preventDefault();
-    this.state.editModalShowing ? this.setState({ editModalShowing: false}) : this.setState({ editModalShowing: true })
+    this.state.editModalShowing ? this.setState({ editModalShowing: false }) : this.setState({ editModalShowing: true })
   }
 
   handleEndEvent = (endedEvent) => {
@@ -112,25 +113,25 @@ class PartyView extends React.Component {
     }
   }
   handlePlayback = (eventId) => {
-    if (this.state.isPlaying){
+    if (this.state.isPlaying) {
       this.props.pausePlaylist()
       this.setState({ isPlaying: false })
     }
-    if (!this.state.isPlaying){
+    if (!this.state.isPlaying) {
       this.props.resumePlaylist(eventId)
       this.setState({ isPlaying: true })
     }
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs} = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs } = this.props
     const { isHost, isCheckedIn, isPlaying, currentTrackUri } = this.state
     const { hasStarted } = event
 
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-   
+
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
@@ -141,82 +142,101 @@ class PartyView extends React.Component {
         console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
     socket.on(`/songChange/${eventId}`, (eventId) => {
       if (!isHost) {
-        _.debounce(this.props.socketUpdates(eventId), 3000)
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
 
     return (
-      <div>
+      <div className="partyView-Container">
         <br />
-        <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }}>
-          <Header as="h2" inverted color="purple" textAlign="center"  >Enjoy the {event.name}!</Header>
-          <Segment inverted>
-          {
-            (isHost && !hasStarted) &&
-            <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => {
-              startParty(spotifyUri, eventId, isHost)
-              this.setState({ isPlaying: true })}}>
-              Start The Event!
-              </Button>
-          }
-          {
-            (isHost && hasStarted) &&
-            <div>
-
-              <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => this.handlePlayback(eventId)}>{playbackButton}</Button>
-              <Button onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
-              <ErrorModal />
-              <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
-                <EndEventModal endEvent={this.handleEndEvent} />
-              </Modal>
-            </div>
-          }
-          </Segment>
-          <Segment inverted>
+        <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }} id="header-container">
+          <Header as="h2" inverted color="purple" textAlign="center"  >{event.name}!</Header>
+          <hr/>
           {
             (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
           }
-          </Segment>
           <Segment inverted>
             {
               isHost &&
               <div>
-              <Button onClick={(evt) => this.handleModal(evt)}>Edit Event Settings</Button>
                 <Modal open={this.state.editModalShowing}>
                   <Modal.Header>Event Settings</Modal.Header>
                   <Modal.Content >
                     <EventSettings
-                    event={event}
-                    handleModal={this.handleModal}
+                      event={event}
+                      handleModal={this.handleModal}
                     />
                   </Modal.Content>
                 </Modal>
-                </div>
+              </div>
             }
           </Segment>
         </Segment>
 
-        <Segment inverted>
+        <div className="lists-container">
           <Grid
+            reversed
             divided
             textAlign="left"
             columns={2}
-            padded
             inverted
-
+            stackable
+            className="lists-container"
           >
-            <Grid.Column floated="left" >
+
+            <Grid.Column color="black" id="playlist-container">
+              <Header as="h2" color="blue" textAlign="center">
+                Playlist
+              </Header>
+              {
+                (isHost && !hasStarted) &&
+                <Button style={{ backgroundColor: '#AF5090', color: 'white' }} onClick={() => {
+                  startParty(spotifyUri, eventId, isHost)
+                  this.setState({ isPlaying: true })
+                }}>
+                  Start The Event!
+              </Button>
+              }
+              {
+                (isHost && hasStarted) &&
+                <div id="playlistBttns">
+                  <Button
+                    id="host-Bttn"
+                    style={isPlaying ? { backgroundColor: '#AF5090' } : { backgroundColor: '#6A8CDF' }}
+                    onClick={() => this.handlePlayback(eventId)}
+                  >
+                    {playbackButton}
+                  </Button>
+                  <Button id="host-Bttn" style={{backgroundColor: '#AF5090'}} onClick={() => this.setState({ showEndEventModal: !this.state.showEndEventModal })}> End Event </Button>
+                  <Button id="host-Bttn"  style={{backgroundColor: '#8038AC'}}onClick={(evt) => this.handleModal(evt)}>Edit Playlist Prefernces</Button>
+                  <ErrorModal />
+                  <Modal open={this.state.showEndEventModal} closeOnDimmerClick={true}>
+                    <EndEventModal endEvent={this.handleEndEvent} />
+                  </Modal>
+                </div>
+              }
+              {
+                spotifyUrl &&
+                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`}  height="100" frameBorder="0" allowtransparency="true" id="spotifyPlayer"></iframe>
+              }
+              <PlaylistQueue songs={playlistSongs} eventId={eventId} />
+            </Grid.Column>
+
+            <Grid.Column floated="left" color="black">
               <Header as="h2" color="blue" textAlign="center">
                 Guestlist
         </Header>
-              <Card.Group
+              <List
                 itemsPerRow={3}
+                horizontal={true}
+                inverted
+                id="guestlist-container"
               >
                 {
                   guestlist.length >= 1 ?
@@ -227,21 +247,10 @@ class PartyView extends React.Component {
                     })
                     : <h1>No one Has Arrived</h1>
                 }
-              </Card.Group>
-            </Grid.Column>
-            <Grid.Column  >
-              <Header as="h2" color="blue" textAlign="center">
-                Playlist
-            </Header>
-              {
-                spotifyUrl &&
-                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`} width="600" height="100" frameBorder="0" allowtransparency="true"></iframe>
-              }
-              <PlaylistQueue songs={playlistSongs} eventId={eventId} />
+              </List>
             </Grid.Column>
           </Grid>
-
-        </Segment>
+          </div>
       </div>
     )
   }
@@ -273,7 +282,7 @@ const mapDispatch = (dispatch, ownProps) => ({
 
   },
   socketUpdates(eventId){
-    console.log("FETCH SONGS AFTER SOCKET" )
+    console.log("FETCH SONGS AFTER SOCKET")
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
   },
@@ -296,20 +305,20 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(updateSpotifyPlaylist(eventId))
     dispatch(fetchPlaylistSongs(eventId))
   },
-  runUpdates(eventId){
+  runUpdates(eventId) {
     dispatch(getPriority(eventId))
-    .then(()=>{
-      dispatch(fetchInvitedUsers(eventId))
-      dispatch(fetchEvent(eventId))
-      dispatch(fetchSpotifyPlaylist(eventId))
-      dispatch(updateSpotifyPlaylist(eventId))
-      dispatch(fetchPlaylistSongs(eventId))
-    })
-    .then(()=>{
-      this.props.updatePlaylist(+eventId)
-    })
+      .then(() => {
+        dispatch(fetchInvitedUsers(eventId))
+        dispatch(fetchEvent(eventId))
+        dispatch(fetchSpotifyPlaylist(eventId))
+        dispatch(updateSpotifyPlaylist(eventId))
+        dispatch(fetchPlaylistSongs(eventId))
+      })
+      .then(() => {
+        this.props.updatePlaylist(+eventId)
+      })
   }
-,
+  ,
   endEvent(eventId, end) {
     dispatch(updateSpotifyPlaylist(eventId, end))
       .then(event => {
@@ -321,7 +330,7 @@ const mapDispatch = (dispatch, ownProps) => ({
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))
   },
-  getPriority(eventId){
+  getPriority(eventId) {
     dispatch(prioritizeSongs(eventId))
   }
 })

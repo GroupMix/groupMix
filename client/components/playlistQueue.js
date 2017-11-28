@@ -28,6 +28,7 @@ const PlaylistQueue = ({ songs, eventId, voteForSong }) => {
                                             <span id="song-name">{`${song.name} `}</span>
                                             ~ by ~
                                             <span id="song-artist"> {` ${song.artist}`}</span>
+                                            <span id="now-playing">{i === 0 ? '  ~ Now Playing' : ''}</span>
                                         </h3>
                                         <div id="vote-container">
                                             <Icon onClick={() => voteForSong('up', song.id, eventId)} name="caret up" size="big" style={{ color: '#6A8CDF', cursor: 'pointer' }} />
