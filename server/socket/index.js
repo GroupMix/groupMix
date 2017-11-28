@@ -23,13 +23,11 @@ module.exports = (io) => {
     console.log(`A socket connection to the server has been made: ${socket.id}`)
 
     socket.on('guestCoords', ((coords) => {
-      console.log("coords", coords)
       //cache all coordinates
       let { lat, long, userIdForSocket } = coords
       let key = userIdForSocket
       coordsCache[key] = { lat, long }
       //find most recent Event for user from DB
-      console.log("user Id for socket",userIdForSocket)
       return User.findById(userIdForSocket)
         .then((user) => {
           return user.getEvents()
@@ -38,9 +36,7 @@ module.exports = (io) => {
           const eventsObj = {}
           let dates = events.map((event) => {
             let myDate = Date.parse(event.date)
-            console.log("mydate", myDate)
             let now = Date.now() - (1000 * 60 * 60 * 23.9)
-            console.log("now", now)
             if (myDate >= now) {
               eventsObj[myDate] = event.id
              return myDate

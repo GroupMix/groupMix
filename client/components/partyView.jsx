@@ -137,11 +137,11 @@ class PartyView extends React.Component {
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
-      this.props.socketUpdates(eventId)
       if (isHost) {
         console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
+        console.log("user here socket running")
         _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })

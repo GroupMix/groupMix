@@ -93,7 +93,6 @@ export const startSpotifyPlaylist = (spotifyUri) =>
   export const getTrackGenres = (data) => dispatch => {
     let songArtistIds = data.songs.map(song => song.artists[0].id)
     let nestedArtistIds = [];
-console.log("getting track genres")
     while (songArtistIds.length) {
       nestedArtistIds.push(songArtistIds.splice(0, 50))
     }
@@ -114,7 +113,6 @@ console.log("getting track genres")
         return genres
       })
       .then(genres => {
-        console.log('GENRESSSSS', genres)
         getAudioFeatures(data, genres, dispatch)
       })
       .catch(err => console.log(err))
