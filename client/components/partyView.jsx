@@ -167,7 +167,7 @@ class PartyView extends React.Component {
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }} id="header-container">
           <Header as="h1" inverted color="purple" textAlign="center"  >{event.name}!</Header>
-          <hr/>
+          <hr />
           {
             (hasStarted && !isCheckedIn && !isHost) &&
             <Button style={{ backgroundColor: '#6A8CDF', color: 'white' }} onClick={() => this.handleCheckin(eventId, user.id)}>Check-in</Button>
