@@ -24,9 +24,9 @@ const myPrioritizeSongs = () => ({ type: PRIORITIZE_SONGS })
  */
 
  // fetches all the songs belonging to a particular playlist
-export const fetchPlaylistSongs = (eventId) =>
+export const fetchPlaylistSongs = (eventId, currentlyPlaying) =>
 dispatch => {
-    axios.get(`/api/spotifyPlaylist/eventSongs/${eventId}`)
+    axios.get(`/api/spotifyPlaylist/eventSongs/${eventId}/${currentlyPlaying}`)
     .then(res => res.data)
     .then(tracks => {
       dispatch(getPlaylistSongs(tracks))
@@ -56,7 +56,7 @@ export const voteForSong = (vote, songId, eventId) =>
     .then(res => res.data)
     .then(data => {
       dispatch(fetchPlaylistSongs(eventId))
-      dispatch(updateGuests(eventId))
+      socket.emit('voted', eventId)
     })
 }
 export default (playlistSongs = defaultSongs, action) => {

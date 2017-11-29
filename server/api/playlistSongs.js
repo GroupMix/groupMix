@@ -130,7 +130,6 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
             if (presentUsersArr.indexOf(tempKey) !== -1) {
               checkedIn = true
             }
-            //QUESTION --> is this forEach->update loop okay here ?
              duplicateSongArr.forEach((duplicate) => {
               let key = duplicate.songId.toString()
               if (checkedIn) pointsCache[key] += 20
