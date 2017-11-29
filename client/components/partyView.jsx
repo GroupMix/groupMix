@@ -209,7 +209,7 @@ class PartyView extends React.Component {
           >
 
             <Grid.Column
-            width={8}
+            width={10}
             color="black"
             id="playlist-container">
               <Header as="h2" color="blue" textAlign="center">
@@ -249,7 +249,7 @@ class PartyView extends React.Component {
             </Grid.Column>
 
             <Grid.Column
-            width={8}
+            width={6}
             floated="left"
             color="black">
               <Header
@@ -259,7 +259,7 @@ class PartyView extends React.Component {
                 Guestlist
         </Header>
               <Card.Group
-                itemsPerRow={3}
+                itemsPerRow={2}
 
                 inverted
 

@@ -37,8 +37,8 @@ const PlaylistQueue = ({ songs, party, voteForSong, addSimilarSongs, userId, eve
                                             <Label circular color="black" size ="huge">{i + 1} -
                                             <span id="song-name">
                                             {
-                                              (song.name.length >= 30)
-                                              ? `${song.name.slice(0, 30).concat('...')}`
+                                              (song.name.length >= 40)
+                                              ? `${song.name.slice(0, 40).concat('...')}`
                                               : `${song.name}`
                                             }
                                             </span>

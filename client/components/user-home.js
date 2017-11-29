@@ -38,7 +38,7 @@ class UserHome extends React.Component {
 
   componentDidMount() {
     this.props.fetchInitialData(this.props.eventId)
-    spotifyApi.setAccessToken(this.props.user.access)
+    this.props.setRefreshToken();
 
     spotifyApi.getMyRecentlyPlayedTracks()
       .then(data => {
@@ -217,6 +217,10 @@ const mapDispatch = (dispatch) => ({
   },
   getTrackInfo(data) {
     dispatch(getTrackGenres(data))
+  },
+  setRefreshToken() {
+    console.log('SETTING REFRESH TOKEN')
+    dispatch(setSpotifyToken())
   }
 })
 
