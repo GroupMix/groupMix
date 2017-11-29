@@ -18,7 +18,7 @@ const UserListItem = ({ user, hideUser, eventId, inviteUser, uninviteUser, invit
                     {
                       user.imgurPhoto
                       ? <Image id="profilePic" size="small" src={user.imgurPhoto} />
-                      : <Icon name="music" size="huge" color="blue" />
+                      : <Image id="profilePic" size="small" src="/assets/coloredheadphones.jpeg" />
                     }
                 </div>
                 <br />
