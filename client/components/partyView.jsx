@@ -20,7 +20,8 @@ import {
   resumeSpotifyPlaylist,
   fetchPlaylistSongs,
   prioritizeSongs,
-  getCurrentSong
+  getCurrentSong,
+  setSpotifyToken
 } from '../store'
 import '../styles/_partyView.scss'
 
@@ -64,6 +65,7 @@ class PartyView extends React.Component {
 
   componentWillMount() {
     this.getUserStatus(+this.props.eventId)
+    setSpotifyToken()
     this.props.fetchInitialData(this.props.eventId)
   }
 

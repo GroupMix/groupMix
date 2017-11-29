@@ -6,6 +6,7 @@ import {
     Icon
 
 } from 'semantic-ui-react'
+import '../styles/_logo.scss'
 
 const nowPlayingContainer = {
     display: 'flex',
@@ -21,7 +22,7 @@ const CurrentlyPlaying = ({ currentSong }) => {
                 <div>
                     <h3>Now Playing:</h3>
                     <div style={nowPlayingContainer}>
-                        <Icon name="music" size="huge" color="violet" />
+                        <Icon name="music" size="huge" color="violet" className="heartbeat" />
                         <div>
                             <h2 style={{ color: '#6F8CD9' }}>{name}</h2>
                             <p style={{ color: '#A3568D' }}>{artist}</p>
