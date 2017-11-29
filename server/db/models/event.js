@@ -37,7 +37,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   loudness: {
     type: Sequelize.FLOAT,
@@ -57,7 +57,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   energy: {
     type: Sequelize.FLOAT,
@@ -77,7 +77,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   acousticness: {
     type: Sequelize.FLOAT,
@@ -97,7 +97,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   valence: {
     type: Sequelize.FLOAT,
@@ -117,7 +117,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   instrumentalness: {
     type: Sequelize.FLOAT,
@@ -137,7 +137,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   tempo: {
     type: Sequelize.FLOAT,
@@ -157,7 +157,7 @@ const Event = db.define('event', {
     },
     isRequired: true,
     allowNull: false,
-    defaultValue: 1.0
+    defaultValue: 0
   },
   hasEnded: {
     type: Sequelize.BOOLEAN,

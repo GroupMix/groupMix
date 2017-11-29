@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { createNewEvent, createSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Form, Rating, Segment, Header, Message } from 'semantic-ui-react'
+import { Button, Dropdown, Form, Rating, Segment, Header, Message, Statistic } from 'semantic-ui-react'
 import { EventGenres } from '/'
 import genreList from './genreList'
 import DatePicker from 'react-datepicker';
@@ -28,20 +28,23 @@ export class NewEvent extends Component {
       valence: 0,
       instrumentalness: 0,
       tempo: 0,
-      danceabilityWeight: 1,
-      loudnessWeight: 1,
-      energyWeight: 1,
-      acousticnessWeight: 1,
-      valenceWeight: 1,
-      instrumentalnessWeight: 1,
-      tempoWeight: 1,
+      danceabilityWeight: 0,
+      loudnessWeight: 0,
+      energyWeight: 0,
+      acousticnessWeight: 0,
+      valenceWeight: 0,
+      instrumentalnessWeight: 0,
+      tempoWeight: 0,
       weightPoints: 12,
       visible: false,
       submitVisible: false,
+      entryMessage: true,
     }
     this.renderError = this.renderError.bind(this)
+    this.renderInfo = this.renderInfo.bind(this)
     this.checkPoints = this.checkPoints.bind(this)
     this.handleDismiss = this.handleDismiss.bind(this)
+    this.handleDismissInfo = this.handleDismissInfo.bind(this)
   }
 
   checkPoints() {
@@ -51,7 +54,7 @@ export class NewEvent extends Component {
     else if (this.state.weightPoints >= 0) {
       this.setState({ visible: false, submitVisible: false })
     }
-
+console.log("remaining points", this.state.weightPoints)
   }
   handleChange(evt) {
     var change = {}
@@ -94,7 +97,7 @@ export class NewEvent extends Component {
     this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleLoudnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.loudnessWeight;
@@ -102,7 +105,7 @@ export class NewEvent extends Component {
     this.setState({ loudnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
 
   }
   handleEnergyWeight = (evt) => {
@@ -112,7 +115,7 @@ export class NewEvent extends Component {
 
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleAcousticnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.acousticnessWeight;
@@ -121,7 +124,7 @@ export class NewEvent extends Component {
 
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleValenceWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.valenceWeight;
@@ -129,7 +132,7 @@ export class NewEvent extends Component {
     this.setState({ valenceWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleInstrumentalnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.instrumentalnessWeight;
@@ -137,7 +140,7 @@ export class NewEvent extends Component {
     this.setState({ instrumentalnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleTempoWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.tempoWeight;
@@ -145,10 +148,13 @@ export class NewEvent extends Component {
     this.setState({ tempoWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleDismiss = () => {
-    this.setState({ messageVisible: false })
+    this.setState({ visible: false })
+  }
+  handleDismissInfo = () => {
+    this.setState({ entryMessage: false })
   }
 
   render() {
@@ -187,6 +193,7 @@ export class NewEvent extends Component {
         <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: '-webkit-fill-available', marginTop: '.85em' }}>
           <Header textAlign="center" as="h1" color="purple" size= "huge" >Create New Event</Header>
           <Form size="large" inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token)}>
+          {this.renderInfo()}
             <Form.Group widths="equal">
               <Form.Field>
                 <label>Event Name</label>
@@ -210,6 +217,14 @@ export class NewEvent extends Component {
               </Form.Field>
               <Form.Field
                 control={Dropdown} label="Genre Preferences" name="genres" placeholder="Hip Hop, Electronic, Pop" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
+              />
+              <Statistic
+              floated="right"
+              inverted
+              size="tiny"
+              color= "purple"
+              label="Remaining Importance Points"
+              value={this.state.weightPoints}
               />
             </Form.Group>
             <Form.Group widths="equal">
@@ -303,6 +318,20 @@ export class NewEvent extends Component {
           color="red"
           header="You have used too many points!"
           content="You only have 10 total points to split between the importance fields."
+        />
+      );
+    }
+  }
+
+  renderInfo() {
+    if (this.state.entryMessage) {
+      console.log('enteringgggg')
+      return (
+        <Message
+          onDismiss={this.handleDismissInfo}
+          color="purple"
+          header="Welcome to groupMix Events!"
+          content="Fill out the form below to create an event. Choosing specific genres to populate your event playlist with mostly songs of those genres. Choose target attritibutes (e.g. Danceability) for your playlist songs on a scale of 1-10. A Danceability of 10 will fill your playlist with mostly dance songs. You also have 12 total points to split between the attributes' importance. Give more points to attributes you really care about. If you DO NOT care about an attribute/ do not want it to be considered give it an importance of 0!. Enjoy your stress-free playlist! "
         />
       );
     }
