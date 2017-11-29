@@ -37,26 +37,27 @@ class UserHome extends React.Component {
   }
 
   componentDidMount() {
+    spotifyApi.setAccessToken(this.props.user.access)
     this.props.fetchInitialData(this.props.eventId)
-    this.props.setRefreshToken();
 
     spotifyApi.getMyRecentlyPlayedTracks()
-      .then(data => {
-        let recent = data.items.map(item => item.track)
-        this.setState({ recentTracks: recent })
-      })
-      .catch(err => {
-        console.error(err);
-      })
+    .then(data => {
+      let recent = data.items.map(item => item.track)
+      this.setState({ recentTracks: recent })
+    })
+    .catch(err => {
+      console.error(err);
+    })
 
     spotifyApi.getMyTopTracks()
-      .then(data => {
-        this.setState({ topTracks: data.items })
-      })
-      .catch(err => {
-        console.error(err);
-      })
+    .then(data => {
+      this.setState({ topTracks: data.items })
+    })
+    .catch(err => {
+      console.error(err);
+    })
 
+    setSpotifyToken()
     spotifyApi.getMyTopArtists()
       .then((data) => {
         this.setState({ topArtists: data.items })
@@ -217,10 +218,6 @@ const mapDispatch = (dispatch) => ({
   },
   getTrackInfo(data) {
     dispatch(getTrackGenres(data))
-  },
-  setRefreshToken() {
-    console.log('SETTING REFRESH TOKEN')
-    dispatch(setSpotifyToken())
   }
 })
 
