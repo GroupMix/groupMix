@@ -92,8 +92,8 @@ module.exports = (io) => {
       console.log(`Connection ${socket.id} has left the building`)
     })
 
-    socket.on('/pollerSongChange', (eventId) => {
-      socket.broadcast.emit(`/songChange/${eventId}`, eventId)
+    socket.on('/pollerSongChange', (eventId, currentSong) => {
+      socket.broadcast.emit(`/songChange/${eventId}`, eventId, currentSong)
     })
 
 

@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { logout } from '../store/user'
-
+import '../styles/_logo.scss'
 
 const Navbar = (props) => {
   const {
@@ -28,7 +28,7 @@ const Navbar = (props) => {
       vertical
     >
     <Header inverted as="h1" color="blue" floated="left" style={{ marginTop: '.7em'}}>
-    <Icon name="music" size="large" color="blue" />
+    <Icon name="music" size="large" color="blue" className="heartbeat" />
     groupMix
     </Header>
       <Container>
