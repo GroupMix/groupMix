@@ -84,8 +84,8 @@ module.exports = (io) => {
       socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
     })
     socket.on('voted', (eventId) => {
-      console.log('voted emitter on back end')
-      socket.broadcast.emit(`gotVote/${eventId}`, eventId)
+      console.log('voted emitter on back end', eventId)
+      io.emit(`gotVote/${eventId}`, eventId)
     })
 
     socket.on('disconnect', () => {

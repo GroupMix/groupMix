@@ -164,13 +164,10 @@ class PartyView extends React.Component {
     })
 
     socket.on(`gotVote/${eventId}`, (eventId) => {
-      if (isHost) {
-        _.debounce(this.props.voteUpdates(eventId, currentSong), 30000)
-      } else {
-        _.debounce(this.props.socketUpdates(eventId, currentSong), 30000)
-      }
+      console.log('front end go vote', eventId)
+        _.debounce(this.props.voteUpdates(eventId), 30000)
+        // _.debounce(this.props.socketUpdates(eventId), 30000)
     })
-    console.log(currentSong, "this is the cureent songdf;aldjfal;sdjfa")
     return (
       <div className="partyView-Container">
         <br />
@@ -339,7 +336,6 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchPlaylistSongs(eventId))
   },
   runUpdates(eventId) {
-    console.log('Run Update is running')
     dispatch(prioritizeSongs(eventId))
       .then(() => {
         dispatch(fetchInvitedUsers(eventId))
