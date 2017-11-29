@@ -35,7 +35,7 @@ export class NewEvent extends Component {
       valenceWeight: 1,
       instrumentalnessWeight: 1,
       tempoWeight: 1,
-      weightPoints: 10,
+      weightPoints: 12,
       visible: false,
       submitVisible: false,
     }
