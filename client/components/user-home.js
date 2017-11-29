@@ -73,6 +73,7 @@ class UserHome extends React.Component {
   handleAdd(evt, data) {
     this.setState({ selected: [data.content, ...this.state.selected] })
   }
+
   handleSubmit() {
     this.getTopArtistTracks();
   }
@@ -112,9 +113,9 @@ class UserHome extends React.Component {
   getInfoAndPersist = (data) => {
     console.log("PERSIST data", data)
     this.props.getTrackInfo(data)
-
+    setTimeout(() => {
     history.push(`/events/${this.props.eventId}/partyview`)
-
+    }, 100)
   }
 
 
@@ -215,7 +216,6 @@ const mapDispatch = (dispatch) => ({
     dispatch(prioritizeSongs(eventId))
   },
   getTrackInfo(data) {
-
     dispatch(getTrackGenres(data))
   }
 })
