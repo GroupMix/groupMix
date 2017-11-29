@@ -190,7 +190,7 @@ console.log("remaining points", this.state.weightPoints)
     return (
 
       <div style={{ marginLeft: '9em', marginRight: '9em', background: '#2184d0' }}>
-        <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: '-webkit-fill-available', marginTop: '.85em' }}>
+        <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: 'auto', marginTop: '.85em' }}>
           <Header textAlign="center" as="h1" color="purple" size= "huge" >Create New Event</Header>
           <Form size="large" inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token)}>
           {this.renderInfo()}

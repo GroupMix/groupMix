@@ -18,6 +18,7 @@ import {
 } from '../store'
 import UserListItem from './userListItem'
 import '../styles/_usersList.scss'
+import socket from '../socket'
 
 class UsersList extends Component {
     constructor(props) {
@@ -116,9 +117,11 @@ const mapDispatch = (dispatch, ownProps) => {
             dispatch(hideUser(userId))
         },
         inviteUser: (eventId, userId) => {
+            socket.emit('userInvite', (userId))
             dispatch(postInvitedUser(eventId, userId))
         },
         uninviteUser: (eventId, userId) => {
+            socket.emit('userInvite', (userId))
             dispatch(removeUserInvite(eventId, userId))
         }
     }

@@ -4,6 +4,7 @@ import { editEvent, prioritizeSongs, updateSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Segment, Message, Header } from 'semantic-ui-react'
 import genreList from './genreList'
+import socket from '../socket'
 
 /**
  * COMPONENT
@@ -235,12 +236,10 @@ export class EventSettings extends Component {
               <StyleFormGroup>
                 <label>Loudness: {(this.state.loudness) <= 1 ? (this.state.loudness * 10) : (this.state.loudness)}</label>
                 <input type="range" min={0} max={10} value={(this.state.loudness) <= 1 ? (this.state.loudness * 10) : (this.state.loudness)} onChange={this.handleLoudness.bind(this)} />
-
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Loudness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
-
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -327,6 +326,8 @@ const mapDispatch = (dispatch, ownProps) => {
     handleSubmit(evt, eventId, name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token) {
 
       evt.preventDefault()
+
+      socket.emit('UpdateEvents', eventId)
 
       let { history } = ownProps;
 

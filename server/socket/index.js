@@ -72,8 +72,12 @@ module.exports = (io) => {
 
     }))
     socket.on('UpdateEvents', (eventId) => {
-      console.log(eventId, 'from emmit')
+      console.log(eventId, 'UPDATE EVENTS')
       socket.broadcast.emit(`UpdatePlaylist/${eventId}`, eventId)
+    })
+    socket.on('userInvite', (userId) => {
+      console.log('A User Has Accepted / Declined an Invite');
+      socket.broadcast.emit(`userInvite/${userId}`, userId)
     })
     socket.on('userArrived', (eventId, userId) => {
       console.log('A User Has Manually Checked in')
