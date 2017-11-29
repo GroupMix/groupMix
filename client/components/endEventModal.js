@@ -12,8 +12,8 @@ const EndEventModal = ({endEvent}) => {
     return (
         <Modal.Content>
             <Modal.Content>
-                <Header icon="warning sign" content="Are You Sure You want to end the Event?" />
-               
+                <Header icon="warning sign" content="Are you sure you want to end this event?" />
+
                 <Divider />
             </Modal.Content>
             <Modal.Content>
