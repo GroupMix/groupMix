@@ -22,7 +22,6 @@ const GuestListItem = ({ user, eventId }) => {
     color = '#a3568d'
   }
   return (
-
     <Card color="purple" style={{ backgroundColor: '#939496', height: '20em' }} size="medium" >
       <Image size ="medium" style={{ height: '14em' }}src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
       <Card.Content color="purple" style={{ backgroundColor: '#490450' }}>
@@ -34,7 +33,6 @@ const GuestListItem = ({ user, eventId }) => {
       </Card.Content>
 
     </Card>
-
   )
 }
 

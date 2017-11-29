@@ -56,36 +56,39 @@ class UsersList extends Component {
             <Container className="userInviteContainer">
                 {
                     currentUser.id ?
-                    <div>
-                    <Header as="h2">Invite Your Guests to your "{newEvent.name}" Event</Header>
-                    <hr />
-                    <div className="filteringContainer">
-                        <Search
-                            floated="right"
-                            showNoResults={false}
-                            onSearchChange={this.handleSearchChange}
-                            value={this.state.search}
-                            id="userSearchBar"
-                        />
-                        <Button id="invitedFilterBttn" onClick={() => this.setState({ filterInvited: !this.state.filterInvited })} >Invited</Button>
-                        <Button id="clearFilterBttn" onClick={() => this.clearAllFilters()}>Clear Filters</Button>
-                        <Button color="blue" onClick={() => history.push(`/events/${event.id}`)} style={{ marginLeft: '5em' }}>Set Music Preferences</Button>
-                        <Button color="teal" onClick={() => history.push(`/events/${event.id}/partyview`)} style={{ marginLeft: '0.5em' }}>Party View</Button>
-                    </div>
-                    <List divided relaxed horizontal size="small">
-                        {
-                            users.length ?
-                                users.map(user => {
-                                    return (
-                                        <UserListItem key={user.id} user={user} hideUser={hideUser} inviteUser={inviteUser} eventId={eventId} uninviteUser={uninviteUser} invitedUsers={invitedUsers} />
-                                    )
-                                })
-                                : <h1>No one Has been Invited</h1>
-                        }
-                    </List>
-                    </div>
-                    : <h1>Must be a the host to reach this page</h1>
-            }
+                        <div>
+                            <Header as="h2">Invite Your Guests to your "{newEvent.name}" Event</Header>
+                            <hr />
+                            <div className="filteringContainer">
+                                <div className="flexDiv">
+                                    <Button id="flatBttn1" onClick={() => this.props.history.push(`/events/${eventId}`)} >Set Preferences</Button>
+                                    <Button id="flatBttn2" onClick={() => this.props.history.push(`/events/${eventId}/partyview`)}>Party View</Button>
+                                </div>
+                                <div className="flexDiv">
+                                <Search
+                                    showNoResults={false}
+                                    onSearchChange={this.handleSearchChange}
+                                    value={this.state.search}
+                                    id="userSearchBar"
+                                />
+                                <Button id="invitedFilterBttn" onClick={() => this.setState({ filterInvited: !this.state.filterInvited })} >Invited</Button>
+                                <Button id="clearFilterBttn" onClick={() => this.clearAllFilters()}>Clear Filters</Button>
+                                </div>
+                            </div>
+                            <List divided relaxed horizontal size="small">
+                                {
+                                    users.length ?
+                                        users.map(user => {
+                                            return (
+                                                <UserListItem key={user.id} user={user} hideUser={hideUser} inviteUser={inviteUser} eventId={eventId} uninviteUser={uninviteUser} invitedUsers={invitedUsers} />
+                                            )
+                                        })
+                                        : <h1>No one Has been Invited</h1>
+                                }
+                            </List>
+                        </div>
+                        : <h1>Must be a the host to reach this page</h1>
+                }
             </Container>
         )
     }

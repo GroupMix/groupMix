@@ -23,7 +23,6 @@ module.exports = (io) => {
     console.log(`A socket connection to the server has been made: ${socket.id}`)
 
     socket.on('guestCoords', ((coords) => {
-      console.log("coords", coords)
       //cache all coordinates
       let { lat, long, userIdForSocket } = coords
       let key = userIdForSocket
@@ -34,15 +33,19 @@ module.exports = (io) => {
           return user.getEvents()
         })
         .then((events) => {
-          let eventsObj = {}
+          const eventsObj = {}
           let dates = events.map((event) => {
             let myDate = Date.parse(event.date)
             let now = Date.now() - (1000 * 60 * 60 * 23.9)
-            if (myDate >= now) eventsObj[myDate] = event.id
+            if (myDate >= now) {
+              eventsObj[myDate] = event.id
+             return myDate
+            }
           })
           return eventsObj[Math.min.apply(null, dates)]
         })
         .then((upcomingEventId) => {
+          console.log("id",upcomingEventId)
           return EventUser.findOne({ where: { eventId: upcomingEventId, isHost: true } })
         })
         .then((upcomingEvent) => {
@@ -76,6 +79,11 @@ module.exports = (io) => {
       console.log('A User Has Manually Checked in')
       socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
     })
+    socket.on('voted', (eventId) => {
+      console.log('voted emitter on back end')
+      socket.broadcast.emit(`gotVote/${eventId}`, eventId)
+    })
+
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
     })

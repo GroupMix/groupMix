@@ -4,6 +4,7 @@
 
     #userName{
         font-size: 2rem;
+        color: #E9e9e9;
     }
     #inviteBttn {
         color: white;
@@ -22,18 +23,24 @@
     .filteringContainer {
         display: flex;
         flex-direction: row;
-        justify-content: flex-end;
+        justify-content: space-between;
         margin-top: 20px;
         #userSearchBar {
             width: 16rem;
         }
         #clearFilterBttn {
             margin-left: 8px;
+            color: white;
+            background-Color: #6A8CDF;
+            width: 12rem;
+            height: 2.5em;
         }
         #invitedFilterBttn {
             margin-left: 8px;
             color: white;
             background-Color: #6A8CDF;
+            width: 12rem;
+            height: 2.5em;
         }
         #uninvitedFilterBttn {
             margin-left: 8px;
@@ -42,3 +49,27 @@
         }
     }
 }
+
+#flatBttn1 {
+    white-space: nowrap;
+    height: fit-content;
+    color: white;
+    background-Color: #11A9BA;
+    width: 12rem;
+    height: 2.5em;
+}
+
+#flatBttn2 {
+    white-space: nowrap;
+    height: fit-content;
+    margin-left: 8px;
+    color: white;
+    background-Color: #11A9BA;
+    width: 12rem;
+    height: 2.5em;
+}
+
+.flexDiv{
+    display: flex;
+}
+

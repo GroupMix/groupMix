@@ -106,8 +106,12 @@ class PartyView extends React.Component {
 
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
-      console.log(this.props.eventId)
-      this.props.endEvent(this.props.eventId, true, this.props.user.id)
+      const { eventId, user, spotifyPlaylist } = this.props
+      const { id } = user
+      const { spotifyUserId } = user.user
+      const { spotifyPlaylistId } = spotifyPlaylist
+
+      this.props.endEvent(eventId, true, spotifyUserId, spotifyPlaylistId)
     } else {
       this.setState({ showEndEventModal: false })
     }
@@ -131,22 +135,28 @@ class PartyView extends React.Component {
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
-      this.props.socketUpdates(eventId)
       if (isHost) {
         console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
+        console.log("user here socket running")
         _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
     socket.on(`/songChange/${eventId}`, (eventId) => {
       if (!isHost) {
+        _.debounce(this.props.socketUpdates(eventId), 30000)
+      }
+    })
+    socket.on(`gotVote/${eventId}`, (eventId) => {
+      if (isHost) {
+        _.debounce(this.props.voteUpdates(eventId), 30000)
+      } else {
         _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
@@ -225,7 +235,7 @@ class PartyView extends React.Component {
                 </div>
               }
               {
-                spotifyUrl &&
+                (spotifyUrl && isHost) &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`}  height="100" frameBorder="0" allowtransparency="true" id="spotifyPlayer"></iframe>
               }
               <PlaylistQueue songs={playlistSongs} eventId={eventId} userId= {user.id} party={event} />
@@ -295,6 +305,10 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
   },
+  voteUpdates(eventId){
+    console.log("vote updates after sockets")
+    dispatch(updateSpotifyPlaylist(eventId))
+  },
   startParty(spotifyUri, eventId, hostStat) {
     dispatch(startSpotifyPlaylist(spotifyUri))
     dispatch(startEvent(eventId, hostStat))
@@ -328,13 +342,13 @@ const mapDispatch = (dispatch, ownProps) => ({
       })
   }
   ,
-  endEvent(eventId, end) {
+  endEvent(eventId, end, spotifyUserId, spotifyPlaylistId) {
     dispatch(updateSpotifyPlaylist(eventId, end))
       .then(event => {
         dispatch(deletePlaylistSongs(eventId))
-        dispatch(endEvent(eventId))
+        dispatch(endEvent(eventId, spotifyUserId, spotifyPlaylistId))
+        ownProps.history.push('/eventList/')
       })
-    ownProps.history.push('/eventList/')
   },
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))

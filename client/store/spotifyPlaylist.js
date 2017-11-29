@@ -10,7 +10,7 @@ import { addSongsThunk} from './songs'
 import socket from '../socket'
 
 // Helper Functions
-const setSpotifyToken = () => {
+export const setSpotifyToken = () => {
   return axios.get('/api/spotifyPlaylist/refreshtoken')
     .then(res => res.data)
     .then(token => {
@@ -93,7 +93,6 @@ export const startSpotifyPlaylist = (spotifyUri) =>
   export const getTrackGenres = (data) => dispatch => {
     let songArtistIds = data.songs.map(song => song.artists[0].id)
     let nestedArtistIds = [];
-console.log('getting track genres')
     while (songArtistIds.length) {
       nestedArtistIds.push(songArtistIds.splice(0, 50))
     }
@@ -114,7 +113,6 @@ console.log('getting track genres')
         return genres
       })
       .then(genres => {
-        console.log('GENRESSSSS', genres)
         getAudioFeatures(data, genres, dispatch)
       })
       .catch(err => console.log(err))
@@ -266,14 +264,7 @@ export const pollingCurrentSong = (poll, eventId) =>
                   }
 
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
-                } else {
-                  console.log('no song playing')
-                  // dispatch(updateSpotifyPlaylist(eventId))
-                  //   .then(() => {
-                  // dispatch(startSpotifyPlaylist())
-                  // })
                 }
-                dispatch(updateSpotifyPlaylist(eventId))
               })
           })
       }, 9000)

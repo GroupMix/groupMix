@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { updateGuests } from './index'
+import socket from '../socket'
 /**
  * ACTION TYPES
  */
@@ -50,13 +51,13 @@ export const prioritizeSongs = (eventId) =>
       })
       .catch(err => console.log(err))
   }
-export const voteForSong = (vote, songId, eventId) => 
+export const voteForSong = (vote, songId, eventId) =>
   dispatch => {
   return axios.put(`/api/playlistSongs/voteSong/${eventId}`, {vote, songId})
     .then(res => res.data)
     .then(data => {
       dispatch(fetchPlaylistSongs(eventId))
-      dispatch(updateGuests(eventId))      
+      socket.emit('voted', eventId)
     })
 }
 export default (playlistSongs = defaultSongs, action) => {
