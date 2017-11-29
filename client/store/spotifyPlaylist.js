@@ -263,7 +263,7 @@ export const pollingCurrentSong = (poll, eventId) =>
                       dispatch(updateGuests(eventId, currentTrack))
                     })
                   }
-                  dispatch(updateGuests(eventId, currentTrack))                  
+                  dispatch(updateGuests(eventId, currentTrack))
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
                 }
               })
