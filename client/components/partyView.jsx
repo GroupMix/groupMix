@@ -73,7 +73,6 @@ class PartyView extends React.Component {
     this.props.polling(false)
   }
 
-
   getUserStatus = (eventId) => {
     const { polling } = this.props
     let hostStatus;

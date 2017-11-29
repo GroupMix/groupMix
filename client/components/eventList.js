@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { List, Segment, Button, Header } from 'semantic-ui-react';
+import { List, Segment, Button, Header, Modal } from 'semantic-ui-react';
 import { fetchUserEvents, setRsvp, cancelEvent } from '../store';
 import { Link } from 'react-router-dom'
 import '../styles/_eventList.scss';
 import socket from '../socket'
+import CancelEventModal from './cancelEventModal';
 
 class EventList extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      showCancelEventModal: false
+    }
   }
 
   componentDidMount(props) {
     this.props.loadEvents(this.props.user.id)
+  }
+
+  handleCancelEventModal = () => {
+    this.state.showCancelEventModal
+    ? this.setState({ showCancelEventModal: false })
+    : this.setState({ showCancelEventModal: true })
   }
 
   render() {
@@ -84,9 +95,17 @@ class EventList extends Component {
                   <List.Content floated="left">
                     <List.Header style={{ marginLeft: '3em' }}>
                       <Button color="green" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
-                      <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
+                      <Button negative onClick={() => this.handleCancelEventModal()}>Cancel Event</Button>
                       <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
                       <Button color="teal" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
+                      <Modal
+                      open={this.state.showCancelEventModal} closeOnDimmerClick={true}>
+                        <CancelEventModal
+                        cancelEvent={handleCancelEvent}
+                        closeModal={this.handleCancelEventModal}
+                        eventId={event.id}
+                        userId={user.id} />
+                      </Modal>
                     </List.Header>
                     <List.Description>
                       <List.List as="ul">
@@ -143,7 +162,7 @@ class EventList extends Component {
 
         <Segment className="past-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Past Events" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h2" content="Past Events" color="purple" style={{ marginLeft: '1em' }} />
           </Segment>
           <List divided inverted>
             {events &&
@@ -152,7 +171,7 @@ class EventList extends Component {
                 <List.Item key={event.id}>
                   <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content floated="left">
-                    <a href={event.playlistURL} target="#blank"><Button content="View Spotify Playlist" style={{backgroundColor: '#4BA7B8', color: '#FFFFFF', marginLeft: '3em'}} /></a>
+                    <a href={event.playlistURL} target="#blank"><Button content="View Spotify Playlist" style={{ backgroundColor: '#4BA7B8', color: '#FFFFFF', marginLeft: '3em' }} /></a>
                     <List.Description>
                       <List.List as="ul">
                         <List.Item as="li">Description: {event.type}</List.Item>
