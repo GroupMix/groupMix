@@ -315,7 +315,7 @@ console.log("remaining points", this.state.weightPoints)
           onDismiss={this.handleDismiss}
           color="red"
           header="You have used too many points!"
-          content="You only have 10 total points to split between the importance fields."
+          content="You only have 12 total points to split between the importance fields."
         />
       );
     }
@@ -329,7 +329,7 @@ console.log("remaining points", this.state.weightPoints)
           onDismiss={this.handleDismissInfo}
           color="purple"
           header="Welcome to groupMix Events!"
-          content="Fill out the form below to create an event. Choosing specific genres to populate your event playlist with mostly songs of those genres. Choose target attritibutes (e.g. Danceability) for your playlist songs on a scale of 1-10. A Danceability of 10 will fill your playlist with mostly dance songs. You also have 12 total points to split between the attributes' importance. Give more points to attributes you really care about. If you DO NOT care about an attribute/ do not want it to be considered give it an importance of 0!. Enjoy your stress-free playlist! "
+          content="Fill out the form below to create an event. Choose specific genres to populate your event playlist with mostly songs of those genres. Choose target attritibutes (e.g. Danceability) for your playlist songs on a scale of 1-10. A target Danceability of 10 will fill your playlist with mostly dance songs. You also have 12 total points to split between the attributes' importance. Give more points to attributes you really care about. If you DO NOT care about an attribute/ do not want it to be considered give it an importance of 0!. Enjoy your stress-free playlist! "
         />
       );
     }
