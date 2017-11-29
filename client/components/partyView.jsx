@@ -106,8 +106,12 @@ class PartyView extends React.Component {
 
   handleEndEvent = (endedEvent) => {
     if (endedEvent) {
-      console.log(this.props.eventId)
-      this.props.endEvent(this.props.eventId, true, this.props.user.id)
+      const { eventId, user, spotifyPlaylist } = this.props
+      const { id } = user
+      const { spotifyUserId } = user.user
+      const { spotifyPlaylistId } = spotifyPlaylist
+
+      this.props.endEvent(eventId, true, spotifyUserId, spotifyPlaylistId)
     } else {
       this.setState({ showEndEventModal: false })
     }
@@ -131,7 +135,6 @@ class PartyView extends React.Component {
     let spotifyUri = this.props.spotifyPlaylist.spotifyPlaylistUri;
     let spotifyUrl
     spotifyUri ? spotifyUrl = spotifyUri.replace(/:/g, '/').substr(8) : spotifyUri = spotifyUri + '';
-
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
@@ -330,13 +333,13 @@ const mapDispatch = (dispatch, ownProps) => ({
       })
   }
   ,
-  endEvent(eventId, end) {
+  endEvent(eventId, end, spotifyUserId, spotifyPlaylistId) {
     dispatch(updateSpotifyPlaylist(eventId, end))
       .then(event => {
         dispatch(deletePlaylistSongs(eventId))
-        dispatch(endEvent(eventId))
+        dispatch(endEvent(eventId, spotifyUserId, spotifyPlaylistId))
+        ownProps.history.push('/eventList/')
       })
-    ownProps.history.push('/eventList/')
   },
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))

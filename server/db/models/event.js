@@ -127,7 +127,7 @@ const Event = db.define('event', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
-  montageURL: {
+  playlistURL: {
     type: Sequelize.STRING,
     validate: {
       isURL: true

@@ -10,7 +10,7 @@ import { addSongsThunk} from './songs'
 import socket from '../socket'
 
 // Helper Functions
-const setSpotifyToken = () => {
+export const setSpotifyToken = () => {
   return axios.get('/api/spotifyPlaylist/refreshtoken')
     .then(res => res.data)
     .then(token => {

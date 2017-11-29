@@ -27,16 +27,16 @@ class EventList extends Component {
 
         <Segment className="invited-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Invitations" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h2" content="Invitations" color="purple" style={{ marginLeft: '1em' }} />
           </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isAttending === null && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <Header as="h3" icon="sound" content={event.name} style={{marginBottom: '1em'}} />
+                  <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content>
-                    <List.Header style={{marginLeft: '3em'}}>
+                    <List.Header style={{ marginLeft: '3em' }}>
                       <Button
                         positive
                         onClick={evt => {
@@ -66,33 +66,33 @@ class EventList extends Component {
 
         <Segment className="hosted-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Hosted Events" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h2" content="Hosted Events" color="purple" style={{ marginLeft: '1em' }} />
           </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <Header as="h3" icon="sound" content={event.name} style={{marginBottom: '1em'}} />
+                  <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content floated="left">
-                    <List.Header style={{marginLeft: '3em'}}>
+                    <List.Header style={{ marginLeft: '3em' }}>
                       <Button color="green" onClick={() => history.push(`/${event.id}/users/invite`)}>Invite Users</Button>
                       <Button negative onClick={() => handleCancelEvent(event.id, user.id)}>Cancel Event</Button>
                       <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
                       <Button color="teal" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
-                    <List.List as="ul">
-                      <List.Item as="li">Description: {event.type}</List.Item>
-                      <List.Item as="li">Genres: {
-                        event.genres.map(genre => (
-                          `${genre.toUpperCase()} `
-                        ))
-                      }
-                      </List.Item>
-                      <List.Item as="li">Date: {event.date}</List.Item>
-                    </List.List>
-                  </List.Description>
+                      <List.List as="ul">
+                        <List.Item as="li">Description: {event.type}</List.Item>
+                        <List.Item as="li">Genres: {
+                          event.genres.map(genre => (
+                            `${genre.toUpperCase()} `
+                          ))
+                        }
+                        </List.Item>
+                        <List.Item as="li">Date: {event.date}</List.Item>
+                      </List.List>
+                    </List.Description>
                   </List.Content>
                 </List.Item>
               ))
@@ -102,31 +102,31 @@ class EventList extends Component {
 
         <Segment className="upcoming-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h2" content="Upcoming Events" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h2" content="Upcoming Events" color="purple" style={{ marginLeft: '1em' }} />
           </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isAttending && !event.eventUser.isHost && !event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <Header as="h3" icon="sound" content={event.name} style={{marginBottom: '1em'}} />
+                  <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content floated="left">
-                    <List.Header style={{marginLeft: '3em'}}>
+                    <List.Header style={{ marginLeft: '3em' }}>
                       <Button color="blue" onClick={() => history.push(`/events/${event.id}`)}>Set Music Preferences</Button>
                       <Button color="purple" onClick={() => history.push(`/events/${event.id}/partyview`)}>Party View</Button>
                     </List.Header>
                     <List.Description>
-                    <List.List as="ul">
-                      <List.Item as="li">Description: {event.type}</List.Item>
-                      <List.Item as="li">Genres: {
-                        event.genres.map(genre => (
-                          `${genre.toUpperCase()} `
-                        ))
-                      }
-                      </List.Item>
-                      <List.Item as="li">Date: {event.date}</List.Item>
-                    </List.List>
-                  </List.Description>
+                      <List.List as="ul">
+                        <List.Item as="li">Description: {event.type}</List.Item>
+                        <List.Item as="li">Genres: {
+                          event.genres.map(genre => (
+                            `${genre.toUpperCase()} `
+                          ))
+                        }
+                        </List.Item>
+                        <List.Item as="li">Date: {event.date}</List.Item>
+                      </List.List>
+                    </List.Description>
                   </List.Content>
                 </List.Item>
               ))
@@ -136,27 +136,28 @@ class EventList extends Component {
 
         <Segment className="past-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h1" content="Past Events" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h1" content="Past Events" color="purple" style={{ marginLeft: '1em' }} />
           </Segment>
           <List divided inverted>
             {events &&
               events.map((event) => (
                 (event.eventUser.isAttending && event.hasEnded) &&
                 <List.Item key={event.id}>
-                  <Header as="h3" icon="sound" content={event.name} style={{marginBottom: '1em'}} />
+                  <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content floated="left">
-                  <List.Description>
-                  <List.List as="ul">
-                    <List.Item as="li">Description: {event.type}</List.Item>
-                    <List.Item as="li">Genres: {
-                      event.genres.map(genre => (
-                        `${genre.toUpperCase()} `
-                      ))
-                    }
-                    </List.Item>
-                    <List.Item as="li">Date: {event.date}</List.Item>
-                  </List.List>
-                </List.Description>
+                    <a href={event.playlistURL} target="#blank"><Button content="View Spotify Playlist" style={{backgroundColor: '#4BA7B8', color: '#FFFFFF'}} /></a>
+                    <List.Description>
+                      <List.List as="ul">
+                        <List.Item as="li">Description: {event.type}</List.Item>
+                        <List.Item as="li">Genres: {
+                          event.genres.map(genre => (
+                            `${genre.toUpperCase()} `
+                          ))
+                        }
+                        </List.Item>
+                        <List.Item as="li">Date: {event.date}</List.Item>
+                      </List.List>
+                    </List.Description>
                   </List.Content>
                 </List.Item>
               ))

@@ -83,8 +83,8 @@ router.put('/start/:eventId', (req, res, next) => {
     .catch(next)
 })
 
-router.put('/end/:eventId', (req, res, next) => {
-  Event.update({ hasEnded: true }, {where: { id: req.params.eventId }, returning: true})
+router.put('/end/:eventId', (req, res, next) => { //Get Hyperlink before this
+  Event.update({ hasEnded: true, playlistURL: req.body.spotifyUrl }, {where: { id: req.params.eventId }, returning: true})
   .then(updatedEvent => {
     console.log('event hasEnded', updatedEvent)
     res.send(updatedEvent)
