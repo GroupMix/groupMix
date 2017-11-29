@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { editEvent, prioritizeSongs, updateSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Form, Segment, Message, Header } from 'semantic-ui-react'
+import { Button, Dropdown, Form, Segment, Message, Header, Statistic } from 'semantic-ui-react'
 import genreList from './genreList'
 import socket from '../socket'
 
@@ -39,7 +39,7 @@ export class EventSettings extends Component {
       valenceWeight: currentEvent.valenceWeight,
       instrumentalnessWeight: currentEvent.instrumentalnessWeight,
       tempoWeight: currentEvent.tempoWeight,
-      weightPoints: 10,
+      weightPoints: 12,
       visible: false,
       submitVisible: false,
     }
@@ -47,7 +47,9 @@ export class EventSettings extends Component {
     this.checkPoints = this.checkPoints.bind(this)
     this.handleDismiss = this.handleDismiss.bind(this)
   }
-
+componentWillMount(){
+  this.setState({weightPoints: (12 - this.state.danceabilityWeight - this.state.loudnessWeight - this.state.energyWeight - this.state.acousticnessWeight - this.state.valenceWeight - this.state.instrumentalnessWeight - this.state.tempoWeight)})
+}
   checkPoints() {
     if (this.state.weightPoints < 0) {
       this.setState({ visible: true, submitVisible: true })
@@ -96,7 +98,7 @@ export class EventSettings extends Component {
     this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleLoudnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.loudnessWeight;
@@ -104,7 +106,7 @@ export class EventSettings extends Component {
     this.setState({ loudnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
 
   }
   handleEnergyWeight = (evt) => {
@@ -114,7 +116,7 @@ export class EventSettings extends Component {
 
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleAcousticnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.acousticnessWeight;
@@ -123,7 +125,7 @@ export class EventSettings extends Component {
 
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleValenceWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.valenceWeight;
@@ -131,7 +133,7 @@ export class EventSettings extends Component {
     this.setState({ valenceWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleInstrumentalnessWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.instrumentalnessWeight;
@@ -139,7 +141,7 @@ export class EventSettings extends Component {
     this.setState({ instrumentalnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleTempoWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.tempoWeight;
@@ -147,10 +149,10 @@ export class EventSettings extends Component {
     this.setState({ tempoWeight: evt.target.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
-    }, 2000)
+    }, 500)
   }
   handleDismiss = () => {
-    this.setState({ messageVisible: false })
+    this.setState({ visible: false })
   }
 
   render() {
@@ -220,6 +222,14 @@ export class EventSettings extends Component {
               <Form.Field
                 control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}>
               </Form.Field>
+              <Statistic
+              floated="right"
+              inverted
+              size="tiny"
+              color= "purple"
+              label="Remaining Importance Points"
+              value={this.state.weightPoints}
+              />
             </Form.Group>
             <Form.Group widths="equal">
               <StyleFormGroup>
@@ -308,7 +318,7 @@ export class EventSettings extends Component {
           onDismiss={this.handleDismiss}
           color="red"
           header="You have used too many points!"
-          content="You only have 10 total points to split between the importance fields."
+          content="You only have 12 total points to split between the importance fields."
         />
       );
     }
