@@ -22,17 +22,21 @@ const GuestListItem = ({ user, eventId }) => {
     color = '#a3568d'
   }
   return (
-        <List.Item color="black" fluid={true} id="guestListItem">
-          <img src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
-          <Card.Content color="purple">
-            <Card.Header id="guestHeader">{user.name}</Card.Header>
-          </Card.Content>
-          <Card.Content extra>
-              <Icon name={atEvent} style={{color: color}} />
-              <p style={{color: '#E9E9E9', display: 'inline'}} >{status}</p>
-          </Card.Content>
-          <hr/>
-        </List.Item>
+    <List.Item color="black" fluid={true} id="guestListItem">
+      {
+        user.imgurPhoto
+          ? <img src={user.imgurPhoto} alt={`${user.name}'s Photo`} />
+          : <Icon name="music" size="massive" color="blue" fitted id="profile-icon" />
+      }
+      <Card.Content color="purple">
+        <Card.Header id="guestHeader">{user.name}</Card.Header>
+      </Card.Content>
+      <Card.Content extra>
+        <Icon name={atEvent} style={{ color: color }} />
+        <p style={{ color: '#E9E9E9', display: 'inline' }} >{status}</p>
+      </Card.Content>
+      <hr />
+    </List.Item>
 
   )
 }
