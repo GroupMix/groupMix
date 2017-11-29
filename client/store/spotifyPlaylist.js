@@ -93,7 +93,7 @@ export const startSpotifyPlaylist = (spotifyUri) =>
   export const getTrackGenres = (data) => dispatch => {
     let songArtistIds = data.songs.map(song => song.artists[0].id)
     let nestedArtistIds = [];
-console.log("getting track genres")
+console.log('getting track genres')
     while (songArtistIds.length) {
       nestedArtistIds.push(songArtistIds.splice(0, 50))
     }
@@ -164,17 +164,39 @@ console.log("getting track genres")
       })
 
   }
-export const getSimilarSongs = (seedInfo, eventId) =>
+export const getSimilarSongs = (song, event, userId) =>
   dispatch => {
+    const seedInfo = {
+      limit: 5,
+      seed_tracks: [song.spotifySongId],
+      target_acousticness: event.acousticness,
+      target_danceability: event.danceability,
+      target_energy: event.energy,
+      target_valence: event.valence,
+      target_loudness: event.loudness
+    }
     setSpotifyToken()
     .then(() => {
+      console.log('seed info', seedInfo)
       return SpotifyApi.getRecommendations(seedInfo)
     })
     .then((similarSongs) => {
-      getTrackGenres(similarSongs)
+      console.log('SIMILAR', similarSongs)
+      let songs = similarSongs.tracks
+      let idArr = [];
+      let uniqueSongs = [];
+      songs.map(song => {
+        if (idArr.indexOf(song.id) === -1) {
+          idArr.push(song.id)
+          uniqueSongs.push(song)
+        }
+      })
+      let dataObj = {songs: songs, idArr: idArr, eventId: event.id, userId: userId}
+      dispatch(getTrackGenres(dataObj))
     })
     .then( () => {
-      dispatch(prioritizeSongs(eventId))
+      console.log('PRIORITIZING')
+      dispatch(prioritizeSongs(event.id))
     })
     .catch(err => {
       console.error(err)

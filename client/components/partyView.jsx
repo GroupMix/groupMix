@@ -155,7 +155,7 @@ class PartyView extends React.Component {
       <div className="partyView-Container">
         <br />
         <Segment inverted style={{ marginTop: '-.75em', marginBottom: '-.7em' }} id="header-container">
-          <Header as="h2" inverted color="purple" textAlign="center"  >{event.name}!</Header>
+          <Header as="h1" inverted color="purple" textAlign="center"  >{event.name}!</Header>
           <hr/>
           {
             (hasStarted && !isCheckedIn && !isHost) &&
@@ -190,7 +190,10 @@ class PartyView extends React.Component {
             className="lists-container"
           >
 
-            <Grid.Column color="black" id="playlist-container">
+            <Grid.Column
+            width={8}
+            color="black"
+            id="playlist-container">
               <Header as="h2" color="blue" textAlign="center">
                 Playlist
               </Header>
@@ -225,18 +228,24 @@ class PartyView extends React.Component {
                 spotifyUrl &&
                 <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`}  height="100" frameBorder="0" allowtransparency="true" id="spotifyPlayer"></iframe>
               }
-              <PlaylistQueue songs={playlistSongs} eventId={eventId} />
+              <PlaylistQueue songs={playlistSongs} eventId={eventId} userId= {user.id} party={event} />
             </Grid.Column>
 
-            <Grid.Column floated="left" color="black">
-              <Header as="h2" color="blue" textAlign="center">
+            <Grid.Column
+            width={8}
+            floated="left"
+            color="black">
+              <Header
+              as="h2"
+              color="blue"
+              textAlign="center">
                 Guestlist
         </Header>
-              <List
+              <Card.Group
                 itemsPerRow={3}
-                horizontal={true}
+
                 inverted
-                id="guestlist-container"
+
               >
                 {
                   guestlist.length >= 1 ?
@@ -247,7 +256,7 @@ class PartyView extends React.Component {
                     })
                     : <h1>No one Has Arrived</h1>
                 }
-              </List>
+              </Card.Group>
             </Grid.Column>
           </Grid>
           </div>

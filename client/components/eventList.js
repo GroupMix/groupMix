@@ -136,7 +136,7 @@ class EventList extends Component {
 
         <Segment className="past-events" inverted>
           <Segment compact={true} inverted>
-            <Header as="h1" content="Past Events" color="purple" style={{marginLeft: '1em'}} />
+            <Header as="h2" content="Past Events" color="purple" style={{marginLeft: '1em'}} />
           </Segment>
           <List divided inverted>
             {events &&
