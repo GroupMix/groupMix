@@ -13,6 +13,7 @@ import playlist from './playlist'
 import spotifyPlaylist from './spotifyPlaylist'
 import playlistSongs from './playlistSongs'
 import error from './errorHandler'
+import currentSong from './nowPlaying'
 
 const reducer = combineReducers({
   user,
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   songs,
   events,
   playlist,
+  currentSong,
   newEvent,
   eventUsers,
   invitedUsers,
@@ -46,3 +48,4 @@ export * from './eventUsers'
 export * from './playlistSongs'
 export * from './spotifyPlaylist'
 export * from './errorHandler'
+export * from './nowPlaying'

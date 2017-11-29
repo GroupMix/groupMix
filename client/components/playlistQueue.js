@@ -38,7 +38,6 @@ const PlaylistQueue = ({ songs, party, voteForSong, addSimilarSongs, userId, eve
                                             <span id="song-name">{` ${song.name} `}</span>
                                             </Label>
                                             <span id="song-artist" style={{marginLeft: '2em' }}> {`${song.artist}`}</span>
-                                            <span id="now-playing"  style={{marginLeft: '2em' }}>{i === 0 ? '  ~ Now Playing' : ''}</span>
                                             </div>
                                         </h3>
                                         <div inverted style={{ width: '-webkit-fill-available', alignItems: 'center' }}>
