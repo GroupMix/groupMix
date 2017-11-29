@@ -153,6 +153,8 @@ class PartyView extends React.Component {
     socket.on(`gotVote/${eventId}`, (eventId) => {
       if (isHost) {
         _.debounce(this.props.voteUpdates(eventId), 30000)
+      } else {
+        _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
 
