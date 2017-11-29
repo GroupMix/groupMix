@@ -140,7 +140,7 @@ const Event = db.define('event', {
     defaultValue: 1.0
   },
   tempo: {
-    type: Sequelize.DECIMAL,
+    type: Sequelize.FLOAT,
     validate: {
       min: 0,
       max: 160
