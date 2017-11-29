@@ -126,7 +126,6 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
         //   match += 'tempo,'
         // }
 
-
         let keyName = song.id.toString()
         if (requestCount[keyName] > 1) { pointsToAdd += requestCount[keyName] * 4 }
 
