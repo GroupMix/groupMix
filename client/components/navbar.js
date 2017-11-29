@@ -38,8 +38,8 @@ const Navbar = (props) => {
           ?
             <Menu.Item position="right" >
               {/* The navbar will show these links after you log in */}
-
               <Button inverted as={Link} to="/" name="home"  ><Icon name="home" />Home</Button>
+
 
               <Button inverted as={Link} to="/eventList" style={{ marginLeft: '0.5em' }}><Icon name="list layout" />Events</Button>
 
@@ -51,7 +51,8 @@ const Navbar = (props) => {
           :
             <Menu.Item position="right">
               {/* The navbar will show these links before you log in */}
-              <Button inverted as={Link} to="/login">Log In</Button>
+              <Button inverted as={Link} to="/" name="home"  ><Icon name="home" />Home</Button>
+              <Button inverted as={Link} to="/login" style={{ marginLeft: '0.5em' }}>Log In</Button>
               <Button inverted as={Link} to="/signup" style={{ marginLeft: '0.5em' }}>Sign Up</Button>
             </Menu.Item>
             }
