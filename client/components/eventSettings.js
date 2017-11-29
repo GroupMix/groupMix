@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { editEvent, prioritizeSongs, updateSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Form, Segment, Message } from 'semantic-ui-react'
+import { Button, Dropdown, Form, Segment, Message, Header } from 'semantic-ui-react'
 import genreList from './genreList'
 
 /**
@@ -198,95 +198,106 @@ export class EventSettings extends Component {
     let tempoWeight = this.state.tempoWeight
     let spotifyUserId = user.user.spotifyUserId
     let token = user.access
+    const StyleFormGroup = (props) => {
+      return (
+        <Form.Field inline inverted style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {props.children}
+        </Form.Field>
+      )
+    }
 
     return (
 
-      <div>
-        <Segment inverted>
+      <div style={{ background: '#2184d0' }}>
+      <Segment raised inverted>
+      <Header textAlign="center" as="h1" color="purple" size= "huge" >Edit Event Settings</Header>
           <Form inverted onSubmit={(evt) => {
             handleSubmit(evt, this.props.event.id, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token);
             handleModal(evt)
           }}>
-            <Segment inverted>
-              <Form.Field
-                control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
-              />
-              <Form.Field inverted>
+          <Form.Group>
+              <StyleFormGroup
+                control={Dropdown} label="Genres" name="genres" placeholder="select your event music genres" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}>
+              </StyleFormGroup>
+              </Form.Group>
+
+              <Form.Group widths="equal">
+              <StyleFormGroup>
                 <label>Danceability:{(this.state.danceability) <= 1 ? (this.state.danceability * 10) : (this.state.danceability)}
                 </label>
                 <input type="range" min={0} max={10} value={(this.state.danceability) <= 1 ? (this.state.danceability * 10) : (this.state.danceability)} onChange={this.handleDanceability.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field inline inverted>
+                </StyleFormGroup>
+              <StyleFormGroup>
                 <label>Danceability Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field>
+               </StyleFormGroup>
+              </Form.Group>
+              <Form.Group widths="equal">
+              <StyleFormGroup>
                 <label>Loudness: {(this.state.loudness) <= 1 ? (this.state.loudness * 10) : (this.state.loudness)}</label>
                 <input type="range" min={0} max={10} value={(this.state.loudness) <= 1 ? (this.state.loudness * 10) : (this.state.loudness)} onChange={this.handleLoudness.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field inline inverted>
+
+              </StyleFormGroup>
+              <StyleFormGroup>
                 <label>Loudness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field>
+
+              </StyleFormGroup>
+              </Form.Group>
+              <Form.Group widths="equal">
+              <StyleFormGroup>
                 <label>Energy: {(this.state.energy) <= 1 ? (this.state.energy * 10) : (this.state.energy)}</label>
-                <input type="range" min={0} max={10} value={(this.state.energy) <= 1 ? (this.state.energy * 10) : (this.state.loudness)} onChange={this.handleEnergy.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field inline inverted>
+                <input type="range" min={0} max={10} value={(this.state.energy) <= 1 ? (this.state.energy * 10) : (this.state.energy)} onChange={this.handleEnergy.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup>
                 <label>Energy Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field>
+              </StyleFormGroup>
+              </Form.Group>
+              <Form.Group widths="equal">
+              <StyleFormGroup>
                 <label>Acousticness: {(this.state.acousticness) <= 1 ? (this.state.acousticness * 10) : (this.state.acousticness)}</label>
                 <input type="range" min={0} max={10} value={(this.state.acousticness) <= 1 ? (this.state.acousticness * 10) : (this.state.acousticness)} onChange={this.handleAcousticness.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field inline inverted>
+              </StyleFormGroup>
+              <StyleFormGroup>
                 <label>Acousticness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field>
+              </StyleFormGroup>
+              </Form.Group>
+              <Form.Group widths="equal">
+              <StyleFormGroup>
                 <label>Happiness: {(this.state.valence) <= 1 ? (this.state.valence * 10) : (this.state.valence)}</label>
                 <input type="range" min={0} max={10} value={(this.state.valence) <= 1 ? (this.state.valence * 10) : (this.state.valence)} onChange={this.handleValence.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field inline inverted>
+              </StyleFormGroup>
+              <StyleFormGroup>
                 <label>Happiness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
-                <br />
-              </Form.Field>
-              <Form.Field>
+              </StyleFormGroup>
+              </Form.Group>
+              <Form.Group widths="equal">
+              <StyleFormGroup>
               <label>Instrumentalness: {(this.state.instrumentalness) <= 1 ? (this.state.instrumentalness * 10) : (this.state.instrumentalness)}</label>
               <input type="range" min={0} max={10} value={(this.state.instrumentalness) <= 1 ? (this.state.instrumentalness * 10) : (this.state.instrumentalness)} onChange={this.handleInstrumentalness.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field inline inverted>
+            </StyleFormGroup>
+            <StyleFormGroup>
               <label>Instrumentalness Importance:</label>
               <input type="number" width={2} min={0} max={10} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
-              <br />
-            </Form.Field>
-            <Form.Field>
+            </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+            <StyleFormGroup>
             <label>Tempo: {(this.state.tempo)}</label>
             <input type="range" min={0} max={160} value={this.state.tempo} onChange={this.handleTempo.bind(this)} />
-            <br />
-          </Form.Field>
-          <Form.Field inline inverted>
+          </StyleFormGroup>
+          <StyleFormGroup>
             <label>Tempo Importance:</label>
             <input type="number" width={2} min={0} max={10} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
-            <br />
-          </Form.Field>
-              <div>
+          </StyleFormGroup>
+          </Form.Group>
+              <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {this.renderError()}
-                <Button disabled={this.state.submitVisible} color="purple" type="submit">Submit</Button>
+                <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge">Submit</Button>
               </div>
-            </Segment>
           </Form>
         </Segment>
       </div>

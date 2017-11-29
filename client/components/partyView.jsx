@@ -176,8 +176,7 @@ class PartyView extends React.Component {
               isHost &&
               <div>
                 <Modal open={this.state.editModalShowing}>
-                  <Modal.Header>Event Settings</Modal.Header>
-                  <Modal.Content >
+                  <Modal.Content style={{ background: '#1B1C1D' }} >
                     <EventSettings
                       event={event}
                       handleModal={this.handleModal}
