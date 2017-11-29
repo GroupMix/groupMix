@@ -213,11 +213,9 @@ export class NewEvent extends Component {
               />
             </Form.Group>
             <Form.Group widths="equal">
-              <StyleFormGroup inverted>
+              <StyleFormGroup>
                 <label>Danceability: {this.state.danceability}</label>
                 <input type="range" min={0} max={10} value={this.state.danceability} onChange={this.handleDanceability.bind(this)} />
-
-
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Danceability Importance: </label>
@@ -229,7 +227,7 @@ export class NewEvent extends Component {
                 <label>Loudness: {this.state.loudness}</label>
                 <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
               </StyleFormGroup>
-              <StyleFormGroup inline inverted>
+              <StyleFormGroup>
                 <label>Loudness Importance:    </label>
                 <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
               </StyleFormGroup>
@@ -239,7 +237,7 @@ export class NewEvent extends Component {
                 <label>Energy: {this.state.energy}</label>
                 <input type="range" min={0} max={10} value={this.state.energy} onChange={this.handleEnergy.bind(this)} />
               </StyleFormGroup>
-              <StyleFormGroup inline inverted >
+              <StyleFormGroup >
                 <label>Energy Importance:      </label>
                 <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
               </StyleFormGroup>
@@ -250,7 +248,7 @@ export class NewEvent extends Component {
                 <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
 
               </StyleFormGroup>
-              <StyleFormGroup inline inverted>
+              <StyleFormGroup>
                 <label>Acousticness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
               </StyleFormGroup>
@@ -260,7 +258,7 @@ export class NewEvent extends Component {
                 <label>Happiness: {this.state.valence}</label>
                 <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
               </StyleFormGroup>
-              <StyleFormGroup inline inverted>
+              <StyleFormGroup>
                 <label>Hapiness Importance:     </label>
                 <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
               </StyleFormGroup>
@@ -270,7 +268,7 @@ export class NewEvent extends Component {
               <label>Instrumentalness: {this.state.instrumentalness}</label>
               <input type="range" min={0} max={10} value={this.state.instrumentalness} onChange={this.handleInstrumentalness.bind(this)} />
             </StyleFormGroup>
-            <StyleFormGroup inline inverted>
+            <StyleFormGroup>
               <label>Instrumentalness Importance:     </label>
               <input type="number" width={2} min={0} max={10} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
             </StyleFormGroup>
@@ -280,14 +278,14 @@ export class NewEvent extends Component {
             <label>Tempo: {this.state.tempo}</label>
             <input type="range" min={0} max={160} value={this.state.tempo} onChange={this.handleTempo.bind(this)} />
           </StyleFormGroup>
-          <StyleFormGroup inline inverted>
+          <StyleFormGroup>
             <label>Tempo Importance:     </label>
             <input type="number" width={2} min={0} max={10} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
           </StyleFormGroup>
         </Form.Group>
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {this.renderError()}
-              <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge" >Create Event</Button>
+              <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge">Create Event</Button>
             </div>
           </Form>
         </Segment>
