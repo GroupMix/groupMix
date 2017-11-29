@@ -12,11 +12,15 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
   let hostEnergy = 0;
   let hostAcousticness = 0;
   let hostValence = 0;
+  let hostInstrumentalness = 0;
+  let hostTempo = 0;
   let hostDanceabilityWeight = 0;
   let hostLoudnessWeight = 0;
   let hostEnergyWeight = 0;
   let hostAcousticnessWeight = 0;
   let hostValenceWeight = 0;
+  let hostInstrumentalnessWeight = 0;
+  let hostTempoWeight = 0;
   let hostGenres = [];
   let playlistId = 0;
   let requestCount = {}
@@ -35,13 +39,17 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
       hostLoudness = (((1.4 - +event.loudness) * 12)) * -1;
       hostEnergy = event.energy * 0.9;
       hostAcousticness = event.acousticness * 0.9;
-      hostValence = event.valence * 0.9
+      hostValence = event.valence * 0.9;
+      hostInstrumentalness = event.instrumentalness * 0.9;
+      hostTempo = event.tempo;
       hostGenres = event.genres
       hostDanceabilityWeight = event.danceabilityWeight;
       hostLoudnessWeight = event.loudnessWeight;
       hostEnergyWeight = event.energyWeight;
       hostAcousticnessWeight = event.acousticnessWeight;
       hostValenceWeight = event.valenceWeight;
+      hostInstrumentalnessWeight = event.instrumentalnessWeight;
+      hostTempoWeight = event.tempoWeight;
       return Playlist.findOne({ where: { eventId: req.params.eventId } })
     })
     .then((playlist) => {
@@ -100,13 +108,22 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
           pointsToAdd += (6 * hostEnergyWeight)
           match += 'energy,'
         }
-        if (song.acousticness > hostAcousticness - 0.12 && song.acoustisness < hostAcousticness + 0.15) {
+        if (song.acousticness > hostAcousticness - 0.12 && song.acousticness < hostAcousticness + 0.15) {
           pointsToAdd += (6 * hostAcousticnessWeight)
           match += 'acousticness,'
         }
         if (song.valence > hostValence - 0.12 && song.valence < hostValence + 0.15) {
           pointsToAdd += (6 * hostValenceWeight)
           match += 'valence,'
+        }
+        if (song.instrumentalness > hostInstrumentalness - 0.12 && song.instrumentalness < hostInstrumentalness + 0.15) {
+          pointsToAdd += (6 * hostInstrumentalnessWeight)
+          console.log('SONG.INSTRUMENTALNESSSSSSSASASSSSSSSS', song.instrumentalness, hostInstrumentalness, hostInstrumentalnessWeight)
+          match += 'instrumentalness,'
+        }
+        if (song.tempo > hostTempo - 10 && song.tempo < hostTempo + 10) {
+          pointsToAdd += (6 * hostTempoWeight)
+          match += 'tempo,'
         }
 
         let keyName = song.id.toString()
