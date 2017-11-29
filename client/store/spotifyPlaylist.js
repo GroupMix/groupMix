@@ -6,6 +6,7 @@ const SpotifyApi = new SpotifyWebApi()
 import { ERROR } from 'socket.io-parser';
 import { errorState } from './errorHandler'
 import { fetchPlaylistSongs, prioritizeSongs } from './playlistSongs'
+import { getCurrentSong } from './nowPlaying'
 import { addSongsThunk} from './songs'
 import socket from '../socket'
 
@@ -192,14 +193,9 @@ export const getSimilarSongs = (song, event, userId) =>
       let dataObj = {songs: songs, idArr: idArr, eventId: event.id, userId: userId}
       dispatch(getTrackGenres(dataObj))
     })
-    .then( () => {
-      console.log('PRIORITIZING')
-      dispatch(prioritizeSongs(event.id))
-    })
     .catch(err => {
       console.error(err)
     })
-
 }
 export const resumeSpotifyPlaylist = () =>
   dispatch => {
@@ -253,16 +249,21 @@ export const pollingCurrentSong = (poll, eventId) =>
           .then(() => {
             return SpotifyApi.getMyCurrentPlayingTrack()
               .then(track => {
-                // console.log('polling')
-                console.log('CURRENT SONG', currentSongId)
+                let currentTrack = {
+                  artist: track.item.artists[0].name,
+                  name: track.item.name
+                }
                 if (track.is_playing) {
 
                   if (track.item.id !== currentSongId) {
-                    dispatch(updateSpotifyPlaylist(eventId))
-                    currentSongId = track.item.id
-                    dispatch(updateGuests(eventId))
+                    dispatch(prioritizeSongs(eventId)).then(() => {
+                      dispatch(updateSpotifyPlaylist(eventId))
+                      currentSongId = track.item.id
+                      dispatch(getCurrentSong(currentTrack))
+                      dispatch(updateGuests(eventId, currentTrack))
+                    })
                   }
-
+                  dispatch(updateGuests(eventId, currentTrack))                  
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
                 }
               })
@@ -270,15 +271,13 @@ export const pollingCurrentSong = (poll, eventId) =>
       }, 9000)
     }
     if (!poll) {
-      console.log(interval, 'stopped pollling')
       clearInterval(interval)
     }
   }
 
-export const updateGuests = (eventId) =>
+export const updateGuests = (eventId, currentTrack) =>
   dispatch => {
-    console.log('thunk updateGuests Emmited')
-    socket.emit('/pollerSongChange', eventId)
+    socket.emit('/pollerSongChange', eventId, currentTrack)
   }
 /* REDUCER */
 export default function (state = defaultSpotifyPlaylist, action) {

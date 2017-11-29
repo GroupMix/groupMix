@@ -19,11 +19,13 @@ import {
   pauseSpotifyPlaylist,
   resumeSpotifyPlaylist,
   fetchPlaylistSongs,
-  prioritizeSongs
+  prioritizeSongs,
+  getCurrentSong
 } from '../store'
 import '../styles/_partyView.scss'
 
 import _ from 'lodash'
+import CurrentlyPlaying from './currentlyPlaying'
 import GuestListItem from './guestListItem.jsx'
 import EndEventModal from './endEventModal'
 import ErrorModal from './errorModal'
@@ -129,7 +131,7 @@ class PartyView extends React.Component {
   }
 
   render() {
-    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, eventStatus, pausePlaylist, resumePlaylist, playlistSongs } = this.props
+    const { user, eventId, guestlist, event, spotifyPlaylist, startParty, currentSong ,eventStatus, pausePlaylist, resumePlaylist, playlistSongs } = this.props
     const { isHost, isCheckedIn, isPlaying, currentTrackUri } = this.state
     const { hasStarted } = event
 
@@ -149,19 +151,20 @@ class PartyView extends React.Component {
         _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
-    socket.on(`/songChange/${eventId}`, (eventId) => {
+    socket.on(`/songChange/${eventId}`, (eventId, guestCurrentSong) => {
       if (!isHost) {
-        _.debounce(this.props.socketUpdates(eventId), 30000)
-      }
-    })
-    socket.on(`gotVote/${eventId}`, (eventId) => {
-      if (isHost) {
-        _.debounce(this.props.voteUpdates(eventId), 30000)
-      } else {
-        _.debounce(this.props.socketUpdates(eventId), 30000)
+        _.debounce(this.props.socketUpdates(eventId, guestCurrentSong), 30000)
       }
     })
 
+    socket.on(`gotVote/${eventId}`, (eventId) => {
+      if (isHost) {
+        _.debounce(this.props.voteUpdates(eventId, currentSong), 30000)
+      } else {
+        _.debounce(this.props.socketUpdates(eventId, currentSong), 30000)
+      }
+    })
+    console.log(currentSong, "this is the cureent songdf;aldjfal;sdjfa")
     return (
       <div className="partyView-Container">
         <br />
@@ -234,10 +237,9 @@ class PartyView extends React.Component {
                   </Modal>
                 </div>
               }
-              {
-                (spotifyUrl && isHost) &&
-                <iframe src={`https://open.spotify.com/embed/${spotifyUrl}`}  height="100" frameBorder="0" allowtransparency="true" id="spotifyPlayer"></iframe>
-              }
+              <CurrentlyPlaying currentSong={currentSong}/>
+              <Header inverted>Next Up:</Header>
+              <hr/>
               <PlaylistQueue songs={playlistSongs} eventId={eventId} userId= {user.id} party={event} />
             </Grid.Column>
 
@@ -281,6 +283,7 @@ class PartyView extends React.Component {
 const mapState = (state, ownProps) => {
   return {
     user: state.user,
+    currentSong: state.currentSong,
     email: state.user.user.email,
     eventId: ownProps.match.params.eventId,
     guestlist: state.invitedUsers,
@@ -300,10 +303,11 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(updateSpotifyPlaylist(eventId))
 
   },
-  socketUpdates(eventId){
+  socketUpdates(eventId, currentSong){
     console.log("FETCH SONGS AFTER SOCKET")
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
+    dispatch(getCurrentSong(currentSong))
   },
   voteUpdates(eventId){
     console.log("vote updates after sockets")
@@ -329,7 +333,8 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchPlaylistSongs(eventId))
   },
   runUpdates(eventId) {
-    dispatch(getPriority(eventId))
+    console.log('Run Update is running')
+    dispatch(prioritizeSongs(eventId))
       .then(() => {
         dispatch(fetchInvitedUsers(eventId))
         dispatch(fetchEvent(eventId))
@@ -354,9 +359,6 @@ const mapDispatch = (dispatch, ownProps) => ({
   polling(poll, eventId) {
     dispatch(pollingCurrentSong(poll, eventId))
   },
-  getPriority(eventId) {
-    dispatch(prioritizeSongs(eventId))
-  }
 })
 
 export default connect(mapState, mapDispatch)(PartyView)
