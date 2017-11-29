@@ -13,6 +13,7 @@ import {
   startSpotifyPlaylist,
   startEvent,
   endEvent,
+  endThisEvent,
   deletePlaylistSongs,
   pollingCurrentSong,
   pauseSpotifyPlaylist,
@@ -347,6 +348,7 @@ const mapDispatch = (dispatch, ownProps) => ({
       .then(event => {
         dispatch(deletePlaylistSongs(eventId))
         dispatch(endEvent(eventId, spotifyUserId, spotifyPlaylistId))
+        dispatch(endThisEvent(eventId))
         ownProps.history.push('/eventList/')
       })
   },

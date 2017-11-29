@@ -145,7 +145,7 @@ class EventList extends Component {
                 <List.Item key={event.id}>
                   <Header as="h3" icon="sound" content={event.name} style={{ marginBottom: '1em' }} />
                   <List.Content floated="left">
-                    <a href={event.playlistURL} target="#blank"><Button content="View Spotify Playlist" style={{backgroundColor: '#4BA7B8', color: '#FFFFFF'}} /></a>
+                    <a href={event.playlistURL} target="#blank"><Button content="View Spotify Playlist" style={{backgroundColor: '#4BA7B8', color: '#FFFFFF', marginLeft: '3em'}} /></a>
                     <List.Description>
                       <List.List as="ul">
                         <List.Item as="li">Description: {event.type}</List.Item>
