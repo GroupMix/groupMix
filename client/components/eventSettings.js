@@ -29,11 +29,15 @@ export class EventSettings extends Component {
       energy: currentEvent.energy,
       acousticness: currentEvent.acousticness,
       valence: currentEvent.valence,
+      instrumentalness: currentEvent.instrumentalness,
+      tempo: currentEvent.tempo,
       danceabilityWeight: currentEvent.danceabilityWeight,
       loudnessWeight: currentEvent.loudnessWeight,
       energyWeight: currentEvent.energyWeight,
       acousticnessWeight: currentEvent.acousticnessWeight,
       valenceWeight: currentEvent.valenceWeight,
+      instrumentalnessWeight: currentEvent.instrumentalnessWeight,
+      tempoWeight: currentEvent.tempoWeight,
       weightPoints: 10,
       visible: false,
       submitVisible: false,
@@ -76,6 +80,12 @@ export class EventSettings extends Component {
   }
   handleValence = (evt) => {
     this.setState({ valence: evt.target.value * 1 })
+  }
+  handleInstrumentalness = (evt) => {
+    this.setState({ instrumentalness: evt.target.value * 1 })
+  }
+  handleTempo = (evt) => {
+    this.setState({ tempo: evt.target.value * 1 })
   }
   handleDanceabilityWeight = (evt) => {
     let pointsUsed = (evt.target.value * 1) - this.state.danceabilityWeight;
@@ -122,6 +132,22 @@ export class EventSettings extends Component {
       this.checkPoints()
     }, 2000)
   }
+  handleInstrumentalnessWeight = (evt) => {
+    let pointsUsed = (evt.target.value * 1) - this.state.instrumentalnessWeight;
+    let remainingPoints = this.state.weightPoints - pointsUsed;
+    this.setState({ instrumentalnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    setTimeout(() => {
+      this.checkPoints()
+    }, 2000)
+  }
+  handleTempoWeight = (evt) => {
+    let pointsUsed = (evt.target.value * 1) - this.state.tempoWeight;
+    let remainingPoints = this.state.weightPoints - pointsUsed;
+    this.setState({ tempoWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    setTimeout(() => {
+      this.checkPoints()
+    }, 2000)
+  }
   handleDismiss = () => {
     this.setState({ messageVisible: false })
   }
@@ -158,11 +184,18 @@ export class EventSettings extends Component {
     (this.state.valence <= 1) ?
       (valence = this.state.valence) :
       (valence = this.state.valence / 10)
+    let instrumentalness;
+    (this.state.instrumentalness <= 1) ?
+      (instrumentalness = this.state.instrumentalness) :
+      (instrumentalness = this.state.instrumentalness / 10)
+    let tempo = this.state.tempo;
     let danceabilityWeight = this.state.danceabilityWeight
     let loudnessWeight = this.state.loudnessWeight
     let energyWeight = this.state.energyWeight
     let acousticnessWeight = this.state.acousticnessWeight
     let valenceWeight = this.state.valenceWeight
+    let instrumentalnessWeight = this.state.instrumentalnessWeight
+    let tempoWeight = this.state.tempoWeight
     let spotifyUserId = user.user.spotifyUserId
     let token = user.access
 
@@ -171,7 +204,7 @@ export class EventSettings extends Component {
       <div>
         <Segment inverted>
           <Form inverted onSubmit={(evt) => {
-            handleSubmit(evt, this.props.event.id, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token);
+            handleSubmit(evt, this.props.event.id, eventname, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token);
             handleModal(evt)
           }}>
             <Segment inverted>
@@ -220,15 +253,35 @@ export class EventSettings extends Component {
                 <br />
               </Form.Field>
               <Form.Field>
-                <label>Valence: {(this.state.valence) <= 1 ? (this.state.valence * 10) : (this.state.valence)}</label>
+                <label>Happiness: {(this.state.valence) <= 1 ? (this.state.valence * 10) : (this.state.valence)}</label>
                 <input type="range" min={0} max={10} value={(this.state.valence) <= 1 ? (this.state.valence * 10) : (this.state.valence)} onChange={this.handleValence.bind(this)} />
                 <br />
               </Form.Field>
               <Form.Field inline inverted>
-                <label>Valence Importance:</label>
+                <label>Happiness Importance:</label>
                 <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
                 <br />
               </Form.Field>
+              <Form.Field>
+              <label>Instrumentalness: {(this.state.instrumentalness) <= 1 ? (this.state.instrumentalness * 10) : (this.state.instrumentalness)}</label>
+              <input type="range" min={0} max={10} value={(this.state.instrumentalness) <= 1 ? (this.state.instrumentalness * 10) : (this.state.instrumentalness)} onChange={this.handleInstrumentalness.bind(this)} />
+              <br />
+            </Form.Field>
+            <Form.Field inline inverted>
+              <label>Instrumentalness Importance:</label>
+              <input type="number" width={2} min={0} max={10} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
+              <br />
+            </Form.Field>
+            <Form.Field>
+            <label>Tempo: {(this.state.tempo)}</label>
+            <input type="range" min={0} max={160} value={this.state.tempo} onChange={this.handleTempo.bind(this)} />
+            <br />
+          </Form.Field>
+          <Form.Field inline inverted>
+            <label>Tempo Importance:</label>
+            <input type="number" width={2} min={0} max={10} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
+            <br />
+          </Form.Field>
               <div>
                 {this.renderError()}
                 <Button disabled={this.state.submitVisible} color="purple" type="submit">Submit</Button>
@@ -261,19 +314,19 @@ const mapState = (state, ownProps) => {
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    handleSubmit(evt, eventId, name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token) {
+    handleSubmit(evt, eventId, name, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token) {
 
       evt.preventDefault()
 
       let { history } = ownProps;
 
-      let updatedEvent = { name, eventId, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, spotifyUserId, token }
+      let updatedEvent = { name, eventId, date, time, city, state, zip, address, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token }
 
       dispatch(editEvent(eventId, updatedEvent))
       dispatch(prioritizeSongs(eventId))
-      .then(()=>{
-        dispatch(updateSpotifyPlaylist(eventId))
-      })
+        .then(() => {
+          dispatch(updateSpotifyPlaylist(eventId))
+        })
     },
   }
 }

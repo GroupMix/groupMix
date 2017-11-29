@@ -6,7 +6,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 var spotifyApi = new SpotifyWebApi();
 
 import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
-import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs, getTrackGenres, getAudioFeatures } from '../store'
+import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs, getTrackGenres, setSpotifyToken, getAudioFeatures } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
 
