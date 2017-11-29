@@ -139,6 +139,11 @@ class PartyView extends React.Component {
     let playbackButton;
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
+    socket.on(`UpdatePlaylist/${eventId}`, eventId => {
+      console.log("RECEIVED UPDATEPLAYLIST EMITTER! eventID:", eventId)
+        this.props.runUpdates(eventId)
+    })
+
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
       console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
@@ -329,16 +334,13 @@ const mapDispatch = (dispatch, ownProps) => ({
     dispatch(fetchPlaylistSongs(eventId))
   },
   runUpdates(eventId) {
-    dispatch(getPriority(eventId))
+    dispatch(prioritizeSongs(eventId))
       .then(() => {
         dispatch(fetchInvitedUsers(eventId))
         dispatch(fetchEvent(eventId))
         dispatch(fetchSpotifyPlaylist(eventId))
         dispatch(updateSpotifyPlaylist(eventId))
         dispatch(fetchPlaylistSongs(eventId))
-      })
-      .then(() => {
-        this.props.updatePlaylist(+eventId)
       })
   }
   ,

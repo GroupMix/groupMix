@@ -4,6 +4,7 @@ import { List, Segment, Button, Header } from 'semantic-ui-react';
 import { fetchUserEvents, setRsvp, cancelEvent } from '../store';
 import { Link } from 'react-router-dom'
 import '../styles/_eventList.scss';
+import socket from '../socket'
 
 class EventList extends Component {
   constructor(props) {
@@ -18,6 +19,12 @@ class EventList extends Component {
     const { events, user, handleSubmit, history, handleCancelEvent } = this.props
     const rsvpYes = true;
     const rsvpNo = false;
+
+    socket.on(`userInvite/${user.id}`, (userId) => {
+      console.log('SOCKET UPDATING USEREVENTSSSSSSSS')
+      this.props.loadEvents(userId);
+    })
+
     return (
       <div className="event-list-container">
         <br />
