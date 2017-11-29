@@ -118,10 +118,9 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
         }
         if (song.instrumentalness > hostInstrumentalness - 0.12 && song.instrumentalness < hostInstrumentalness + 0.15) {
           pointsToAdd += (6 * hostInstrumentalnessWeight)
-          console.log('SONG.INSTRUMENTALNESSSSSSSASASSSSSSSS', song.instrumentalness, hostInstrumentalness, hostInstrumentalnessWeight)
           match += 'instrumentalness,'
         }
-        if (song.tempo > hostTempo - 10 && song.tempo < hostTempo + 10) {
+        if (song.tempo > hostTempo - 5 && song.tempo < hostTempo + 5) {
           pointsToAdd += (6 * hostTempoWeight)
           match += 'tempo,'
         }

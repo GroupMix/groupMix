@@ -34,8 +34,14 @@ const PlaylistQueue = ({ songs, party, voteForSong, addSimilarSongs, userId, eve
                                     <div className="playlistSong-Item" style={{ display: 'flex', alignItem: 'center', justifyContent: 'space-between' }}>
                                         <h3>
                                         <div style={{ display: 'flex', alignItem: 'center', flexDirection: 'column', width: 'max-content' }}>
-                                            <Label circular color="black" size ="huge"> {i + 1} -
-                                            <span id="song-name">{` ${song.name} `}</span>
+                                            <Label circular color="black" size ="huge">{i + 1} -
+                                            <span id="song-name">
+                                            {
+                                              (song.name.length >= 30)
+                                              ? `${song.name.slice(0, 30).concat('...')}`
+                                              : `${song.name}`
+                                            }
+                                            </span>
                                             </Label>
                                             <span id="song-artist" style={{marginLeft: '2em' }}> {`${song.artist}`}</span>
                                             <span id="now-playing"  style={{marginLeft: '2em' }}>{i === 0 ? '  ~ Now Playing' : ''}</span>
