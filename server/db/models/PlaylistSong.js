@@ -37,7 +37,11 @@ const PlaylistSong = db.define('playlistSong', {
   },
   match: {
     type: Sequelize.STRING
-  } 
+  },
+  votes: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  }
 })
 
 // PlaylistSong.prototype.addPointsIfPresent = () => {

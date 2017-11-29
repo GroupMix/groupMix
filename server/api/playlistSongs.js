@@ -133,7 +133,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
         pointsCache[key] = pointsToAdd
         matchCache[key] = match
 
-        return PlaylistSong.findAll({ where: { songId: song.id } })
+        return PlaylistSong.findAll({ where: { songId: song.id, playlistId } })
       })
     })
         .then((songMatchPromisesArr) => {
@@ -149,6 +149,7 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
              duplicateSongArr.forEach((duplicate) => {
               let key = duplicate.songId.toString()
               if (checkedIn) pointsCache[key] += 20
+              if (duplicate.votes !== 0) pointsCache[key] += (duplicate.votes * 2 )
               matchCache[key] += 'atevent,'
               duplicate.update({ priority: pointsCache[key], match: matchCache[key] })
             })
@@ -174,8 +175,10 @@ router.put('/voteSong/:eventId', (req, res, next) => {
       }})
   })
   .then(song => {
-    req.body.vote == 'up' ? song.increment('priority') : song.decrement('priority')
-    res.json(song.priority)
+    req.body.vote == 'up' ? song.increment({'votes': 2}) : song.decrement({'votes': 2})
+    req.body.vote == 'up' ? song.increment({'priority': 2}) : song.decrement({'priority': 2})
+    
+    res.sendStatus(201)
   })
 })
 

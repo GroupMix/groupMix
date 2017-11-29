@@ -74,11 +74,19 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
     Playlist.findOne({ where: { eventId: req.params.eventId } }) //Gets PlaylistId
         .then(playlist => {
             spotifyPlaylistId = playlist.spotifyPlaylistId
-            return PlaylistSong.findAll({ // Finds 100 of the top Prioritized songs in descending order
-                where: { playlistId: playlist.id },
-                order: [['priority', 'DESC']],
-                limit: limit,
-            })
+            if (req.body.endParty) {
+                return PlaylistSong.findAll({
+                    where: { playlistId: playlist.id, played: true },
+                    order: [['priority', 'DESC']],
+                    limit: limit,
+                })
+            } else {
+                return PlaylistSong.findAll({ // Finds 100 of the top Prioritized songs in descending order
+                    where: { playlistId: playlist.id },
+                    order: [['priority', 'DESC']],
+                    limit: limit,
+                })
+            }
         })
         .then(songs => {
             let tempSongs = songs.map(song => song.toJSON()) // Filters repeated songs and returns the top ten songs...
