@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { updateGuests } from './index'
-import  socket from '../socket'
 /**
  * ACTION TYPES
  */
