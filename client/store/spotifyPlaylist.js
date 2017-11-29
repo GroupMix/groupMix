@@ -242,14 +242,7 @@ export const pollingCurrentSong = (poll, eventId) =>
                   }
 
                   axios.put(`/api/playlistSongs/markAsPlayed/${track.item.id}`)
-                } else {
-                  console.log('no song playing')
-                  // dispatch(updateSpotifyPlaylist(eventId))
-                  //   .then(() => {
-                  // dispatch(startSpotifyPlaylist())
-                  // })
                 }
-                dispatch(updateSpotifyPlaylist(eventId))
               })
           })
       }, 9000)

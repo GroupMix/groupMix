@@ -79,6 +79,11 @@ module.exports = (io) => {
       console.log('A User Has Manually Checked in')
       socket.broadcast.emit(`userHere/${eventId}`, userId, eventId)
     })
+    socket.on('voted', (eventId) => {
+      console.log('voted emitter on back end')
+      socket.broadcast.emit(`gotVote/${eventId}`, eventId)
+    })
+
     socket.on('disconnect', () => {
       console.log(`Connection ${socket.id} has left the building`)
     })
