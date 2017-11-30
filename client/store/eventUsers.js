@@ -30,7 +30,6 @@ export const fetchHostEvents = (userId) =>
     dispatch =>
         axios.get(`/api/eventUsers/${userId}/hosted`)
             .then(res => res.data)
-            .then(hostedEvents => console.log(hostedEvents))
             .catch(err => console.log(err))
 
 export const fetchAllUserEvents = (userId) =>

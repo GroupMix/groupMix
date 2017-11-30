@@ -53,7 +53,6 @@ componentWillMount(){
   checkPoints() {
     if (this.state.weightPoints < 0) {
       this.setState({ visible: true, submitVisible: true })
-      console.log('pointsssss', this.state.submitVisible)
     }
     else if (this.state.weightPoints >= 0) {
       this.setState({ visible: false, submitVisible: false })
