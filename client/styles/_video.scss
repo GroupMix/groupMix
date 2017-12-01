@@ -1,0 +1,36 @@
+.videoDiv{
+  display: 'flex' !important ;
+  align-items: 'center' !important ;
+  justify-content: center !important ;
+}
+.videoMessage{
+  align-self: 'center' !important ;
+  position: absolute !important ;
+  top: 15em !important ;
+  left: 20em !important ;
+  text-align: center !important ;
+  background-color:rgb(97, 3, 97) !important ;
+  z-index:99  !important ;
+  align-content: center !important ;
+  color: white !important ;
+  width: 40em !important ;
+  height: 10em !important ;
+  display: flex !important ;
+  justify-content: center !important ;
+  align-items: center !important;
+}
+.videoHeader{
+  align-self: 'center' !important ;
+  position: absolute !important ;
+  top: 5em !important ;
+  left: 20em !important ;
+  text-align: center !important ;
+  background-color:rgb(97, 3, 97) !important ;
+  z-index:99  !important ;
+  align-content: center !important ;
+  width: 10em !important;
+  height: 3em !important;
+  display: flex !important ;
+  justify-content: center !important ;
+  align-items: center !important;
+}
