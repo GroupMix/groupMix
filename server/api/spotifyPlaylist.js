@@ -113,7 +113,6 @@ router.put('/getPrioritizedSongs/:eventId', tokenRefresh, (req, res, next) => { 
 
             }
             uriArr = uriArr.slice(0, songAmount)
-            console.log(uriArr)
             res.json({
                 uriArr,
                 spotifyUserId,

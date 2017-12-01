@@ -22,7 +22,7 @@ router.put('/rsvp/:eventId/:userId', (req, res, next) => {
 router.put('/checkin/:eventId', (req, res, next) => {
   EventUser.update({ atEvent: true }, { where: { userId: req.user.id, eventId: req.params.eventId } })
     .then(guest => {
-      console.log(guest, "Event Has Updated")
+
       res.send(guest)
     })
 })

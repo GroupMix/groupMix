@@ -41,7 +41,6 @@ passport.serializeUser((user, done) => done(null, user))
 passport.deserializeUser((user, done) =>
   db.models.user.findById(user.id)
     .then(foundUser => {
-      // console.log('user pass', user)
       done(null, user)
     })
     .catch(done))
