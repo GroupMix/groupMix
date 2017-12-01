@@ -5,7 +5,7 @@ import { createNewEvent, createSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Rating, Segment, Header, Message, Statistic } from 'semantic-ui-react'
 import { EventGenres } from '/'
-import genreList from './genreList'
+import genreList, { importanceOptions } from './genreList'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css'
@@ -54,7 +54,7 @@ export class NewEvent extends Component {
     else if (this.state.weightPoints >= 0) {
       this.setState({ visible: false, submitVisible: false })
     }
-console.log("remaining points", this.state.weightPoints)
+    console.log("remaining points", this.state.weightPoints)
   }
   handleChange(evt) {
     var change = {}
@@ -89,63 +89,61 @@ console.log("remaining points", this.state.weightPoints)
   handleTempo = (evt) => {
     this.setState({ tempo: evt.target.value * 1 })
   }
-  handleDanceabilityWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.danceabilityWeight;
-
-
+  handleDanceabilityWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.danceabilityWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ danceabilityWeight: data.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleLoudnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.loudnessWeight;
+  handleLoudnessWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.loudnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ loudnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ loudnessWeight: data.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
 
   }
-  handleEnergyWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.energyWeight;
+  handleEnergyWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.energyWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ energyWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ energyWeight: data.value * 1, weightPoints: remainingPoints })
 
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleAcousticnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.acousticnessWeight;
+  handleAcousticnessWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.acousticnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ acousticnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ acousticnessWeight: data.value * 1, weightPoints: remainingPoints })
 
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleValenceWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.valenceWeight;
+  handleValenceWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.valenceWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ valenceWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ valenceWeight: data.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleInstrumentalnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.instrumentalnessWeight;
+  handleInstrumentalnessWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.instrumentalnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ instrumentalnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ instrumentalnessWeight: data.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleTempoWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.tempoWeight;
+  handleTempoWeight = (evt, data) => {
+    let pointsUsed = (data.value * 1) - this.state.tempoWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ tempoWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ tempoWeight: data.value * 1, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
@@ -181,7 +179,7 @@ console.log("remaining points", this.state.weightPoints)
     let token = user.access
     const StyleFormGroup = (props) => {
       return (
-        <Form.Field inline inverted style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Form.Field inline inverted style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {props.children}
         </Form.Field>
       )
@@ -191,15 +189,15 @@ console.log("remaining points", this.state.weightPoints)
 
       <div style={{ marginLeft: '9em', marginRight: '9em', background: '#2184d0' }}>
         <Segment raised padded inverted style={{ paddingLeft: '6em', paddingRight: '6em', height: 'auto', marginTop: '.85em' }}>
-          <Header textAlign="center" as="h1" color="purple" size= "huge" >Create New Event</Header>
+          <Header textAlign="center" as="h1" color="purple" size="huge" >Create New Event</Header>
           <Form size="large" inverted onSubmit={(evt) => handleSubmit(evt, eventname, date, type, genres, danceability, danceabilityWeight, loudness, loudnessWeight, energy, energyWeight, acousticness, acousticnessWeight, valence, valenceWeight, instrumentalness, instrumentalnessWeight, tempo, tempoWeight, spotifyUserId, token)}>
-          {this.renderInfo()}
+            {this.renderInfo()}
             <Form.Group widths="equal">
               <Form.Field>
                 <label>Event Name</label>
-                <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="New Year's Celebration" />
+                <input name="eventname" onChange={this.handleChange.bind(this)} value={this.state.eventname} placeholder="New Year's Celebration" required={true} />
               </Form.Field>
-              <Form.Field width = {6}>
+              <Form.Field width={6}>
                 <label>Date</label>
                 <DatePicker
                   name="date"
@@ -219,12 +217,12 @@ console.log("remaining points", this.state.weightPoints)
                 control={Dropdown} label="Genre Preferences" name="genres" placeholder="Hip Hop, Electronic, Pop" fluid multiple search selection options={genreList} onChange={this.handleGenreChange.bind(this)} defaultValue={this.state.genres}
               />
               <Statistic
-              floated="right"
-              inverted
-              size="tiny"
-              color= "purple"
-              label="Remaining Importance Points"
-              value={this.state.weightPoints}
+                floated="right"
+                inverted
+                size="tiny"
+                color="purple"
+                label="Remaining Importance Points"
+                value={this.state.weightPoints}
               />
             </Form.Group>
             <Form.Group widths="equal">
@@ -234,7 +232,7 @@ console.log("remaining points", this.state.weightPoints)
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Danceability Importance: </label>
-                <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -243,8 +241,8 @@ console.log("remaining points", this.state.weightPoints)
                 <input type="range" min={0} max={10} value={this.state.loudness} onChange={this.handleLoudness.bind(this)} />
               </StyleFormGroup>
               <StyleFormGroup>
-                <label>Loudness Importance:    </label>
-                <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
+                <label>Loudness Importance: </label>
+                <Dropdown selection compact options={importanceOptions} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -254,18 +252,17 @@ console.log("remaining points", this.state.weightPoints)
               </StyleFormGroup>
               <StyleFormGroup >
                 <label>Energy Importance:      </label>
-                <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
               <StyleFormGroup>
                 <label>Acousticness: {this.state.acousticness}</label>
                 <input type="range" min={0} max={10} value={this.state.acousticness} onChange={this.handleAcousticness.bind(this)} />
-
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Acousticness Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -274,31 +271,31 @@ console.log("remaining points", this.state.weightPoints)
                 <input type="range" min={0} max={10} value={this.state.valence} onChange={this.handleValence.bind(this)} />
               </StyleFormGroup>
               <StyleFormGroup>
-                <label>Hapiness Importance:     </label>
-                <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
+                <label>Happiness Importance:</label>
+                <Dropdown selection compact options={importanceOptions} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
-            <StyleFormGroup>
-              <label>Instrumentalness: {this.state.instrumentalness}</label>
-              <input type="range" min={0} max={10} value={this.state.instrumentalness} onChange={this.handleInstrumentalness.bind(this)} />
-            </StyleFormGroup>
-            <StyleFormGroup>
-              <label>Instrumentalness Importance:     </label>
-              <input type="number" width={2} min={0} max={10} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
-            </StyleFormGroup>
-          </Form.Group>
-          <Form.Group widths="equal">
-          <StyleFormGroup>
-            <label>Tempo: {this.state.tempo}</label>
-            <input type="range" min={0} max={160} value={this.state.tempo} onChange={this.handleTempo.bind(this)} />
-          </StyleFormGroup>
-          <StyleFormGroup>
-            <label>Tempo Importance:     </label>
-            <input type="number" width={2} min={0} max={10} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
-          </StyleFormGroup>
-        </Form.Group>
-            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <StyleFormGroup>
+                <label>Instrumentalness: {this.state.instrumentalness}</label>
+                <input type="range" min={0} max={10} value={this.state.instrumentalness} onChange={this.handleInstrumentalness.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup>
+                <label>Instrumentalness Importance:</label>
+                <Dropdown selection compact options={importanceOptions} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <Form.Group widths="equal">
+              <StyleFormGroup>
+                <label>Tempo: {this.state.tempo}</label>
+                <input type="range" min={0} max={160} value={this.state.tempo} onChange={this.handleTempo.bind(this)} />
+              </StyleFormGroup>
+              <StyleFormGroup>
+                <label>Tempo Importance: </label>
+                <Dropdown selection compact options={importanceOptions} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
+              </StyleFormGroup>
+            </Form.Group>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               {this.renderError()}
               <Button disabled={this.state.submitVisible} color="purple" type="submit" size="huge">Create Event</Button>
             </div>
@@ -329,7 +326,7 @@ console.log("remaining points", this.state.weightPoints)
           onDismiss={this.handleDismissInfo}
           color="purple"
           header="Welcome to groupMix Events!"
-          content="Fill out the form below to create an event. Choose specific genres to populate your event playlist with mostly songs of those genres. Choose target attritibutes (e.g. Danceability) for your playlist songs on a scale of 1-10. A target Danceability of 10 will fill your playlist with mostly dance songs. You also have 12 total points to split between the attributes' importance. Give more points to attributes you really care about. If you DO NOT care about an attribute/ do not want it to be considered give it an importance of 0!. Enjoy your stress-free playlist! "
+          content="Fill out the form below to create an event. Choose specific genres to populate your event playlist with mostly songs of those genres. Choose target attritibutes (e.g. Danceability) for your playlist songs on a scale of 1-10. A target Danceability of 10 will fill your playlist with mostly dance songs. You also have 12 total points to determine each attribute's importance relative to the rest. Give more points to attributes you really care about. If you DO NOT care about an attribute / do not want it to be considered, leave the importance at 0. Enjoy your stress-free playlist! "
         />
       );
     }
