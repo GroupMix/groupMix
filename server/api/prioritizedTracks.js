@@ -6,9 +6,6 @@ module.exports = router
 
 // Gets event by id
 router.get('/:eventId', (req, res, next) => {
-  //console.log("event ID", req.params.eventId)
- // PlaylistSong.prioritize(req.params.eventId)
-
   Playlist.findOne({where: {eventId: req.params.eventId}})
   .then((playlist) => {
     return PlaylistSong.findAll({

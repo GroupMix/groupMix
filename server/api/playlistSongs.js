@@ -165,7 +165,6 @@ router.get(`/prioritize/:eventId`, (req, res, next) => {
     })
 
 router.put('/voteSong/:eventId', (req, res, next) => {
-  console.log(req.body)
   Playlist.findOne({ where: {eventId: req.params.eventId} })
   .then(playlist => {
     return PlaylistSong.findOne({
@@ -177,7 +176,7 @@ router.put('/voteSong/:eventId', (req, res, next) => {
   .then(song => {
     req.body.vote == 'up' ? song.increment({'votes': 2}) : song.decrement({'votes': 2})
     req.body.vote == 'up' ? song.increment({'priority': 2}) : song.decrement({'priority': 2})
-    
+
     res.sendStatus(201)
   })
 })
@@ -257,7 +256,6 @@ router.get('/:playlistId/:songId', (req, res, next) => {
         return PlaylistSong.update({ played: true, priority: 0 }, { where: { songId: song.id } })
       })
       .then(() => {
-        console.log('song updated')
         res.sendStatus(204)
       })
       .catch(next)

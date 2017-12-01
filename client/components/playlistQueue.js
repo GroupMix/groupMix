@@ -17,9 +17,6 @@ import { voteForSong, getSimilarSongs } from '../store'
 const PlaylistQueue = ({ songs, party, voteForSong, addSimilarSongs, userId, eventId }) => {
 
   const handleAdd = (evt, data, song) => {
-    console.log('party', party)
-    console.log('DATA', data)
-    console.log('Song', song)
     addSimilarSongs(song, party, userId)
   }
     return (
@@ -77,7 +74,6 @@ const mapDispatch = dispatch => ({
         dispatch(voteForSong(vote, songId, eventId))
     },
     addSimilarSongs(song, party, userId){
-      console.log("dispatching")
       dispatch(getSimilarSongs(song, party, userId))
     }
 })

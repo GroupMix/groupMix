@@ -90,7 +90,7 @@ export const endEvent = (eventId, spotifyUserId, SpotifyPlaylistId) =>
         console.log('event ended', updatedEvent)
         dispatch(getEvent(updatedEvent[1][0]))
       })
-      .catch(err => console.log(err, "ENDING ERRORRRR"))
+      .catch(err => console.log(err, "end error"))
   }
 
 /* REDUCER */
