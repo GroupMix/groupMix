@@ -78,12 +78,8 @@ width={6}
 
 
 
-
-<StyleFormGroup>
-<label>Danceability Importance: </label>
-<input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
-</StyleFormGroup>
-
-
+groupMix offers the perfect solution for entertainers music lovers and those who entertain.
+Our service allows the host to create a perfect playlist based on the musical tastes of the guest!
+Simply invite your guests, they'll choose their favorite music and our algorithm will take care of the rest!
 
 

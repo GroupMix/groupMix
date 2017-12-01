@@ -16,14 +16,9 @@ const Carousel = () => {
         <Slider {...settings} className="sliderContainer">
             <div className="carouselItem">
                 <div id="carouselTitle">
-                    <h1>Hosting a Party?</h1>
+                    <h1>Welcome to groupMix!</h1>
                     <hr />
-                    <h2>Get in the Mix!</h2>
-                    <p>
-                        Group Mix offers the perfect solution for entertainers music lovers and those who entertain.
-                        Our service allows the host to create a perfect playlist based on the musical tastes of the guest!
-                        Simply invite your guests, they'll choose their favorite music and our algorithm will take care of the rest!
-                    </p>
+                    <h3>~  Smart Playlists for Social Events  ~</h3>
                 </div>
                 <Image src='assets/Club Photo 1.jpeg' className="carouselImage" />
             </div>
@@ -31,7 +26,7 @@ const Carousel = () => {
                 <div id="carouselTitle">
                     <h1>Not Just For Parties!</h1>
                     <hr />
-                    <p> 
+                    <p>
                         Our services could be applicable for any social gathering where a little music can brightend the mood.
                     </p>
                 </div>
@@ -41,7 +36,7 @@ const Carousel = () => {
                 <div id="carouselTitle">
                     <h1>About Us</h1>
                     <hr />
-                    <p> 
+                    <p>
                         Why would you want to know that?
                     </p>
                 </div>
