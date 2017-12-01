@@ -112,7 +112,6 @@ class UserHome extends React.Component {
   }
 
   getInfoAndPersist = (data) => {
-    console.log("PERSIST data", data)
     this.props.getTrackInfo(data)
     setTimeout(() => {
     history.push(`/events/${this.props.eventId}/partyview`)

@@ -32,7 +32,6 @@ class EventList extends Component {
     const rsvpNo = false;
 
     socket.on(`userInvite/${user.id}`, (userId) => {
-      console.log('SOCKET UPDATING USEREVENTSSSSSSSS')
       this.props.loadEvents(userId);
     })
 

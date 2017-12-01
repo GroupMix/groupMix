@@ -143,17 +143,13 @@ class PartyView extends React.Component {
     isPlaying ? playbackButton = 'Pause' : playbackButton = 'Resume'
 
     socket.on(`UpdatePlaylist/${eventId}`, eventId => {
-      console.log("RECEIVED UPDATEPLAYLIST EMITTER! eventID:", eventId)
         this.props.runUpdates(eventId)
     })
 
     socket.on(`userHere/${eventId}`, (userId, eventId) => {
-      console.log("RECEIVED EMITTER! eventID:", eventId, "userId", userId)
       if (isHost) {
-        console.log('updating event', eventId)
         this.props.runUpdates(eventId)
       } else {
-        console.log("user here socket running")
         _.debounce(this.props.socketUpdates(eventId), 30000)
       }
     })
@@ -164,7 +160,6 @@ class PartyView extends React.Component {
     })
 
     socket.on(`gotVote/${eventId}`, (eventId) => {
-      console.log('front end go vote', eventId)
         _.debounce(this.props.voteUpdates(eventId), 30000)
         // _.debounce(this.props.socketUpdates(eventId), 30000)
     })
@@ -307,13 +302,11 @@ const mapDispatch = (dispatch, ownProps) => ({
 
   },
   socketUpdates(eventId, currentSong){
-    console.log("FETCH SONGS AFTER SOCKET")
     dispatch(fetchPlaylistSongs(eventId))
     dispatch(fetchInvitedUsers(eventId))
     dispatch(getCurrentSong(currentSong))
   },
   voteUpdates(eventId){
-    console.log("vote updates after sockets")
     dispatch(updateSpotifyPlaylist(eventId))
   },
   startParty(spotifyUri, eventId, hostStat) {

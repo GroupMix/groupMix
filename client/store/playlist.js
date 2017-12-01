@@ -8,7 +8,6 @@ const filterUniqueTracks = (tracks, tracksCache = {}) => {
   const uniqueTracks = []
   tracks.forEach(track => {
       if (!tracksCache.hasOwnProperty(track.songId)) {
-          console.log(track.songId)
           uniqueTracks.push(track)
           tracksCache[track.songId] = track
       }

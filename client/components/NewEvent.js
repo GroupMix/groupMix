@@ -54,7 +54,6 @@ export class NewEvent extends Component {
     else if (this.state.weightPoints >= 0) {
       this.setState({ visible: false, submitVisible: false })
     }
-console.log("remaining points", this.state.weightPoints)
   }
   handleChange(evt) {
     var change = {}
@@ -309,7 +308,6 @@ console.log("remaining points", this.state.weightPoints)
   }
   renderError() {
     if (this.state.visible) {
-      console.log('ERROR SHOWING')
       return (
         <Message
           onDismiss={this.handleDismiss}
@@ -323,7 +321,6 @@ console.log("remaining points", this.state.weightPoints)
 
   renderInfo() {
     if (this.state.entryMessage) {
-      console.log('enteringgggg')
       return (
         <Message
           onDismiss={this.handleDismissInfo}
