@@ -13,7 +13,7 @@ const AuthForm = (props) => {
     <div className="login-form">
     <Grid
       textAlign="center"
-      style={{ height: '650px', width: 'auto'}}
+      style={{ height: '100vh', width: 'auto', margin:'auto'}}
       verticalAlign="middle"
     >
       <Grid.Column style={{ maxWidth: 450 }}>
