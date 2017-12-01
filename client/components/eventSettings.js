@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { editEvent, prioritizeSongs, updateSpotifyPlaylist } from '../store'
 import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Form, Segment, Message, Header, Statistic } from 'semantic-ui-react'
-import genreList from './genreList'
+import genreList, { importanceOptions } from './genreList'
 import socket from '../socket'
 
 /**
@@ -89,63 +89,63 @@ componentWillMount(){
   handleTempo = (evt) => {
     this.setState({ tempo: evt.target.value * 1 })
   }
-  handleDanceabilityWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.danceabilityWeight;
+  handleDanceabilityWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.danceabilityWeight;
 
 
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ danceabilityWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ danceabilityWeight: data.value, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleLoudnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.loudnessWeight;
+  handleLoudnessWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.loudnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ loudnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ loudnessWeight: data.value, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
 
   }
-  handleEnergyWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.energyWeight;
+  handleEnergyWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.energyWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ energyWeight: evt.target.value * 1, weightPoints: remainingPoints })
-
-    setTimeout(() => {
-      this.checkPoints()
-    }, 500)
-  }
-  handleAcousticnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.acousticnessWeight;
-    let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ acousticnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ energyWeight: data.value, weightPoints: remainingPoints })
 
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleValenceWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.valenceWeight;
+  handleAcousticnessWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.acousticnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ valenceWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ acousticnessWeight: data.value, weightPoints: remainingPoints })
+
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleInstrumentalnessWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.instrumentalnessWeight;
+  handleValenceWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.valenceWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ instrumentalnessWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ valenceWeight: data.value, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
   }
-  handleTempoWeight = (evt) => {
-    let pointsUsed = (evt.target.value * 1) - this.state.tempoWeight;
+  handleInstrumentalnessWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.instrumentalnessWeight;
     let remainingPoints = this.state.weightPoints - pointsUsed;
-    this.setState({ tempoWeight: evt.target.value * 1, weightPoints: remainingPoints })
+    this.setState({ instrumentalnessWeight: data.value, weightPoints: remainingPoints })
+    setTimeout(() => {
+      this.checkPoints()
+    }, 500)
+  }
+  handleTempoWeight = (evt, data) => {
+    let pointsUsed = (data.value) - this.state.tempoWeight;
+    let remainingPoints = this.state.weightPoints - pointsUsed;
+    this.setState({ tempoWeight: data.value, weightPoints: remainingPoints })
     setTimeout(() => {
       this.checkPoints()
     }, 500)
@@ -238,7 +238,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Danceability Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -248,7 +248,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Loudness Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.loudnessWeight} onChange={this.handleLoudnessWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -258,7 +258,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Energy Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.energyWeight} onChange={this.handleEnergyWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -268,7 +268,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Acousticness Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.acousticnessWeight} onChange={this.handleAcousticnessWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -278,7 +278,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Happiness Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.valenceWeight} onChange={this.handleValenceWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -288,7 +288,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Instrumentalness Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.instrumentalnessWeight} onChange={this.handleInstrumentalnessWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <Form.Group widths="equal">
@@ -298,7 +298,7 @@ componentWillMount(){
               </StyleFormGroup>
               <StyleFormGroup>
                 <label>Tempo Importance:</label>
-                <input type="number" width={2} min={0} max={10} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
+                <Dropdown selection compact options={importanceOptions} value={this.state.tempoWeight} onChange={this.handleTempoWeight.bind(this)} />
               </StyleFormGroup>
             </Form.Group>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
