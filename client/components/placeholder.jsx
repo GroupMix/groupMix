@@ -79,7 +79,10 @@ width={6}
 
 
 
-
+<StyleFormGroup>
+<label>Danceability Importance: </label>
+<input type="number" width={2} min={0} max={10} value={this.state.danceabilityWeight} onChange={this.handleDanceabilityWeight.bind(this)} />
+</StyleFormGroup>
 
 
 
