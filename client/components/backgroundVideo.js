@@ -5,17 +5,15 @@ const BackgroundVideo = () => {
     return (
         <div className="videoContainer">
             <div id="applicationDescription">
-                <h1>Hosting a Party?</h1>
+                <h1>Welcome to groupMix!</h1>
                 <hr />
-                <h2 style={{color: '#71C7FA'}}>Get in the Mix!</h2>
+                <h2 style={{color: '#71C7FA', font-style: 'italic'}}>A Collaborative Smart Playlist Generator For Events</h2>
                 <div id="welcomeMessage">
                     <p style={{alignSelf: 'center'}}>
-                        groupMix offers the perfect solution for entertainers music lovers and those who entertain.
-                        Our service allows the host to create a perfect playlist based on the musical tastes of the guest!
+                        groupMix automatically creates a playlist that satisfies all of your guests' individual music tastes.
                     </p>
                     <p>
-                        Simply invite your guests to your event, they'll pick their favorite artists, and our application
-                        will generate a playlist that everyone attending will enjoy!
+                        Create an event and invite your friends. Choose your favorite artists. Then let us take care of the rest!
                     </p>
                     <h2 style={{alignSelf:'center'}}>
                         To get started, <span style={{color: '#71C7FA'}}>Log in and start a new event!</span>
