@@ -10,7 +10,7 @@ const BackgroundVideo = () => {
                 <h2 style={{color: '#71C7FA'}}>Get in the Mix!</h2>
                 <div id="welcomeMessage">
                     <p style={{alignSelf: 'center'}}>
-                        Group Mix offers the perfect solution for entertainers music lovers and those who entertain.
+                        groupMix offers the perfect solution for entertainers music lovers and those who entertain.
                         Our service allows the host to create a perfect playlist based on the musical tastes of the guest!
                     </p>
                     <p>
