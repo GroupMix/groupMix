@@ -1,0 +1,35 @@
+.videoContainer{
+    #applicationDescription {
+        background-color: rgba(150, 58, 158, 0.8);
+        position: absolute;
+        z-index: 2;
+        padding: 2%;
+        margin: auto;
+        width: 80vw;
+        border-radius: 12px;
+        transform: translate(12vw, 10vh);
+        #welcomeMessage {
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            width: 62%;
+        }
+        h1, h2{
+            color: white;
+            text-align: center;
+            text-shadow: 1px 1px black;
+        }
+        p {
+            color: white;
+            text-shadow: 1px 1px black;
+            font-size: 20px;
+            text-align: center;
+        }
+    }
+    .video {
+        position: fixed;
+        height: auto !important;
+        width: 100% !important;
+        margin: auto;
+    }
+}
