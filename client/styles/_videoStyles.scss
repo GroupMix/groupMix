@@ -28,8 +28,11 @@
     }
     .video {
         position: fixed;
+        top: 0;
+        left: 0;
         height: auto !important;
         width: 100% !important;
         margin: auto;
+        z-index: -2;
     }
 }

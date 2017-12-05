@@ -5,8 +5,6 @@ import {
     Segment,
 
 } from 'semantic-ui-react'
-import Slick from 'react-slick'
-import Carousel from './_landingCarousel'
 import BackgroundVideo from './backgroundVideo'
 
 const LandingPage = (props) => {
