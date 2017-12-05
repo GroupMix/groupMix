@@ -27,7 +27,7 @@ const Navbar = (props) => {
       style={{ padding: '0em', marginBottom: '-2em' }}
       vertical
     >
-    <Header inverted as="h1" color="blue" floated="left" style={{ marginTop: '.7em'}}>
+    <Header inverted as="h1" color="blue" floated="left" style={{ marginTop: '.7em', marginLeft: '50px'}}>
     <Icon name="music" size="large" color="blue" className="heartbeat" />
     groupMix
     </Header>

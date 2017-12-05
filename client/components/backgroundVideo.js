@@ -7,7 +7,7 @@ const BackgroundVideo = () => {
             <div id="applicationDescription">
                 <h1>Welcome to groupMix!</h1>
                 <hr />
-                <h2 style={{color: '#71C7FA', font-style: 'italic'}}>A Collaborative Smart Playlist Generator For Events</h2>
+                <h2 style={{color: '#71C7FA', fontStyle: 'italic'}}>~A Collaborative Smart Playlist Generator For Social Events~</h2>
                 <div id="welcomeMessage">
                     <p style={{alignSelf: 'center'}}>
                         groupMix automatically creates a playlist that satisfies all of your guests' individual music tastes.
