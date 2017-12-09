@@ -14,10 +14,11 @@ This will give us a playlist populated with tracks most relevant to the event's 
 
 --- 
 Stack: 
-- React
-- Node.js
-- Semantic
-- Socket.io
-- Express.js
-- PostgreSQL
+- [React](https://reactjs.org/)
+- [Node.js](https://nodejs.org/en/)
+- [Semantic](https://react.semantic-ui.com/introduction)
+- [Express.js](https://expressjs.com/)
+- [Sequelize](http://docs.sequelizejs.com/)
+- [Passportjs](http://www.passportjs.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 - Heroku for deployment and serving the database
