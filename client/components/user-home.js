@@ -5,7 +5,7 @@ var SpotifyWebApi = require('spotify-web-api-js');
 // import * as SpotifyWebApi from 'spotify-web-api-js'
 var spotifyApi = new SpotifyWebApi();
 
-import { Button, Form, Grid, Header, Segment, Icon, List, Card } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Icon, List, Card, Search } from 'semantic-ui-react'
 import { addSongsThunk, addPlaylistSongThunk, fetchInvitedUsers, fetchEvent, prioritizeSongs, getTrackGenres, setSpotifyToken, getAudioFeatures } from '../store'
 import GuestListItem from './guestListItem.jsx'
 import history from '../history'
@@ -27,6 +27,7 @@ class UserHome extends React.Component {
       topArtistSongs: [],
       idArr: [],
       artistIds: [],
+      search: ''
     }
     this.handleAdd = this.handleAdd.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -41,21 +42,21 @@ class UserHome extends React.Component {
     this.props.fetchInitialData(this.props.eventId)
 
     spotifyApi.getMyRecentlyPlayedTracks()
-    .then(data => {
-      let recent = data.items.map(item => item.track)
-      this.setState({ recentTracks: recent })
-    })
-    .catch(err => {
-      console.error(err);
-    })
+      .then(data => {
+        let recent = data.items.map(item => item.track)
+        this.setState({ recentTracks: recent })
+      })
+      .catch(err => {
+        console.error(err);
+      })
 
     spotifyApi.getMyTopTracks()
-    .then(data => {
-      this.setState({ topTracks: data.items })
-    })
-    .catch(err => {
-      console.error(err);
-    })
+      .then(data => {
+        this.setState({ topTracks: data.items })
+      })
+      .catch(err => {
+        console.error(err);
+      })
 
     setSpotifyToken()
     spotifyApi.getMyTopArtists()
@@ -114,13 +115,21 @@ class UserHome extends React.Component {
   getInfoAndPersist = (data) => {
     this.props.getTrackInfo(data)
     setTimeout(() => {
-    history.push(`/events/${this.props.eventId}/partyview`)
+      history.push(`/events/${this.props.eventId}/partyview`)
     }, 100)
   }
 
-
+  handleSearch = (e, { value }) => {
+    this.setState({
+      search: value
+    })
+  }
   render() {
     const { email, user, eventId, guestlist, event } = this.props
+    let { topArtists } = this.state
+    let regex = new RegExp(this.state.search, 'i')
+    topArtists = topArtists.filter(artist => artist.name.match(regex))
+
     return (
       <div>
         <br />
@@ -131,6 +140,8 @@ class UserHome extends React.Component {
           <Grid
             divided
             textAlign="left"
+            stackable
+            reversed
             columns={2}
           >
 
@@ -154,37 +165,47 @@ class UserHome extends React.Component {
             <Grid.Column width={5}>
               <Header as="h2" color="blue" textAlign="center" float="left">
                 Top Artists
-                <Button onClick={this.handleSubmit} color="blue" floated="right" style={{ marginRight: '0.25em' }}>
-                  Submit
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <Search
+                    size="mini"
+                    showNoResults={false}
+                    value={this.state.search}
+                    placeholder="Artist"
+                    onSearchChange={this.handleSearch}
+                  />
+                  <Button onClick={this.handleSubmit} color="blue" floated="right" style={{ width: '50%', marginTop: 10 }}>
+                    Submit
                 </Button>
+                  </div>
               </Header>
 
-              <List divided inverted relaxed>
-                {this.state.topArtists &&
-                  this.state.topArtists.map(item => {
-                    return (
-                      <List.Item key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
-                        <Icon name="music" color="blue" size="large" />
-                        <List.Content floated="left" style={{ width: '-webkit-fill-available' }} >
-                          {item.name}
-                        </List.Content>
-                        <div inverted style={{ width: '-webkit-fill-available', verticalAlign: 'middle' }}>
-                          <List.Content floated="right">
-                            <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
-                              <Icon name="add" color="white" />
-                              Add
+                  <List divided inverted relaxed style={{overflow: 'scroll', height: '60vh', overflowX: 'hidden'}}>
+                    {
+                      topArtists &&
+                      topArtists.map(item => {
+                        return (
+                          <List.Item key={item.id} style={{ display: 'flex', alignItems: 'center' }}>
+                            <Icon name="music" color="blue" size="large" />
+                            <List.Content floated="left" style={{ width: '-webkit-fill-available' }} >
+                              {item.name}
+                            </List.Content>
+                            <div inverted style={{ width: '-webkit-fill-available', verticalAlign: 'middle' }}>
+                              <List.Content floated="right">
+                                <Button onClick={this.handleAdd} color="purple" disabled={this.state.selected.includes(item)} content={item}>
+                                  <Icon name="add" color="white" />
+                                  Add
                             </Button>
-                          </List.Content>
-                        </div>
-                      </List.Item>)
-                  })
-                }
-              </List>
+                              </List.Content>
+                            </div>
+                          </List.Item>)
+                      })
+                    }
+                  </List>
             </Grid.Column>
           </Grid>
         </Segment>
       </div>
-    )
+          )
   }
 }
 /**
@@ -192,7 +213,7 @@ class UserHome extends React.Component {
  */
 const mapState = (state, ownProps) => {
   return {
-    user: state.user,
+            user: state.user,
     email: state.user.user.email,
     eventId: ownProps.match.params.eventId,
     guestlist: state.invitedUsers,
@@ -202,23 +223,23 @@ const mapState = (state, ownProps) => {
 
 
 const mapDispatch = (dispatch) => ({
-  userSongs(songs) {
-    dispatch(addSongsThunk(songs))
+            userSongs(songs) {
+          dispatch(addSongsThunk(songs))
   },
   playListSong(song) {
-    dispatch(addPlaylistSongThunk(song))
-  },
+            dispatch(addPlaylistSongThunk(song))
+          },
   fetchInitialData(eventId) {
-    dispatch(fetchInvitedUsers(eventId))
+            dispatch(fetchInvitedUsers(eventId))
     dispatch(fetchEvent(eventId))
   },
   prioritize(eventId) {
-    dispatch(prioritizeSongs(eventId))
-  },
+            dispatch(prioritizeSongs(eventId))
+          },
   getTrackInfo(data) {
-    dispatch(getTrackGenres(data))
-  }
-})
+            dispatch(getTrackGenres(data))
+          }
+          })
 
 export default connect(mapState, mapDispatch)(UserHome)
 
@@ -226,5 +247,5 @@ export default connect(mapState, mapDispatch)(UserHome)
  * PROP TYPES
  */
 UserHome.propTypes = {
-  email: PropTypes.string
+            email: PropTypes.string
 }
